@@ -1,9 +1,9 @@
-🚨🚧 **NOTE:** The tool is currently under development and all code published here is part of an on-going project.
+🚨🚧 The tool is currently under development and all code published here is part of an on-going project 🚧🚨
 
 ---
 
-# NexTra
- <ins>Nex</ins>us model for <ins>tra</ins>nsboundary (NexTra) energy and water resources planning and management in Israel, Palestine, and Jordan.
+## NexTra
+<ins>Nex</ins>us model for <ins>tra</ins>nsboundary (NexTra) energy and water resources planning and management in Israel, Palestine, and Jordan.
 
 ### Contributors
 **Project Lead:** Aman Majid (aman.majid@new.ox.ac.uk), University of Oxford <br>
