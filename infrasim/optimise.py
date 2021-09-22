@@ -12,17 +12,17 @@ import gurobipy as gp
 class model():
 
 
-    def __init__(self,nodes,edges,flows,**kwargs):
+    def __init__(self,path_to_nodes,path_to_edges,path_to_flows,**kwargs):
         
         '''
         
         Parameters
         ----------
-        nodes : TYPE
+        path_to_nodes : str
             DESCRIPTION.
-        edges : TYPE
+        path_to_edges : str
             DESCRIPTION.
-        flows : TYPE
+        path_to_flows : str
             DESCRIPTION.
         **kwargs : TYPE
             DESCRIPTION.
@@ -32,7 +32,11 @@ class model():
         None.
 
         '''
-
+    
+        # read data
+        self.nodes = read_node_data(path_to_nodes)
+        self.edges = read_edge_data(path_to_edges)
+        self.flows = read_flow_data(path_to_flows)
 
 
     def build(self):
