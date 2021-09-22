@@ -33,10 +33,19 @@ class model():
 
         '''
     
-        # read data
+        # read node
         self.nodes = read_node_data(path_to_nodes)
+
+        # read edge data
         self.edges = read_edge_data(path_to_edges)
-        self.flows = read_flow_data(path_to_flows)
+
+        # read flow data
+        self.flows = read_flow_data(path_to_flows,
+                                    kwargs.get("year", False),
+                                    kwargs.get("timesteps", False))
+
+        # define gurobi model
+        self.model = gp.Model(kwargs.get('model_name', 'nextra'))
 
 
     def build(self):

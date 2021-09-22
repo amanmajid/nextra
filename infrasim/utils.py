@@ -18,7 +18,7 @@ import os
 import numpy as np
 import pandas as pd
 import geopandas as gpd
-
+import warnings
 
 #---
 # Conversions
@@ -29,30 +29,36 @@ def kwh_to_gwh(v):
     '''
     return v*0.000001
 
+
 def gwh_to_kwh(v):
     '''Gigawatt hours to Kilowatt hours
     '''
     return v/0.000001
+
 
 def cmd_to_mld(v):
     '''Cubic meters per day to megalitres per day
     '''
     return v/0.001
 
+
 def mld_to_cmd(v):
     '''Megalitres per day to cubic meters per day
     '''
     return v*0.001
+
 
 def lps_to_cmps(v):
     '''Litres per second to cubic meters per second
     '''
     return v*0.001
 
+
 def seconds_to_hours(v):
     '''Convert seconds to hours
     '''
     return v*3600
+
 
 
 #---
@@ -69,6 +75,18 @@ def seconds_to_hours(v):
 # Data type conversions
 #   Transform one type (e.g. dataframe) into another (e.g. dictionary)
 #---
+
+def edge_indices_to_dict(self,varname):
+    '''Convert variable x to a dict with edge indicies (e.g. [i,j,k,t,x])
+    '''
+    return self.edge_indices[self.indices+[varname]].set_index(keys=self.indices)[varname].to_dict()
+
+
+def flows_to_dict(flows):
+    '''Convert flow data to dict in format [node,time,value]
+    '''
+    return flows[['node','timestep','value']].set_index(keys=['node','timestep']).to_dict()['value']
+
 
 
 #---
@@ -93,6 +111,7 @@ def tidy_flow_data(flows):
                       value_name='value'
                       )
     
+
 
 #---
 # Data reading/saving
@@ -120,7 +139,7 @@ def read_edge_data(path_to_edges)
         raise ValueError('edge file must be in shapefile or csv format')
 
 
-def read_flow_data(path_to_flows):
+def read_flow_data(path_to_flows,**kwargs):
     '''Read flow data
     '''
     if '.csv' in path_to_flows:
@@ -129,7 +148,25 @@ def read_flow_data(path_to_flows):
         # add timestep column
         flows = add_timestep_col(flows)
         # index by year
+        if not kwargs.get("year", False):
+            pass
+        else:
+            flows = flows.loc[(flows.Year == years_restriction)]
         # restrict timesteps
+        if not kwargs.get("timesteps", False):
+            pass
+        else:
+            flows = flows.loc[(flows.Timestep >= flows.Timestep.min()) & \
+                              (flows.Timestep <= flows.Timestep.min() + timesteps)]
+        # tidy
+        flows = tidy_flow_data(flows)
+        # check for negative values
+        if not (flows < 0).any().any():
+            pass
+        else:
+            flows.loc[flows.value < 0, 'value'] = np.nan
+            flows = flows.dropna(axis=0)
+            warnings.warn('Flow data contains negative values... dropped')
         return flows
     else:
         raise ValueError('flow file must be in csv format')
