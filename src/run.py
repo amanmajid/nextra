@@ -21,5 +21,7 @@ super_source=False
 pprint=True
 save_figures=True
 
+infrasim_init_directories()
+
 # BAU
-bau = nextra(nodes,edges,flows)
+model = nextra(nodes,edges,flows,model_name='meow')

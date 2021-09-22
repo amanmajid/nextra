@@ -6,8 +6,20 @@
     @amanmajid
 '''
 
+#---
+# Modules
+#---
+
 import gurobipy as gp
+
+# relative imports
 from .utils import *
+
+
+
+#---
+# NexTra class
+#---
 
 class nextra():
 
@@ -44,8 +56,15 @@ class nextra():
                                     year=kwargs.get("year", False),
                                     timesteps=kwargs.get("timesteps", False))
 
+        # define sets
+        self = define_sets(self)
+
         # define gurobi model
-        self.model = gp.Model(kwargs.get('model_name', 'nextra'))
+        self.model = gp.Model( create_model_name(base=kwargs.get('model_name', 'nextra')) )
+
+        # init dir for outputs
+        self.results_dir = global_variables['results_directory'] + self.model.ModelName
+        create_dir(self.results_dir)
 
 
     def build(self):
