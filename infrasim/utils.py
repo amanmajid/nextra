@@ -93,7 +93,7 @@ def flows_to_dict(flows):
 # Data cleaning
 #---
 
-def add_timestep_col(dataframe)
+def add_timestep_col(dataframe):
     '''add a timestep column to dataframe
     '''
     if 'timestep' in dataframe.columns:
@@ -128,7 +128,7 @@ def read_node_data(path_to_nodes):
         raise ValueError('node file must be in shapefile or csv format')
 
 
-def read_edge_data(path_to_edges)
+def read_edge_data(path_to_edges):
     '''Read edge data
     '''
     if '.shp' in path_to_edges:
@@ -161,7 +161,7 @@ def read_flow_data(path_to_flows,**kwargs):
         # tidy
         flows = tidy_flow_data(flows)
         # check for negative values
-        if not (flows < 0).any().any():
+        if not (flows.value < 0).any().any():
             pass
         else:
             flows.loc[flows.value < 0, 'value'] = np.nan

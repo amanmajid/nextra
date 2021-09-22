@@ -7,9 +7,9 @@
 '''
 
 import gurobipy as gp
+from .utils import *
 
-
-class model():
+class nextra():
 
 
     def __init__(self,path_to_nodes,path_to_edges,path_to_flows,**kwargs):
@@ -41,8 +41,8 @@ class model():
 
         # read flow data
         self.flows = read_flow_data(path_to_flows,
-                                    kwargs.get("year", False),
-                                    kwargs.get("timesteps", False))
+                                    year=kwargs.get("year", False),
+                                    timesteps=kwargs.get("timesteps", False))
 
         # define gurobi model
         self.model = gp.Model(kwargs.get('model_name', 'nextra'))
