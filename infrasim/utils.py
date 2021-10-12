@@ -21,6 +21,8 @@ import warnings
 import datetime
 import os
 import shutil
+import snkit
+from shapely.geometry import Point
 
 # relative imports
 from .global_variables import *
@@ -118,6 +120,16 @@ def tidy_flow_data(flows):
                       value_name='value')
     
 
+def add_toplogy(nodes,edges,i='from_id',j='to_id'):
+    '''Add i,j,k notation to edges
+    '''
+    #find nearest node to the START coordinates of the line -- and return the 'ID' attribute
+    edges[i] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[0]), nodes)['name'])
+    #find nearest node to the END coordinates of the line -- and return the 'ID' attribute
+    edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)['name'])
+    return edges
+
+
 
 #---
 # Data reading/saving
@@ -128,12 +140,22 @@ def init_vars(self,scenario,energy_objective):
     self.global_variables   = global_variables
     self.scenario           = scenario
     self.energy_objective   = energy_objective
+    if not energy_objective:
+        self.ss_factor      = 0
     return self
 
 
 def manage_kwargs(self,key=None,value=None):
     '''Manage kwargs
     '''
+    # self sufficiency factor
+    if key == 'self_sufficiency_factor':
+        if not self.energy_objective:
+            self.ss_factor = 0
+        else:
+            self.ss_factor = value
+    else:
+        self.ss_factor = self.global_variables['self_sufficiency_factor']
     # res factor
     if key == 'res_factor':
         self.res_factor = value
@@ -316,17 +338,17 @@ def define_sets(self):
     return self
 
 
-def add_super_source(nodes,edges):
+def add_super_source(nodes,edges,from_id='from_id'):
     '''Add super_source node to network
     '''
     new_edges = []
     for commodity in edges.commodity.unique():
-        tmp_edges = pd.DataFrame({'Start'       : 'super_source',
-                                  'End'         : nodes.name.unique(),
-                                  'Commodity'   : commodity,
-                                  'Cost'        : global_variables['super_source_maximum'],
-                                  'Minimum'     : 0,
-                                  'Maximum'     : global_variables['super_source_maximum']
+        tmp_edges = pd.DataFrame({'from_id'     : 'super_source',
+                                  'to_id'       : nodes.name.unique(),
+                                  'commodity'   : commodity,
+                                  'cost'        : global_variables['super_source_maximum'],
+                                  'minimum'     : 0,
+                                  'maximum'     : global_variables['super_source_maximum']
                                   })
         new_edges.append(tmp_edges)
     new_edges = pd.concat(new_edges,ignore_index=True)
@@ -338,21 +360,55 @@ def add_super_sink(nodes,edges):
     '''
     new_edges = []
     for commodity in edges.commodity.unique():
-        tmp_edges = pd.DataFrame({'Start'       : nodes.name.unique(),
-                                  'End'         : 'super_sink',
-                                  'Commodity'   : commodity,
-                                  'Cost'        : global_variables['super_source_maximum'],
-                                  'Minimum'     : 0,
-                                  'Maximum'     : global_variables['super_source_maximum']
+        tmp_edges = pd.DataFrame({'from_id'     : nodes.name.unique(),
+                                  'to_id'       : 'super_sink',
+                                  'commodity'   : commodity,
+                                  'cost'        : global_variables['super_source_maximum'],
+                                  'minimum'     : 0,
+                                  'maximum'     : global_variables['super_source_maximum']
                                   })
         new_edges.append(tmp_edges)
     new_edges = pd.concat(new_edges,ignore_index=True)
     return edges.append(new_edges, ignore_index=True)
+
+
+def map_timesteps_to_date(flows,mappable):
+    ''' Function to map dates to timesteps '''
+    # get time reference table
+    id_vars = ['date','hour','day','month','year','timestep']
+    time_ref = flows[id_vars].groupby(by='timestep').max().reset_index()
+    # perform merge
+    mapped = pd.merge(mappable,time_ref,on='timestep',how='right')
+    return mapped
         
 
-def add_time_index_to_edges():
+def add_time_index_to_edges(self):
     '''Add time index to edges (i.e., i,j,k,t)
     '''
+    # Number of timesteps
+    timesteps = self.flows.timestep.max()
+    # add time
+    self.edges['timestep'] = 1
+    #repeat for each timestep
+    new_edges = self.edges.append( [self.edges]*(timesteps-1) )
+    #create time indices in loop
+    tt = []
+    for i in range(0,timesteps):
+        t = self.edges.timestep.to_numpy() + i
+        tt.append(t)
+    tt = np.concatenate(tt,axis=0)
+    #add time to pandas datafram
+    new_edges['timestep'] = tt
+    # reset index
+    new_edges = new_edges.reset_index(drop=True)
+    # add dates
+    new_edges = map_timesteps_to_date(self.flows,new_edges)
+    # reorder
+    col_order = ['from_id','to_id','commodity','timestep',
+                 'date','hour','day','month','year',
+                 'cost','minimum','maximum','capex']
+    self.edges = new_edges[col_order]
+    return self
 
 
 
