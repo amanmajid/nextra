@@ -134,23 +134,37 @@ def init_vars(self,scenario,energy_objective):
 def manage_kwargs(self,key=None,value=None):
     '''Manage kwargs
     '''
-    if not key and not value:
-        self.__name__       = 'nextra'
-        self.res_factor     = 1
-        self.uto_factor     = self.global_variables['coop_res_target_2030']
-        self.super_source   = False
-        self.super_sink     = False
     # res factor
+    if key == 'res_factor':
+        self.res_factor = value
     else:
-        if key == 'res_factor':
-            self.res_factor = value
-        elif key == 'uto_res_factor':
-            self.uto_factor = value
-        elif key == 'model_name':
-            self.__name__ = value
-        elif key == 'super_source':
-            if value:
-                add_super_source(nodes,edges,commodities=edges.Commodity.unique())
+        self.res_factor = 1
+    # uto factor
+    if key == 'uto_res_factor':
+        self.uto_factor = value
+    else:
+        self.uto_factor = self.global_variables['coop_res_target_2030']
+    # model name
+    if key == 'model_name':
+        self.__name__ = value
+    else:
+        self.__name__       = 'nextra'
+    # super source
+    if key == 'super_source':
+        if value:
+            self.edges = add_super_source(self.nodes,self.edges)
+        else:
+            pass
+    else:
+        pass
+    # super source
+    if key == 'super_sink':
+        if value:
+            self.edges = add_super_sink(self.nodes,self.edges)
+        else:
+            pass
+    else:
+        pass
     return self
 
 
@@ -302,15 +316,39 @@ def define_sets(self):
     return self
 
 
-def add_super_source():
+def add_super_source(nodes,edges):
     '''Add super_source node to network
     '''
+    new_edges = []
+    for commodity in edges.commodity.unique():
+        tmp_edges = pd.DataFrame({'Start'       : 'super_source',
+                                  'End'         : nodes.name.unique(),
+                                  'Commodity'   : commodity,
+                                  'Cost'        : global_variables['super_source_maximum'],
+                                  'Minimum'     : 0,
+                                  'Maximum'     : global_variables['super_source_maximum']
+                                  })
+        new_edges.append(tmp_edges)
+    new_edges = pd.concat(new_edges,ignore_index=True)
+    return edges.append(new_edges, ignore_index=True)
 
 
-def add_super_sink():
-    '''Add super_source node to network
+def add_super_sink(nodes,edges):
+    '''Add super_sink node to network
     '''
-
+    new_edges = []
+    for commodity in edges.commodity.unique():
+        tmp_edges = pd.DataFrame({'Start'       : nodes.name.unique(),
+                                  'End'         : 'super_sink',
+                                  'Commodity'   : commodity,
+                                  'Cost'        : global_variables['super_source_maximum'],
+                                  'Minimum'     : 0,
+                                  'Maximum'     : global_variables['super_source_maximum']
+                                  })
+        new_edges.append(tmp_edges)
+    new_edges = pd.concat(new_edges,ignore_index=True)
+    return edges.append(new_edges, ignore_index=True)
+        
 
 def add_time_index_to_edges():
     '''Add time index to edges (i.e., i,j,k,t)

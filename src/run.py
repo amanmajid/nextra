@@ -27,6 +27,8 @@ infrasim_init_directories()
 model = nextra(nodes,edges,flows,
                scenario='COO',
                energy_objective=False,
+               super_source=True,
+               super_sink=True,
                #res_factor=99,
                #model_name='meow',
                )
