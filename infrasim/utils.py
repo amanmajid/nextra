@@ -103,7 +103,7 @@ def flows_to_dict(flows):
 def add_timestep_col(dataframe):
     '''add a timestep column to dataframe
     '''
-    if 'timestep' in dataframe.columns:
+    if 'timestep'.casefold() in dataframe.columns:
         return dataframe
     else:
         dataframe['timestep'] = [i for i in range(1,len(dataframe)+1)]
@@ -115,14 +115,44 @@ def tidy_flow_data(flows):
     '''
     return flows.melt(id_vars=['timestep','date','hour','day','month','year'],
                       var_name='node',
-                      value_name='value'
-                      )
+                      value_name='value')
     
 
 
 #---
 # Data reading/saving
 #---
+
+def init_vars(self,scenario,energy_objective):
+    self.connectivity       = connectivity
+    self.global_variables   = global_variables
+    self.scenario           = scenario
+    self.energy_objective   = energy_objective
+    return self
+
+
+def manage_kwargs(self,key=None,value=None):
+    '''Manage kwargs
+    '''
+    if not key and not value:
+        self.__name__       = 'nextra'
+        self.res_factor     = 1
+        self.uto_factor     = self.global_variables['coop_res_target_2030']
+        self.super_source   = False
+        self.super_sink     = False
+    # res factor
+    else:
+        if key == 'res_factor':
+            self.res_factor = value
+        elif key == 'uto_res_factor':
+            self.uto_factor = value
+        elif key == 'model_name':
+            self.__name__ = value
+        elif key == 'super_source':
+            if value:
+                add_super_source(nodes,edges,commodities=edges.Commodity.unique())
+    return self
+
 
 def read_node_data(path_to_nodes):
     '''Read nodal data
@@ -156,6 +186,25 @@ def read_edge_data(path_to_edges):
     return edges
 
 
+def flows_integrity_check(flows):
+    '''Check integrity of flow data
+    '''
+    # check for negatives
+    if not (flows.value < 0).any().any():
+            pass
+    else:
+        flows.loc[flows.value < 0, 'value'] = np.nan
+        flows = flows.dropna(axis=0)
+        warnings.warn('Flow data contains negative values... dropped')
+    # check hour column
+    if not 'hour'.casefold() in flows.columns:
+        pass
+    else:
+        if flows['hour'.casefold()].max() == 23:
+            flows['hour'.casefold()] = flows['hour'.casefold()] + 1
+    return flows
+
+
 def read_flow_data(path_to_flows,**kwargs):
     '''Read flow data
     '''
@@ -183,12 +232,7 @@ def read_flow_data(path_to_flows,**kwargs):
         # tidy
         flows = tidy_flow_data(flows)
         # check for negative values
-        if not (flows.value < 0).any().any():
-            pass
-        else:
-            flows.loc[flows.value < 0, 'value'] = np.nan
-            flows = flows.dropna(axis=0)
-            warnings.warn('Flow data contains negative values... dropped')
+        flows = flows_integrity_check(flows)
         return flows
     else:
         raise ValueError('flow file must be in csv format')
@@ -246,7 +290,7 @@ def define_sets(self):
     '''Define critical sets
     '''
     self.time_ref       = self.flows[['timestep','year']]
-    self.indices        = global_variables['edge_index_variables']
+    self.indices        = self.global_variables['edge_index_variables']
     self.commodities    = self.edges.commodity.unique().tolist()
     self.node_types     = self.nodes.type.unique().tolist()
     self.technologies   = self.nodes.subtype.unique().tolist()
@@ -271,3 +315,90 @@ def add_super_sink():
 def add_time_index_to_edges():
     '''Add time index to edges (i.e., i,j,k,t)
     '''
+
+
+
+#---
+# Scenarios
+#---
+
+def adjust_for_scenario(self,scenario,**kwargs):
+    '''Adjust connectivity for scenario of interest
+    '''
+    if self.scenario == 'BAU':
+        # Business as usual
+        # Jordan ->
+        self.connectivity['jordan_to_westbank']     = 99999
+        self.connectivity['jordan_to_israel']       = 0
+        #Israel ->
+        self.connectivity['israel_to_westbank']     = 99999
+        self.connectivity['israel_to_jordan']       = 0
+        self.connectivity['israel_to_gaza']         = 99999
+        #West Bank ->
+        self.connectivity['westbank_to_israel']     = 0
+        self.connectivity['westbank_to_jordan']     = 0
+        #Egypt ->
+        self.connectivity['egypt_to_gaza']          = 99999
+
+    elif self.scenario == 'NCO':
+        # No cooperation: each state acts as an individual entity
+        # Jordan ->
+        self.connectivity['jordan_to_westbank']     = 0
+        self.connectivity['jordan_to_israel']       = 0
+        #Israel ->
+        self.connectivity['israel_to_westbank']     = 0
+        self.connectivity['israel_to_jordan']       = 0
+        self.connectivity['israel_to_gaza']         = 0
+        #West Bank ->
+        self.connectivity['westbank_to_israel']     = 0
+        self.connectivity['westbank_to_jordan']     = 0
+        #Egypt ->
+        self.connectivity['egypt_to_gaza']          = 0
+
+    elif self.scenario == 'EAG':
+        # Extended arab grid: palestine turns to jordan; israel an energy island
+        # Jordan ->
+        self.connectivity['jordan_to_westbank']     = 99999
+        self.connectivity['jordan_to_israel']       = 0
+        #Israel ->
+        self.connectivity['israel_to_westbank']     = 0
+        self.connectivity['israel_to_jordan']       = 0
+        self.connectivity['israel_to_gaza']         = 0
+        #West Bank ->
+        self.connectivity['westbank_to_israel']     = 0
+        self.connectivity['westbank_to_jordan']     = 0
+        #Egypt ->
+        self.connectivity['egypt_to_gaza']          = 99999
+
+    elif self.scenario == 'COO':
+        # Cooperation between each state
+        # --        
+        # Jordan ->
+        self.connectivity['jordan_to_westbank']     = 99999
+        self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", 9999)
+        #Israel ->
+        self.connectivity['israel_to_westbank']     = 99999
+        self.connectivity['israel_to_jordan']       = 99999
+        self.connectivity['israel_to_gaza']         = 99999
+        #West Bank ->
+        self.connectivity['westbank_to_israel']     = 0
+        self.connectivity['westbank_to_jordan']     = 0
+        #Egypt ->
+        self.connectivity['egypt_to_gaza']          = 99999
+    
+    elif self.scenario == 'UTO':
+        # Cooperation between each state
+        # --        
+        # Jordan ->
+        self.connectivity['jordan_to_westbank']     = 99999
+        self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", 9999)
+        #Israel ->
+        self.connectivity['israel_to_westbank']     = 99999
+        self.connectivity['israel_to_jordan']       = 99999
+        self.connectivity['israel_to_gaza']         = 99999
+        #West Bank ->
+        self.connectivity['westbank_to_israel']     = 0
+        self.connectivity['westbank_to_jordan']     = 0
+        #Egypt ->
+        self.connectivity['egypt_to_gaza']          = 99999
+    return self

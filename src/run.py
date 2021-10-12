@@ -24,4 +24,9 @@ save_figures=True
 infrasim_init_directories()
 
 # BAU
-model = nextra(nodes,edges,flows,model_name='meow')
+model = nextra(nodes,edges,flows,
+               scenario='COO',
+               energy_objective=False,
+               #res_factor=99,
+               #model_name='meow',
+               )
