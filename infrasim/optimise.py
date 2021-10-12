@@ -78,7 +78,7 @@ class nextra():
         self = define_sets(self)
         
         # add time index to edge data
-        self.edge_indices = add_time_index_to_edges(self)
+        self = add_time_index_to_edges(self)
 
         # define gurobi model
         self.model = gp.Model( create_model_name( self.__name__ ) )
@@ -98,8 +98,7 @@ class nextra():
 
         #---
         # arcflows
-        arc_indicies      = self.edge_indices[self.indices].set_index(keys=self.indices).index.to_list()
-        self.arc_indicies = arc_indicies
+        self.arc_indicies = edge_indices_to_dict(self,varname='index')
         self.arcFlows     = self.model.addVars(arc_indicies,name="arcflow")
 
         #---

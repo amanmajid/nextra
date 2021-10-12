@@ -15,6 +15,12 @@ nodes = '../data/nextra/spatial/nodes.shp'
 edges = '../data/nextra/spatial/edges.shp'
 flows = '../data/nextra/nodal_flows/processed_flows_2030.csv'
 
+e = gpd.read_file(edges)
+n = gpd.read_file(nodes)
+
+add_toplogy(n, e)
+
+
 # Params
 timesteps=24
 super_source=False
@@ -32,3 +38,6 @@ model = nextra(nodes,edges,flows,
                #res_factor=99,
                #model_name='meow',
                )
+
+
+model.build()

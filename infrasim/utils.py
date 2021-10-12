@@ -124,9 +124,9 @@ def add_toplogy(nodes,edges,i='from_id',j='to_id'):
     '''Add i,j,k notation to edges
     '''
     #find nearest node to the START coordinates of the line -- and return the 'ID' attribute
-    edges[i] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[0]), nodes)['name'])
+    edges[i] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[0]), nodes)['Name'])
     #find nearest node to the END coordinates of the line -- and return the 'ID' attribute
-    edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)['name'])
+    edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)['Name'])
     return edges
 
 
@@ -407,7 +407,7 @@ def add_time_index_to_edges(self):
     col_order = ['from_id','to_id','commodity','timestep',
                  'date','hour','day','month','year',
                  'cost','minimum','maximum','capex']
-    self.edges = new_edges[col_order]
+    self.edge_indices = new_edges[col_order]
     return self
 
 
