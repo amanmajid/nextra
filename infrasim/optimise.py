@@ -285,9 +285,12 @@ class nextra():
         
         # define function for baseload constraint
         def baseload_supply(technology,ramping_rate):
+            '''Constraint supply from baseload technologies by capacity and ramp rate
+            '''
             if technology in self.technologies:
+                
                 # index nodes by technology
-                idx_nodes = self.nodes[self.nodes.subtype == technology].name.to_list()
+                idx_nodes = get_nodes_by_technology(self.nodes,technology=technology).name.to_list()
                 
                 # constrain supply
                 self.model.addConstrs(
@@ -386,7 +389,32 @@ class nextra():
         self.model.addConstrs(
             (self.capacity_indices[n,k,t] <= self.global_variables['maximum_capacity'] \
                  for n,k,t in self.capacity_indices),'cap_max')
+        
+            
+        #---
+        # Solar energy output
+        #---
+        
+        # get solar nodes
+        solar_nodes = get_nodes_by_technology(self.nodes, technology='solar')
+        # get supply dict
+        supply_dict = make_supply_dict(self)
+        
+        # loop through each region
+        for region in adjust_nodal_names(self.nodes.territory).unique():
+            # get solar asset
+            solar_asset = solar_nodes[solar_nodes.name.str.contains(region)].name.to_list()
+            
+            # constrain
+            self.model.addConstrs(
+                (self.arcFlows.sum(i,'*',k,t)  \
+                     <= self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
+                         for t in self.timesteps \
+                             for k in self.commodities \
+                                 for i in solar_asset),'solar_supply')
 
+
+            
 
     def run(self,pprint=True,write=True):
         '''Function to solve GurobiPy model

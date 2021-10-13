@@ -98,6 +98,12 @@ def get_sink_nodes(nodes):
     return nodes.loc[(nodes['type']=='sink')]
 
 
+def get_nodes_by_technology(nodes,technology):
+    '''Return nodes by technology (e.g. solar, wind, biogas etc.)
+    '''
+    return nodes.loc[nodes.subtype==technology]
+
+
 def get_timesteps_by_year(self,year):
     '''Return all timesteps (t) associated with a given year
     '''
