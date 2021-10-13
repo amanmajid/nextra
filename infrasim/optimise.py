@@ -67,6 +67,9 @@ class nextra():
                                     year=kwargs.get("year", False),
                                     timesteps=kwargs.get("timesteps", False))
         
+        # clean nodal names in flow file
+        self.flows.node = adjust_nodal_names(self.flows.node)
+        
         # handle kwargs
         if not kwargs:
             self = manage_kwargs(self)
@@ -237,6 +240,87 @@ class nextra():
                 self.model.addConstrs((
                     self.capacity_change[n,k,t] == 0
                         for n,k,t in self.capacity_indices if t>timestep_1),'cap_changes')
+        
+        
+        
+        #----------------------------------------------------------------------
+        # ENERGY DEMAND
+        #----------------------------------------------------------------------
+        
+        # get demand nodes
+        sink_nodes = get_sink_nodes(self.nodes).name.to_list()
+        # get demand dict
+        demand_dict = make_demand_dict(self)
+
+        # constrain
+        self.model.addConstrs(
+            (self.arcFlows.sum('*',j,'electricity',t) \
+                 == demand_dict[j,t] * self.global_variables['peak_demand_factor'] \
+                     for t in self.timesteps 
+                         for j in sink_nodes),'energy_demand')
+        
+            
+            
+        #----------------------------------------------------------------------
+        # ENERGY SUPPLY
+        #----------------------------------------------------------------------
+        
+        #---
+        # Constrain supply below capacity
+        
+        # get energy supply nodes
+        source_nodes = get_source_nodes(self.nodes).name.to_list()
+        # get supply dict
+        supply_dict  = make_supply_dict(self)
+
+        # constrain
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  <= self.capacity_indices[i,k,t] \
+                 for t in self.timesteps \
+                     for k in ['electricity'] \
+                         for i in source_nodes),'electricity_supply')
+        
+        #---
+        # Baseload supplies
+        
+        # define function for baseload constraint
+        def baseload_supply(technology,ramping_rate):
+            if technology in self.technologies:
+                # index nodes by technology
+                idx_nodes = self.nodes[self.nodes.subtype == technology].name.to_list()
+                
+                # constrain supply
+                self.model.addConstrs(
+                    (self.arcFlows.sum(i,'*',k,t)  <= self.capacity_indices[i,k,t] \
+                         for t in self.timesteps \
+                             for k in ['electricity'] \
+                                 for i in idx_nodes),technology+'_baseload')
+
+                # constrain ramping rate
+                if 'hour' in self.flows.columns:
+                    self.model.addConstrs(
+                        (self.arcFlows.sum(i,'*',k,t) - \
+                             self.arcFlows.sum(i,'*',k,t-1) <= ramping_rate \
+                                 for t in self.timesteps if t>1 \
+                                     for k in ['electricity'] \
+                                         for i in idx_nodes),technology+'_supply')
+
+        # open-cycle gas turbine (OCGT) generation
+        baseload_supply(technology='ocgt',ramping_rate=self.global_variables['ocgt_ramping_rate'])
+        # closed-cycle gas turbine (ccgt) generation
+        baseload_supply(technology='ccgt',ramping_rate=self.global_variables['ccgt_ramping_rate'])
+        # Coal generation
+        baseload_supply(technology='coal',ramping_rate=self.global_variables['coal_ramping_rate'])
+        # Diesel generation
+        baseload_supply(technology='diesel',ramping_rate=self.global_variables['diesel_ramping_rate'])
+        # Bio-gas generation
+        baseload_supply(technology='biogas',ramping_rate=self.global_variables['ccgt_ramping_rate'])
+        # Bio-gas generation
+        baseload_supply(technology='shale',ramping_rate=self.global_variables['shale_ramping_rate'])
+        # Natural gas generation
+        baseload_supply(technology='natural_gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
+        
+        
 
 
     def run(self,pprint=True,write=True):

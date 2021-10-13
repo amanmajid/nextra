@@ -86,11 +86,23 @@ def get_source_nodes(nodes):
     return nodes.loc[(nodes['type']=='source')]
 
 
+def get_sink_nodes(nodes):
+    '''Return sink type nodes
+    '''
+    return nodes.loc[(nodes['type']=='sink')]
+
+
 def get_timesteps_by_year(self,year):
     '''Return all timesteps (t) associated with a given year
     '''
     return self.time_ref[self.time_ref.year==year].timestep.to_list()
-    
+
+
+def get_flow_at_nodes(flows,list_of_nodes):
+    '''Return flows of specific nodes 
+    '''
+    return flows.loc[flows.node.isin(list_of_nodes)].reset_index(drop=True)  
+
 
 #---
 # Edge look-ups
@@ -102,8 +114,22 @@ def get_timesteps_by_year(self,year):
 #   Transform one type (e.g. dataframe) into another (e.g. dictionary)
 #---
 
+def make_supply_dict(self):
+    '''Make dictionary of supply (s) at nodes as {(n,k,t) : s}
+    '''
+    supply = self.flows.loc[self.flows.node.isin(get_source_nodes(self.nodes).name)]
+    return supply[['node','timestep','value']].set_index(['node','timestep'])['value'].to_dict()
+    
+
+def make_demand_dict(self):
+    '''Make dictionary of demand (d) at nodes as {(n,k,t) : d}
+    '''
+    demand = self.flows.loc[self.flows.node.isin(get_sink_nodes(self.nodes).name)]
+    return demand[['node','timestep','value']].set_index(['node','timestep'])['value'].to_dict()
+
+
 def make_nodal_capacity_dict(self):
-    '''Make dictionary of nodes that can expand in capacity (c) as {(n,j,k): c}
+    '''Make dictionary of nodes that can expand in capacity (c) as {(n,k,t): c}
     '''
     source_nodes     = get_source_nodes(self.nodes)
     storage_nodes    = get_storage_nodes(self.nodes)
@@ -256,7 +282,7 @@ def manage_kwargs(self,key=None,value=None):
         else:
             self.super_source = False
     else:
-        pass
+        self.super_source = False
     # super source
     if key == 'super_sink':
         if value:
@@ -265,7 +291,7 @@ def manage_kwargs(self,key=None,value=None):
         else:
             self.super_sink = False
     else:
-        pass
+        self.super_sink = False
     return self
 
 
