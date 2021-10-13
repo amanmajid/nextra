@@ -412,7 +412,27 @@ class nextra():
                          for t in self.timesteps \
                              for k in self.commodities \
                                  for i in solar_asset),'solar_supply')
-
+        
+        
+        #---
+        # Wind energy output
+        #---
+        
+        # get solar nodes
+        wind_nodes = get_nodes_by_technology(self.nodes, technology='wind')
+        
+        # loop through each region
+        for region in adjust_nodal_names(self.nodes.territory).unique():
+            # get solar asset
+            wind_asset = wind_nodes[wind_nodes.name.str.contains(region)].name.to_list()
+            
+            # constrain
+            self.model.addConstrs(
+                (self.arcFlows.sum(i,'*',k,t)  \
+                     <= self.capacity_indices.sum(i,k,t) * supply_dict[region+'_wind',t] \
+                         for t in self.timesteps \
+                             for k in self.commodities \
+                                 for i in wind_asset),'wind_supply')
 
             
 
