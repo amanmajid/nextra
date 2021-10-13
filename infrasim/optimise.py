@@ -156,6 +156,7 @@ class nextra():
         # CONSTRAINTS
         #======================================================================
 
+
         #------------------
         # SUPER NODES
         #------------------
@@ -177,6 +178,24 @@ class nextra():
                 (self.arcFlows.sum('*','super_sink',k,t)  >= 0
                      for t in self.timesteps
                          for k in self.commodities),'super_sink_demand')
+        
+        
+        #----------------------------------------------------------------------
+        # ARC FLOW BOUNDS
+        #----------------------------------------------------------------------
+
+        upper_bound = make_edge_bound_dict(self,bound_column='maximum')
+        lower_bound = make_edge_bound_dict(self,bound_column='minimum')
+        
+        # Flows must be below upper bounds
+        self.model.addConstrs(
+            (self.arcFlows[i,j,k,t] <= upper_bound[i,j,k,t]
+                 for i,j,k,t in self.arcFlows),'upper_bound')
+
+        # Flows must be above lower bounds
+        self.model.addConstrs(
+            (lower_bound[i,j,k,t] <= self.arcFlows[i,j,k,t]
+                 for i,j,k,t in self.arcFlows),'lower_bound')
 
 
 

@@ -98,6 +98,12 @@ def get_source_nodes(nodes):
 #   Transform one type (e.g. dataframe) into another (e.g. dictionary)
 #---
 
+def make_edge_bound_dict(self,bound_column='maximum'):
+    '''Make dictionary of lower/upper bounds (u) as {(i,j,k,t) : u}
+    '''
+    return self.edge_indices[self.indices+[bound_column]].set_index(keys=self.indices)[bound_column].to_dict()
+
+
 def make_cost_dict(self,cost_column='cost'):
     '''Make dictionary of costs (c) as {(i,j,k,t) : c}
     '''
