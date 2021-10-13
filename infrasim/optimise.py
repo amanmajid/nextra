@@ -321,6 +321,39 @@ class nextra():
         baseload_supply(technology='natural_gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
         
         
+        #----------------------------------------------------------------------
+        # STORAGES
+        #----------------------------------------------------------------------
+        
+        #---
+        # Storage node volume must be below capacity
+        storage_nodes = get_storage_nodes(self.nodes)
+        storage_caps  = storage_nodes.set_index(keys=['name','commodity']).to_dict()['capacity']
+        # constrain
+        self.model.addConstrs(
+            (self.storage_volume.sum(n,k,t) <= self.capacity_indices.sum(n,k,t) \
+                 for n,k,t in self.storage_volume \
+                     if (n,k) in storage_caps),'stor_cap_max')
+    
+        #---
+        # Storage node balance
+        storage_nodes = storage_nodes.name.to_list()
+    
+        # t=1
+        self.model.addConstrs(
+            (self.storage_volume.sum(j,k,t) == \
+             0 + self.arcFlows.sum('*',j,k,t) - self.arcFlows.sum(j,'*',k,t) \
+                 for k in self.commodities \
+                     for t in self.timesteps if t==1 \
+                         for j in storage_nodes if (j,k) in storage_caps),'storage_init')
+        # t>1
+        self.model.addConstrs(
+            (self.storage_volume.sum(j,k,t) == \
+                 self.storage_volume.sum(j,k,t-1) + self.arcFlows.sum('*',j,k,t) - self.arcFlows.sum(j,'*',k,t) \
+                     for k in self.commodities \
+                         for t in self.timesteps if t>1 \
+                             for j in storage_nodes if (j,k) in storage_caps),'storage_balance')
+        
 
 
     def run(self,pprint=True,write=True):

@@ -24,7 +24,9 @@ save_figures=True
 infrasim_init_directories()
 
 # BAU
-model = nextra(nodes,edges,flows,
+model = nextra(nodes,
+               edges,
+               flows,
                scenario='COO',
                energy_objective=False,
                #super_source=True,
