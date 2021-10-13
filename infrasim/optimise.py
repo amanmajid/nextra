@@ -321,6 +321,7 @@ class nextra():
         baseload_supply(technology='natural_gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
         
         
+        
         #----------------------------------------------------------------------
         # STORAGES
         #----------------------------------------------------------------------
@@ -329,6 +330,7 @@ class nextra():
         # Storage node volume must be below capacity
         storage_nodes = get_storage_nodes(self.nodes)
         storage_caps  = storage_nodes.set_index(keys=['name','commodity']).to_dict()['capacity']
+        
         # constrain
         self.model.addConstrs(
             (self.storage_volume.sum(n,k,t) <= self.capacity_indices.sum(n,k,t) \
@@ -354,6 +356,36 @@ class nextra():
                          for t in self.timesteps if t>1 \
                              for j in storage_nodes if (j,k) in storage_caps),'storage_balance')
         
+        
+            
+        #----------------------------------------------------------------------
+        # JUNCTIONS
+        #----------------------------------------------------------------------
+
+        # get junctions
+        junction_nodes = get_junction_nodes(self.nodes).name.to_list()
+        
+        # constrain
+        self.model.addConstrs(
+            (self.arcFlows.sum('*',j,k,t)  == self.arcFlows.sum(j,'*',k,t) \
+                 for k in self.commodities \
+                     for t in self.timesteps \
+                         for j in junction_nodes),'junction_balance')
+        
+            
+        
+        #----------------------------------------------------------------------
+        # GENERAL CONSTRAINTS
+        #----------------------------------------------------------------------
+        
+        #---
+        # Assign a max capacity to control the decision variable
+        #---
+
+        # Max capacity - i.e. we can't build anything above 10,000 MW
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] <= self.global_variables['maximum_capacity'] \
+                 for n,k,t in self.capacity_indices),'cap_max')
 
 
     def run(self,pprint=True,write=True):

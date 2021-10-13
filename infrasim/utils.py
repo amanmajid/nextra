@@ -74,6 +74,12 @@ def seconds_to_hours(v):
 # Nodal look-ups
 #---
 
+def get_junction_nodes(nodes):
+    '''Return junction type nodes
+    '''
+    return nodes.loc[(nodes['type']=='junction')]
+
+
 def get_storage_nodes(nodes):
     '''Return storage type nodes
     '''
