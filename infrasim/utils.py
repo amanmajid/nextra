@@ -233,16 +233,18 @@ def manage_kwargs(self,key=None,value=None):
     if key == 'super_source':
         if value:
             self.edges = add_super_source(self.nodes,self.edges)
+            self.super_source = value
         else:
-            pass
+            self.super_source = False
     else:
         pass
     # super source
     if key == 'super_sink':
         if value:
             self.edges = add_super_sink(self.nodes,self.edges)
+            self.super_sink = value
         else:
-            pass
+            self.super_sink = False
     else:
         pass
     return self

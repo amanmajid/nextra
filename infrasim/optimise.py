@@ -149,11 +149,44 @@ class nextra():
         # # Maximise storage
         # self.model.setObjectiveN( gp.quicksum(self.storage_volume[n,k,t]
         #                                       for n,k,t in self.storage_volume),1,weight=-1)
+        
+        
+        
+        #======================================================================
+        # CONSTRAINTS
+        #======================================================================
+
+        #------------------
+        # SUPER NODES
+        #------------------
+
+        if not self.super_source:
+            pass
+        else:
+            # constrain
+            self.model.addConstrs(
+                (self.arcFlows.sum('super_source','*',k,t)  <= self.global_variables['super_source_maximum']
+                    for t in self.timesteps
+                        for k in self.commodities),'super_source_supply')
+
+        if not self.super_sink:
+            pass
+        else:
+            # constrain
+            self.model.addConstrs(
+                (self.arcFlows.sum('*','super_sink',k,t)  >= 0
+                     for t in self.timesteps
+                         for k in self.commodities),'super_sink_demand')
+
+
+
 
 
     def run(self,pprint=True,write=True):
         '''Function to solve GurobiPy model
         '''
+
+
 
 
 

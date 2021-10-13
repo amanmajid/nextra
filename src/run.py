@@ -35,6 +35,3 @@ model = nextra(nodes,edges,flows,
 
 
 model.build()
-
-# gp.quicksum(self.capacity_indices[n,k,t] * self.capex_dict[n,k]
-# KeyError: ('israel_gas_storage', 'electricity')
