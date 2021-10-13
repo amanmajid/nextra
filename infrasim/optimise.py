@@ -623,6 +623,606 @@ class nextra():
                      for k in ['electricity']\
                          for t in timesteps_2030),'gaza_ng')
         
+            
+            
+        #----------------------------------------------------------------------
+        # ENERGY GOALS
+        #----------------------------------------------------------------------
+        
+        # The following constraints are only implemented if the
+        #   energy_objectives parameter is True. This is activated by default.
+        
+        if self.energy_objective is True:
+            
+            #========================================
+            # BUSINESS AS USUAL
+            #========================================
+            
+            if self.scenario == 'BAU':
+            
+                #-----
+                # ISRAEL
+                #-----
+        
+                # [1] RES
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['isr_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['israel_generation','israel_energy_demand',k,t] \
+                                + self.arcFlows['israel_generation','west_bank_energy_demand',k,t] \
+                                + self.arcFlows['israel_generation','gaza_energy_demand',k,t])
+                                    for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_solar','israel_generation',k,t] \
+                            + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'isr_res')
+                
+                # [2] NATURAL GAS
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['isr_ng_target_2030'] *  \
+                            (self.arcFlows['israel_generation','israel_energy_demand',k,t] \
+                            + self.arcFlows['israel_generation','west_bank_energy_demand',k,t] \
+                            + self.arcFlows['israel_generation','gaza_energy_demand',k,t])
+                                for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_natural_gas','israel_gas_storage',k,t] \
+                            + self.arcFlows['israel_ccgt','israel_generation',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'isr_ng')
+            
+                #-----
+                # JORDAN
+                #-----
+        
+                # [1] RES
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t] \
+                                + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t] \
+                                + self.arcFlows['jordan_generation','israel_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_generation',k,t] )
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'jor_res')
+                
+                # [2] NATURAL GAS
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_ng_target_2030'] * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t] \
+                                + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t] \
+                                + self.arcFlows['jordan_generation','israel_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_natural_gas','jordan_generation',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'jor_ng')
+        
+                # [3] SHALE OIL
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_shale_target_2030'] * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t] \
+                                + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t] \
+                                + self.arcFlows['jordan_generation','israel_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_shale','jordan_generation',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'jor_shale')
+    
+    
+                # #-----
+                # # WEST BANK
+                # #-----
+        
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+        
+        
+                #-----
+                # GAZA
+                #-----
+        
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+            
+            
+            #========================================
+            # NON-COOPERATIVE
+            #========================================
+            
+            if self.scenario == 'NCO':
+                            
+                #-----
+                # ISRAEL
+                #-----
+        
+                # [1] RES
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['isr_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['israel_generation','israel_energy_demand',k,t])
+                                    for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_solar','israel_generation',k,t] \
+                            + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'isr_res')
+                
+                # [2] NATURAL GAS
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['isr_ng_target_2030'] *  \
+                            (self.arcFlows['israel_generation','israel_energy_demand',k,t])
+                                for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_natural_gas','israel_gas_storage',k,t] \
+                            + self.arcFlows['israel_ccgt','israel_generation',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'isr_ng')
+                
+                
+                #-----
+                # JORDAN
+                #-----
+        
+                # [1] RES
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_generation',k,t] )
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'jor_res')
+                
+                # [2] NATURAL GAS
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_ng_target_2030'] * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_natural_gas','jordan_generation',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'jor_ng')
+        
+                # [3] SHALE OIL
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_shale_target_2030'] * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t] )
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_shale','jordan_generation',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'jor_shale')
+                
+                
+                #-----
+                # WEST BANK
+                #-----
+        
+                # [1] RES
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['pal_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['west_bank_solar','west_bank_generation',k,t] \
+                            + self.arcFlows['west_bank_wind','west_bank_generation',k,t] )
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'wb_res')
+                
+                # [2] SELF-SUFFICIENCY
+                # <<<<< Does not apply >>>>>
+                
+                
+                #-----
+                # GAZA
+                #-----
+        
+                # [1] RES
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['gaz_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['gaza_solar','gaza_generation',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'gaza_res')
+                
+                # [2] SELF-SUFFICIENCY
+                # <<<<< Does not apply >>>>>
+            
+            
+            #========================================
+            # EXTENDED ARAB GRID
+            #========================================
+            
+            if self.scenario == 'EAG':
+            
+                #-----
+                # ISRAEL
+                #-----
+        
+                # [1] RES
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['isr_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['israel_generation','israel_energy_demand',k,t])
+                                    for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_solar','israel_generation',k,t] \
+                            + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'isr_res')
+                
+                # [2] NATURAL GAS
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['isr_ng_target_2030'] *  \
+                            (self.arcFlows['israel_generation','israel_energy_demand',k,t])
+                                for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_natural_gas','israel_gas_storage',k,t] \
+                            + self.arcFlows['israel_ccgt','israel_generation',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'isr_ng')
+                
+                
+                #-----
+                # JORDAN
+                #-----
+        
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+                
+                # [2] NATURAL GAS
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_ng_target_2030'] * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_natural_gas','jordan_generation',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'jor_ng')
+        
+                # [3] SHALE OIL
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['jor_shale_target_2030'] * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t] )
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_shale','jordan_generation',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'jor_shale')
+                
+                
+                #-----
+                # WEST BANK
+                #-----
+        
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+                
+                # [2] SELF-SUFFICIENCY
+                # <<<<< Does not apply >>>>>
+                
+                
+                #-----
+                # GAZA
+                #-----
+    
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+            
+                # [2] SELF-SUFFICIENCY
+                # <<<<< Does not apply >>>>>
+                
+                #-----
+                # JORDAN AND PALESTINE INTEGRATED RES TARGET
+                #-----
+                
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['eag_res_target_2030'] * self.res_factor * \
+                            (self.arcFlows['jordan_generation','jordan_energy_demand',k,t] \
+                                + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t] \
+                                + self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t]\
+                                + self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                                    for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030) \
+                    == \
+                    gp.quicksum( \
+                        (self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_generation',k,t] \
+                            + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
+                            + self.arcFlows['west_bank_solar','west_bank_generation',k,t]
+                            + self.arcFlows['gaza_solar','gaza_generation',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'eag_res')
+            
+            
+            #========================================
+            # COOPERATIVE AND UTOPIA
+            #========================================
+            
+            if self.scenario == 'COO' or self.scenario == 'UTO':
+                
+                # [1] COMBINED RES TARGET
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        #variables['coop_res_target_2030'] * self.res_factor * \
+                            self.uto_factor * \
+                            # israel
+                            (self.arcFlows['israel_solar','israel_generation',k,t] \
+                                + self.arcFlows['israel_wind','israel_generation',k,t] \
+                                + self.arcFlows['israel_diesel','israel_generation',k,t] \
+                                + self.arcFlows['israel_coal','israel_generation',k,t] \
+                                + self.arcFlows['israel_ccgt','israel_generation',k,t] \
+                                + self.arcFlows['israel_natural_gas','israel_gas_storage',k,t] \
+                                # jordan
+                                + self.arcFlows['jordan_wind','jordan_generation',k,t] \
+                                + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                                + self.arcFlows['jordan_natural_gas','jordan_generation',k,t] \
+                                + self.arcFlows['jordan_diesel','jordan_generation',k,t] \
+                                + self.arcFlows['jordan_coal','jordan_generation',k,t] \
+                                + self.arcFlows['jordan_ccgt','jordan_generation',k,t] \
+                                + self.arcFlows['jordan_shale','jordan_generation',k,t] \
+                                # west bank
+                                + self.arcFlows['west_bank_solar','west_bank_generation',k,t] \
+                                + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
+                                + self.arcFlows['west_bank_coal','west_bank_generation',k,t] \
+                                + self.arcFlows['west_bank_ccgt','west_bank_generation',k,t] \
+                                + self.arcFlows['west_bank_natural_gas','west_bank_generation',k,t] \
+                                + self.arcFlows['west_bank_diesel','west_bank_generation',k,t] \
+                                # gaza
+                                + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
+                                + self.arcFlows['gaza_solar','gaza_generation',k,t] \
+                                + self.arcFlows['gaza_natural_gas','gaza_generation',k,t] \
+                                + self.arcFlows['egypt_generation','gaza_energy_demand',k,t])
+                                    for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030) \
+                    <= \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_solar','israel_generation',k,t] \
+                            + self.arcFlows['israel_wind','israel_generation',k,t] \
+                            + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_generation',k,t] \
+                            + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
+                            + self.arcFlows['west_bank_solar','west_bank_generation',k,t]
+                            + self.arcFlows['gaza_solar','gaza_generation',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'coo_res')
+            
+                # # [1] COMBINED RES TARGET
+                # self.model.addConstr( \
+                #     gp.quicksum( \
+                #         variables['coop_res_target_2030'] * self.res_factor * \
+                #             (self.arcFlows['israel_generation','israel_energy_demand',k,t] \
+                #                 + self.arcFlows['israel_generation','west_bank_energy_demand',k,t] \
+                #                 + self.arcFlows['israel_generation','gaza_energy_demand',k,t] \
+                #                 + self.arcFlows['israel_generation','jordan_energy_demand',k,t] \
+                #                 + self.arcFlows['jordan_generation','jordan_energy_demand',k,t] \
+                #                 + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t] \
+                #                 + self.arcFlows['jordan_generation','israel_energy_demand',k,t] \
+                #                 + self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t]\
+                #                 + self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                #                     for k in ['electricity']
+                #                             for t in self.timesteps if t in reference_timesteps) \
+                #     <= \
+                #     gp.quicksum( \
+                #         (self.arcFlows['israel_solar','israel_generation',k,t] \
+                #             + self.arcFlows['israel_wind','israel_generation',k,t] \
+                #             + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                #             + self.arcFlows['jordan_wind','jordan_generation',k,t] \
+                #             + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
+                #             + self.arcFlows['west_bank_solar','west_bank_generation',k,t]
+                #             + self.arcFlows['gaza_solar','gaza_generation',k,t])
+                #                 for k in ['electricity']
+                #                     for t in self.timesteps if t in reference_timesteps),'coo_res')
+                
+                # # RES should only be in Jordan
+                # # no further addition in israel
+                # self.model.addConstrs((
+                #     self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.Name.isin([n]),'Capacity'].iloc[0]
+                #     for n in ['israel_solar']
+                #     for k in ['electricity']
+                #     for t in reference_timesteps),'isr_sol_cap')
+                
+                # # # no further addition in west bank
+                # self.model.addConstrs((
+                #     self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.Name.isin([n]),'Capacity'].iloc[0]
+                #     for n in ['west_bank_solar']
+                #     for k in ['electricity']
+                #     for t in reference_timesteps),'wb_sol_cap')
+                
+                # # # no further addition in gaza
+                # self.model.addConstrs((
+                #     self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.Name.isin([n]),'Capacity'].iloc[0]
+                #     for n in ['gaza_solar']
+                #     for k in ['electricity']
+                #     for t in reference_timesteps),'gz_sol_cap')
+                
+            
+            
+                #-----
+                # ISRAEL
+                #-----
+        
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+                
+                # [2] NATURAL GAS
+                self.model.addConstr( \
+                    gp.quicksum( \
+                        self.global_variables['isr_ng_target_2030'] *  \
+                            (self.arcFlows['israel_solar','israel_generation',k,t] \
+                                + self.arcFlows['israel_wind','israel_generation',k,t] \
+                                + self.arcFlows['israel_diesel','israel_generation',k,t] \
+                                + self.arcFlows['israel_coal','israel_generation',k,t] \
+                                + self.arcFlows['israel_ccgt','israel_generation',k,t] \
+                                + self.arcFlows['israel_natural_gas','israel_gas_storage',k,t])
+                                    for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030) \
+                    <= \
+                    gp.quicksum( \
+                        (self.arcFlows['israel_natural_gas','israel_gas_storage',k,t] \
+                            + self.arcFlows['israel_ccgt','israel_generation',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'isr_ng')
+                
+                
+                # #-----
+                # # JORDAN
+                # #-----
+        
+                # # [1] RES
+                # # <<<<< Does not apply >>>>>
+                
+                # # [2] NATURAL GAS
+                # self.model.addConstr( \
+                #     gp.quicksum( \
+                #         variables['jor_ng_target_2030'] * \
+                #             (self.arcFlows['jordan_wind','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_natural_gas','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_diesel','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_coal','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_ccgt','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_shale','jordan_generation',k,t]) \
+                #                     for k in ['electricity']
+                #                         for t in self.timesteps if t in reference_timesteps) \
+                #     <= \
+                #     gp.quicksum( \
+                #         (self.arcFlows['jordan_natural_gas','jordan_generation',k,t])
+                #             for k in ['electricity']
+                #                 for t in self.timesteps if t in reference_timesteps),'jor_ng')
+        
+                # # [3] SHALE OIL
+                # self.model.addConstr( \
+                #     gp.quicksum( \
+                #         variables['jor_shale_target_2030'] * \
+                #             (self.arcFlows['jordan_wind','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_natural_gas','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_diesel','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_coal','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_ccgt','jordan_generation',k,t] \
+                #                 + self.arcFlows['jordan_shale','jordan_generation',k,t]) \
+                #                     for k in ['electricity']
+                #                         for t in self.timesteps if t in reference_timesteps) \
+                #     <= \
+                #     gp.quicksum( \
+                #         (self.arcFlows['jordan_shale','jordan_generation',k,t])
+                #             for k in ['electricity']
+                #                 for t in self.timesteps if t in reference_timesteps),'jor_shale')
+                
+                
+                #-----
+                # WEST BANK
+                #-----
+        
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+                
+                # [2] SELF-SUFFICIENCY
+                if self.scenario == 'COO' and self.scenario != 'UTO':
+                    self.model.addConstr(
+                        gp.quicksum( \
+                            self.ss_factor * \
+                                # sum of total demand
+                                (self.arcFlows['west_bank_generation',j,k,t] \
+                                    + self.arcFlows['israel_generation',j,k,t] \
+                                    + self.arcFlows['jordan_generation',j,k,t])
+                                        for j in ['west_bank_energy_demand']
+                                            for k in ['electricity']
+                                                for t in self.timesteps if t in timesteps_2030)
+                        <= \
+                          gp.quicksum( \
+                              (self.arcFlows['west_bank_solar',j,k,t]
+                                + self.arcFlows['west_bank_wind',j,k,t] \
+                                + self.arcFlows['west_bank_ccgt',j,k,t] \
+                                + self.arcFlows['west_bank_coal',j,k,t] \
+                                + self.arcFlows['west_bank_diesel',j,k,t] \
+                                + self.arcFlows['west_bank_natural_gas',j,k,t])
+                                    for j in ['west_bank_generation']
+                                        for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030),'wb_ss')
+                
+                
+                #-----
+                # GAZA
+                #-----
+        
+                # [1] RES
+                # <<<<< Does not apply >>>>>
+                
+                # [2] SELF-SUFFICIENCY
+                if self.scenario == 'COO' and self.scenario != 'UTO':
+                    self.model.addConstr(
+                        gp.quicksum( \
+                            self.ss_factor * \
+                                # sum of total demand
+                                (self.arcFlows['gaza_generation',j,k,t] \
+                                    + self.arcFlows['israel_generation',j,k,t] \
+                                    + self.arcFlows['egypt_generation',j,k,t])
+                                        for j in ['gaza_energy_demand']
+                                            for k in ['electricity']
+                                                for t in self.timesteps if t in timesteps_2030) \
+                            <= \
+                            gp.quicksum( \
+                                (self.arcFlows['gaza_solar',j,k,t]
+                                    + self.arcFlows['gaza_diesel',j,k,t] \
+                                    + self.arcFlows['gaza_natural_gas',j,k,t])
+                                        for j in ['gaza_generation']
+                                            for k in ['electricity']
+                                                for t in self.timesteps if t in timesteps_2030),'gaz_ss')
         
         
         
@@ -631,6 +1231,15 @@ class nextra():
     def run(self,pprint=True,write=True):
         '''Function to solve GurobiPy model
         '''
+        if write==True:
+            print('')
+        # set output flag
+        if not pprint:
+            self.model.setParam('OutputFlag', 0)
+        else:
+            self.model.setParam('OutputFlag', 1)
+        # optimise
+        self.model.optimize()
 
 
 

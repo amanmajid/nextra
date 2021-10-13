@@ -27,8 +27,8 @@ infrasim_init_directories()
 model = nextra(nodes,
                edges,
                flows,
-               scenario='COO',
-               energy_objective=False,
+               scenario='EAG',
+               energy_objective=True,
                #super_source=True,
                #super_sink=True,
                #res_factor=99,
@@ -37,3 +37,4 @@ model = nextra(nodes,
 
 
 model.build()
+model.run()
