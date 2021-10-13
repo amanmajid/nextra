@@ -180,6 +180,7 @@ class nextra():
                          for k in self.commodities),'super_sink_demand')
         
         
+        
         #----------------------------------------------------------------------
         # ARC FLOW BOUNDS
         #----------------------------------------------------------------------
@@ -199,6 +200,43 @@ class nextra():
 
 
 
+        #----------------------------------------------------------------------
+        # CAPACITY CHANGES
+        #----------------------------------------------------------------------
+        
+        # get initial capacities as dict
+        expandable_nodes = make_nodal_capacity_dict(self)
+        
+        # capacity changes
+        for y in self.years:
+            timesteps_by_year = get_timesteps_by_year(self,y)
+            timestep_1 = self.time_ref[self.time_ref.year==y].timestep.min()
+            if y==2019:
+                # capacity at t=1 as defined in nodal file
+                self.model.addConstrs((
+                    self.capacity_indices[n,k,t] \
+                        == expandable_nodes[n,k]
+                            for n,k,t in self.capacity_indices if t==1),'init_cap')
+                # capacity at t>1
+                self.model.addConstrs((
+                    self.capacity_indices[n,k,t] == \
+                        self.capacity_indices[n,k,t-1] + self.capacity_change[n,k,t]
+                            for n,k,t in self.capacity_indices if t>1),'cap_after_init')
+                # no change in capacity in 2019
+                self.model.addConstrs((
+                    self.capacity_change[n,k,t] == 0
+                        for n,k,t in self.capacity_indices
+                            if t in timesteps_by_year),'cap_changes')
+            else:
+                # capacity at t>1
+                self.model.addConstrs((
+                    self.capacity_indices[n,k,t] == \
+                        self.capacity_indices[n,k,t-1] + self.capacity_change[n,k,t]
+                            for n,k,t in self.capacity_indices if t>timestep_1),'cap_after_init')
+                # one change per year
+                self.model.addConstrs((
+                    self.capacity_change[n,k,t] == 0
+                        for n,k,t in self.capacity_indices if t>timestep_1),'cap_changes')
 
 
     def run(self,pprint=True,write=True):

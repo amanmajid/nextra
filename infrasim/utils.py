@@ -86,7 +86,11 @@ def get_source_nodes(nodes):
     return nodes.loc[(nodes['type']=='source')]
 
 
-
+def get_timesteps_by_year(self,year):
+    '''Return all timesteps (t) associated with a given year
+    '''
+    return self.time_ref[self.time_ref.year==year].timestep.to_list()
+    
 
 #---
 # Edge look-ups
@@ -97,6 +101,15 @@ def get_source_nodes(nodes):
 # Data type conversions
 #   Transform one type (e.g. dataframe) into another (e.g. dictionary)
 #---
+
+def make_nodal_capacity_dict(self):
+    '''Make dictionary of nodes that can expand in capacity (c) as {(n,j,k): c}
+    '''
+    source_nodes     = get_source_nodes(self.nodes)
+    storage_nodes    = get_storage_nodes(self.nodes)
+    expandable_nodes = source_nodes.append(storage_nodes, ignore_index=True)
+    return expandable_nodes.set_index(keys=['name','commodity']).to_dict()['capacity']
+
 
 def make_edge_bound_dict(self,bound_column='maximum'):
     '''Make dictionary of lower/upper bounds (u) as {(i,j,k,t) : u}
