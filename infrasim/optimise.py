@@ -433,7 +433,199 @@ class nextra():
                          for t in self.timesteps \
                              for k in self.commodities \
                                  for i in wind_asset),'wind_supply')
+        
+        
+        #---
+        # Egyptian export to Gaza
+        #---
 
+        # assume as infinite: it is capped by the constraint on the arc
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,j,k,t) <= self.global_variables['egypt_to_gaza_export'] \
+                for i in ['egypt_generation'] \
+                    for j in ['gaza_energy_demand'] \
+                        for k in self.commodities \
+                            for t in self.timesteps),'egypt_import')
+        
+            
+        #---
+        # Israel's baseload output
+        #---
+
+        # Coal output must always be half of total capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['isr_min_coal_output'] * self.capacity_indices.sum(i,k,t) \
+                    for i in ['israel_coal'] \
+                        for k in ['electricity'] \
+                            for t in self.timesteps),'isr_coal_base')
+
+        # CCGT output must always be half of total capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                 >= self.global_variables['isr_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
+                     for i in ['israel_ccgt'] \
+                         for k in ['electricity']\
+                             for t in self.timesteps),'isr_ng_base')
+        
+        
+        #---
+        # Jordan's baseload output
+        #---
+        
+        # Shale output must be at least half of capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['jor_min_shale_output'] * self.capacity_indices.sum(i,k,t)\
+                    for i in ['jordan_shale'] \
+                        for k in ['electricity'] \
+                            for t in self.timesteps),'shale_base')
+        
+        # Natural gas output must be at least half of capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['jor_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
+                    for i in ['jordan_natural_gas']\
+                        for k in ['electricity']\
+                            for t in self.timesteps),'ng_base')
+            
+            
+            
+        #----------------------------------------------------------------------
+        # TARGETS FOR 2030
+        #----------------------------------------------------------------------
+        
+        timesteps_2030 = get_timesteps_by_year(self, year=2030)
+        
+        #---
+        # Israel's energy targets
+        #---
+
+        # No high carbon energy technologies in 2030
+        high_carbon_techs   = ['israel_coal', 'israel_diesel']
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == 0\
+                 for n,k,t in self.capacity_indices \
+                     if t in timesteps_2030 and n in high_carbon_techs),'isr_carb1')
+
+        # There can only be a maximum of 700 MW of wind capacity due to land constraints
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == self.global_variables['isr_max_wind_cap']\
+                 for n in ['israel_wind']\
+                     for k in ['electricity']\
+                         for t in self.timesteps),'isr_wind')
+
+        # Additional capacity of carbon-intensive technologies cannot be built
+        high_carbon_techs = ['israel_coal', 'israel_diesel']
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] <= self.capacity_indices[n,k,t-1]\
+                 for n,k,t in self.capacity_indices\
+                     if t>1 and n in high_carbon_techs),'isr_carb2')
+
+        # There must be a minimum amount of natural gas
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] >= self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
+                 for n in ['israel_natural_gas']\
+                     for k in ['electricity']\
+                         for t in self.timesteps),'isr_ng')
+
+        # There must be 3400 MW of ccgt
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == self.global_variables['isr_max_ccgt_cap']\
+                 for n in ['israel_ccgt']\
+                     for k in ['electricity']\
+                         for t in self.timesteps\
+                             if t in timesteps_2030),'isr_ccgt')
+        
+        # Israel's storage targets
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] >= 0\
+                 for n in ['israel_gas_storage']\
+                     for k in ['electricity']\
+                         for t in self.timesteps\
+                             if t in timesteps_2030),'isr_storage')
+        
+            
+        #---
+        # Jordan's energy targets
+        #---
+
+        # No high carbon energy technologies in 2030
+        high_carbon_techs   = ['jordan_coal', 'jordan_diesel', 'jordan_ccgt']
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == 0\
+                 for n,k,t in self.capacity_indices\
+                     if t in timesteps_2030 and n in high_carbon_techs),'jor_carbon')
+
+        # No more wind capacity should be added
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
+                 for n in ['jordan_wind']\
+                     for k in ['electricity']\
+                         for t in self.timesteps),'jor_wind')
+
+        # jordan_solar should be more than baseline
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] >= self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
+                 for n in ['jordan_solar']\
+                     for k in ['electricity']\
+                         for t in self.timesteps),'jor_sol1')
+
+        # jordan_natural_gas should be more than baseline
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] >= self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
+                 for n in ['jordan_natural_gas']\
+                     for k in ['electricity']\
+                         for t in self.timesteps),'jor_sol2')
+
+
+        #---
+        # West Bank's energy targets
+        #---
+
+        # Wind in West Bank
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == 0\
+                 for n in ['west_bank_wind']\
+                     for k in ['electricity']\
+                         for t in timesteps_2030),'wb_wind')
+        
+        # Baseload technologies in West Bank
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == 0\
+                 for n in ['west_bank_coal','west_bank_natural_gas','west_bank_ccgt']\
+                     for k in ['electricity']\
+                         for t in timesteps_2030),'wb_baseload')
+
+
+        #---
+        # Gaza's energy targets
+        #---
+
+        # gaza_diesel is at least 60 MW
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] >= self.global_variables['gaz_diesel_cap']\
+                 for n in ['gaza_diesel']\
+                     for k in ['electricity']\
+                         for t in timesteps_2030),'gaza_diesel')
+        
+        # # Solar in Gaza
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] >= 0\
+                 for n in ['gaza_solar']\
+                     for k in ['electricity']\
+                         for t in timesteps_2030),'gaza_solar')
+        
+        # Natural gas in Gaza
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == 0\
+                 for n in ['gaza_natural_gas']\
+                     for k in ['electricity']\
+                         for t in timesteps_2030),'gaza_ng')
+        
+        
+        
+        
             
 
     def run(self,pprint=True,write=True):
