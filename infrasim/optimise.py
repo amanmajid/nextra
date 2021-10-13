@@ -52,6 +52,9 @@ class nextra():
     
         # read node
         self.nodes = read_node_data(path_to_nodes)
+        
+        # clean nodal names
+        self.nodes.name = adjust_nodal_names(self.nodes.name)
 
         # read edge data
         self.edges = read_edge_data(path_to_edges)
@@ -98,40 +101,54 @@ class nextra():
 
         #---
         # arcflows
-        self.arc_indicies = edge_indices_to_dict(self,varname='index')
-        self.arcFlows     = self.model.addVars(arc_indicies,name="arcflow")
+        self.arc_indicies = make_edge_indices(self)
+        self.arcFlows     = self.model.addVars(self.arc_indicies,name="arcflow")
 
         #---
         # storage volumes
-        storage_nodes         = utils.get_nodes(nodes=self.nodes,index_column='Type',lookup='storage')
-
-        storage_indices       = [(n, storage_nodes.loc[storage_nodes.Name==n,'Commodity'].values[0], t)
-                                 for n in storage_nodes.Name
-                                 for t in self.timesteps]
-
-        self.storage_volume   = self.model.addVars(storage_indices,lb=0,name="storage_volume")
+        storage_indices     = make_storage_indices(self)
+        self.storage_volume = self.model.addVars(storage_indices,lb=0,name="storage_volume")
 
         #---
         # capacity at each node
-        source_nodes     = utils.get_nodes(nodes=self.nodes,index_column='Type',lookup='source')
-        node_list        = source_nodes.Name.to_list() + ['israel_gas_storage']
-
-        capacity_indices = [(n,k,t)
-                            for n in node_list
-                            for k in self.nodes.loc[self.nodes.Name==n,'Commodity']
-                            for t in self.timesteps]
-
+        capacity_indices      = make_capacity_indices(self)  
         self.capacity_indices = self.model.addVars(capacity_indices,lb=0,name="capacity_indices")
 
         #---
         # capacity variation at each node
-        capacity_indices = [(n,k,t)
-                            for n in node_list
-                            for k in self.nodes.loc[self.nodes.Name==n,'Commodity']
-                            for t in self.timesteps]
-
+            # do we want to exclude gas storages here????
         self.capacity_change = self.model.addVars(capacity_indices,lb=-10000,name="capacity_change")
+        
+        
+        
+        #======================================================================
+        # OBJECTIVE FUNCTION
+        #======================================================================
 
+        #---
+        # Minimise cost of flow + capex
+
+        # create cost/capex dict
+        self.cost_dict  = make_cost_dict(self)
+        self.capex_dict = make_capex_dict(self)
+
+        #---
+        # SET OBJECTIVES
+
+        # (1) Cost of flow -> min.
+        self.model.setObjectiveN(
+            gp.quicksum(self.arcFlows[i,j,k,t] * self.cost_dict[i,j,k,t]
+                        for i,j,k,t in self.arcFlows),0,weight=1)
+
+        # (2) Capacity of nodes -> min.
+        self.model.setObjectiveN(
+            gp.quicksum(self.capacity_indices[n,k,t] * self.capex_dict[n,k]
+                        for n,k,t in self.capacity_indices),0,weight=1)
+
+        # #---
+        # # Maximise storage
+        # self.model.setObjectiveN( gp.quicksum(self.storage_volume[n,k,t]
+        #                                       for n,k,t in self.storage_volume),1,weight=-1)
 
 
     def run(self,pprint=True,write=True):

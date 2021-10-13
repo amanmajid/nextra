@@ -11,15 +11,9 @@ sys.path.append('../')
 from infrasim.optimise import *
 
 #File paths
-nodes = '../data/nextra/spatial/nodes.shp'
-edges = '../data/nextra/spatial/edges.shp'
+nodes = '../data/nextra/spatial/network/nodes.shp'
+edges = '../data/nextra/spatial/network/edges.shp'
 flows = '../data/nextra/nodal_flows/processed_flows_2030.csv'
-
-e = gpd.read_file(edges)
-n = gpd.read_file(nodes)
-
-add_toplogy(n, e)
-
 
 # Params
 timesteps=24
@@ -41,3 +35,6 @@ model = nextra(nodes,edges,flows,
 
 
 model.build()
+
+# gp.quicksum(self.capacity_indices[n,k,t] * self.capex_dict[n,k]
+# KeyError: ('israel_gas_storage', 'electricity')

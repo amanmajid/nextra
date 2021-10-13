@@ -74,6 +74,19 @@ def seconds_to_hours(v):
 # Nodal look-ups
 #---
 
+def get_storage_nodes(nodes):
+    '''Return storage type nodes
+    '''
+    return nodes.loc[(nodes['type']=='storage')]
+    
+
+def get_source_nodes(nodes):
+    '''Return source type nodes
+    '''
+    return nodes.loc[(nodes['type']=='source')]
+
+
+
 
 #---
 # Edge look-ups
@@ -84,6 +97,45 @@ def seconds_to_hours(v):
 # Data type conversions
 #   Transform one type (e.g. dataframe) into another (e.g. dictionary)
 #---
+
+def make_cost_dict(self,cost_column='cost'):
+    '''Make dictionary of costs (c) as {(i,j,k,t) : c}
+    '''
+    return self.edge_indices[self.indices+[cost_column]].set_index(keys=self.indices)[cost_column].to_dict()
+
+
+def make_capex_dict(self,capex_column='capex'):
+    '''Make dictionary of capex (c) as {(n,k,t) : c}
+    '''
+    return self.nodes[['name','commodity','capex']].set_index(['name','commodity'])['capex'].to_dict()
+
+
+def make_edge_indices(self):
+    '''Make edge indices as [(i,j,k,t)] for algebraic modelling
+    '''
+    return self.edge_indices[self.indices].set_index(keys=self.indices).index.to_list()
+
+
+def make_storage_indices(self):
+    '''Make storage indices as [(n,k,t)] for algebraic modelling
+    '''
+    storage_nodes   = get_storage_nodes(self.nodes)
+    return [(n,k,t) \
+        for n in storage_nodes.name \
+            for k in ['electricity'] \
+                for t in self.timesteps]
+
+
+def make_capacity_indices(self):
+    '''Make capacity indices as [(n,k,t)] for algebraic modelling
+    '''
+    source_nodes = get_source_nodes(self.nodes)
+    node_list    = source_nodes.name.to_list() + ['israel_gas_storage']
+    return [(n,k,t) \
+        for n in node_list \
+            for k in ['electricity'] \
+                for t in self.timesteps]
+        
 
 def edge_indices_to_dict(self,varname):
     '''Convert variable x to a dict with edge indicies (e.g. [i,j,k,t,x])
@@ -101,6 +153,12 @@ def flows_to_dict(flows):
 #---
 # Data cleaning
 #---
+
+def adjust_nodal_names(nodal_names):
+    '''Clean-up nodal names from 'Example Node 1' to 'example_node_1'
+    '''
+    return nodal_names.str.lower().str.replace(' ','_')
+    
 
 def add_timestep_col(dataframe):
     '''add a timestep column to dataframe
@@ -124,9 +182,9 @@ def add_toplogy(nodes,edges,i='from_id',j='to_id'):
     '''Add i,j,k notation to edges
     '''
     #find nearest node to the START coordinates of the line -- and return the 'ID' attribute
-    edges[i] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[0]), nodes)['Name'])
+    edges[i] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[0]), nodes)['name'])
     #find nearest node to the END coordinates of the line -- and return the 'ID' attribute
-    edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)['Name'])
+    edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)['name'])
     return edges
 
 
