@@ -14,7 +14,7 @@ import gurobipy as gp
 
 # relative imports
 from .utils import *
-
+from .postprocess import nextra_postprocess
 
 
 #---
@@ -1225,9 +1225,6 @@ class nextra():
                                                 for t in self.timesteps if t in timesteps_2030),'gaz_ss')
         
         
-        
-            
-
     def run(self,pprint=True,write=True):
         '''Function to solve GurobiPy model
         '''
@@ -1242,7 +1239,13 @@ class nextra():
         self.model.optimize()
 
 
-
+    def get_results(self):
+        '''Fetch results from model
+        '''
+        if self.model.Status != 2:
+            raise ValueError('Could not get results! Model may be infeasible')
+        else:
+            return nextra_postprocess(self)
 
 
     def debug(self,output_path='../outputs/__cache__/'):

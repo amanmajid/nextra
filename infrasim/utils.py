@@ -251,6 +251,8 @@ def add_toplogy(nodes,edges,i='from_id',j='to_id'):
 #---
 
 def init_vars(self,scenario,energy_objective):
+    '''Initialise input variables
+    '''
     self.connectivity       = connectivity
     self.global_variables   = global_variables
     self.scenario           = scenario
@@ -389,6 +391,44 @@ def read_flow_data(path_to_flows,**kwargs):
         return flows
     else:
         raise ValueError('flow file must be in csv format')
+
+
+    def fetch_edge_flow_results(model_run):
+        '''Get edge flow results from model run
+        '''
+        arcFlows                = model_run.model.getAttr('x', model_run.arcFlows)
+        keys                    = pd.DataFrame(arcFlows.keys(),columns=['from_id','to_id','commodity','timestep'])
+        vals                    = pd.DataFrame(arcFlows.items(),columns=['key','value'])
+        results_arcflows        = pd.concat([keys,vals],axis=1)
+        results_arcflows        = model_run.flows[['hour','day','month','year','timestep']].merge(results_arcflows, on='timestep')
+        results_arcflows        = results_arcflows[['from_id','to_id','commodity',
+                                                    'hour','day','month','year','timestep','value']]
+        results_arcflows        = results_arcflows.drop_duplicates()
+        return results_arcflows
+
+
+    def fetch_storage_results(model_run):
+        '''Get storages results from model run
+        '''
+        storage_volumes              = model_run.model.getAttr('x', model_run.storage_volume)
+        keys                         = pd.DataFrame(storage_volumes.keys(),columns=['node','commodity','timestep'])
+        vals                         = pd.DataFrame(storage_volumes.items(),columns=['key','value'])
+        results_storage_volumes      = pd.concat([keys,vals],axis=1)
+        results_storage_volumes      = self.flows[['hour','day','month','year','timestep']].merge(results_storage_volumes, on='timestep')
+        results_storage_volumes      = results_storage_volumes[['node','commodity','hour','day','month','year','timestep','value']]
+        results_storage_volumes      = results_storage_volumes.drop_duplicates()
+        return results_storage_volumes
+
+
+    def fetch_capacity_results(model_run):
+        '''Get capacity indices results from model run
+        '''
+        capacity_indices                = self.model.getAttr('x', self.capacity_indices)
+        keys                            = pd.DataFrame(capacity_indices.keys(),columns=['node','commodity','timestep'])
+        vals                            = pd.DataFrame(capacity_indices.items(),columns=['key','value'])
+        results_capacity_indices        = pd.concat([keys,vals],axis=1)
+        results_capacity_indices        = results_capacity_indices[['node','commodity','timestep','value']]
+        return results_capacity_indices
 
 
 
