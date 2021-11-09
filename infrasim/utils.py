@@ -245,7 +245,6 @@ def add_toplogy(nodes,edges,i='from_id',j='to_id'):
     return edges
 
 
-
 #---
 # Data reading/saving
 #---
@@ -430,6 +429,28 @@ def fetch_capacity_results(model_run):
     results_capacity_indices        = results_capacity_indices[['node','commodity','timestep','value']]
     return results_capacity_indices
 
+
+
+#---
+# Postprocessing
+#---
+
+def map_tech_and_territory(model_run,results_dataframe,col_to_map='from_id'):
+    '''Map technology and territory to a results dataframe
+    '''
+    # get cols to map
+    df_to_map = model_run.nodes[['name','subtype','territory']]
+    # remove demand, junction and egypt generation (generic)
+    df_to_map = df_to_map[~df_to_map.subtype.isin(['demand','junction','generic'])].reset_index(drop=True)
+    # capitalise first letters
+    df_to_map.subtype = df_to_map.subtype.str.title()
+    # rename cols
+    df_to_map[col_to_map]   = df_to_map['name']
+    df_to_map['technology'] = df_to_map['subtype']
+    df_to_map['territory']  = df_to_map['territory']
+    # reindex dataframe
+    df_to_map = df_to_map[['from_id','technology','territory']]
+    return results_dataframe.merge(df_to_map,on=col_to_map)
 
 
 #---
