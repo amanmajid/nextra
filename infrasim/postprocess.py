@@ -37,9 +37,6 @@ class nextra_postprocess():
         self.results_edge_flows = fetch_edge_flow_results(model_run)
         self.results_storages   = fetch_storage_results(model_run)
         self.results_capacities = fetch_capacity_results(model_run)
-
-        # map technologies and territories
-        self.results_edge_flows = map_tech_and_territory(model_run,self.results_edge_flows)
     
 
     def plot_hourly_profile(self,day,month,year=2030,territory=None,**kwargs):
@@ -53,7 +50,8 @@ class nextra_postprocess():
         idx = idx.groupby(by=['from_id','hour']).sum().reset_index()
         # drop generation nodes
         idx = idx.loc[~idx.from_id.str.contains('generation')].reset_index(drop=True)
-        # adjust by region
+        # map tech and territory
+        idx = map_tech_and_territory(self,idx)
         if territory is None:
             # sum across all regions
             idx = idx.groupby(by=['technology','hour']).sum().reset_index()
