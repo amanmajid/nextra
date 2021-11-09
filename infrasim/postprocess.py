@@ -10,6 +10,7 @@
 # Modules
 #---
 
+import seaborn as sns
 import matplotlib.pyplot as plt
 
 # relative imports
@@ -67,3 +68,24 @@ class nextra_postprocess():
                     cmap=kwargs.get("cmap", 'YlGnBu'),
                     linewidth=kwargs.get("linewidth", 0),
                     alpha=kwargs.get("alpha", 1),)
+    
+
+    def plot_flows_heatmap(self,var,**kwargs):
+        '''Plot a heatmap from flows data (x: month, y: hour, z: var)
+        '''
+        # get flows
+        idx = self.flows.copy()
+        # index var
+        idx = idx.loc[idx.node == var].reset_index(drop=True)
+        # reindex df
+        idx = idx[['month','hour','value']]
+        # pivot table
+        idx = idx.pivot_table(columns='month',values='value',index='hour',aggfunc=kwargs.get('aggfunc',np.mean))
+        # plot
+        tmp_ax = sns.heatmap(idx,
+                            linewidth=kwargs.get('linewidth',0),
+                            cmap=kwargs.get('cmap','YlGnBu'),
+                            ax=kwargs.get('ax',None))
+        # frame
+        for _, spine in tmp_ax.spines.items():
+            spine.set_visible(True)

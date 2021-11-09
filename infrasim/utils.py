@@ -69,6 +69,19 @@ def seconds_to_hours(v):
     return v*3600
 
 
+def months_as_str(df,month_column='month',as_letter=False):
+    '''Convert months column from int to str
+    '''
+    if not as_letter:
+        months_dict = {1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',
+                       7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov',12:'Dec'}
+    else:
+        months_dict = {1:'J',2:'F',3:'M',4:'A',5:'M',6:'J',
+                       7:'J',8:'A',9:'S',10:'O',11:'N',12:'D'}
+
+    return df[month_column].map(months_dict)
+
+
 
 #---
 # Nodal look-ups
