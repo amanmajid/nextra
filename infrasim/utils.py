@@ -33,14 +33,19 @@ from .global_variables import *
 # Conversions
 #---
 
-def kwh_to_gwh(v):
-    '''Kilowatt hours to Gigawatt hours
+def mw_to_gw(v):
+    '''MW to GW
+    '''
+    return v*0.001
+
+def kw_to_gw(v):
+    '''Kilowatt to Gigawatt
     '''
     return v*0.000001
 
 
-def gwh_to_kwh(v):
-    '''Gigawatt hours to Kilowatt hours
+def gw_to_kw(v):
+    '''Gigawatt to Kilowatt
     '''
     return v/0.000001
 
@@ -395,7 +400,7 @@ def read_flow_data(path_to_flows,**kwargs):
             pass
         else:
             flows = flows.loc[(flows.timestep >= flows.timestep.min()) & \
-                              (flows.timestep <= flows.timestep.min() + timesteps)]
+                              (flows.timestep <= flows.timestep.min() + kwargs.get("timesteps"))]
         # tidy
         flows = tidy_flow_data(flows)
         # check for negative values
@@ -462,7 +467,7 @@ def map_tech_and_territory(model_run,results_dataframe,col_to_map='from_id'):
     df_to_map['technology'] = df_to_map['subtype']
     df_to_map['territory']  = df_to_map['territory']
     # reindex dataframe
-    df_to_map = df_to_map[['from_id','technology','territory']]
+    df_to_map = df_to_map[[col_to_map,'technology','territory']]
     return results_dataframe.merge(df_to_map,on=col_to_map)
 
 
