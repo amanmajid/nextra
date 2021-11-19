@@ -10,8 +10,15 @@
 # Modules
 #---
 
+import random
 import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+import plotly.graph_objs as go
+from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+init_notebook_mode(connected=True)
 
 # relative imports
 from .utils import *
@@ -38,6 +45,12 @@ class nextra_postprocess():
         self.results_edge_flows = fetch_edge_flow_results(model_run)
         self.results_storages   = fetch_storage_results(model_run)
         self.results_capacities = fetch_capacity_results(model_run)
+    
+
+    def generate_random_colour():
+        '''Return random hex colour
+        '''
+        return "%06x" % random.randint(0, 0xFFFFFF)
     
 
     def plot_hourly_profile(self,day,month,year=2030,territory=None,**kwargs):
@@ -89,3 +102,79 @@ class nextra_postprocess():
         # frame
         for _, spine in tmp_ax.spines.items():
             spine.set_visible(True)
+    
+
+    def plot_flows_sankey(self,**kwargs):
+        '''Plot a sankey diagram visualising flows
+        '''
+        # get edge flows
+        flows = self.results_edge_flows.copy()
+        # sum across all timesteps
+        flows = flows.groupby(by=['from_id','to_id']).sum().reset_index(drop=False)
+        # Make nodes 
+        count=0
+        nodal_dict={}
+        nodes=[ ['ID', 'Label', 'Color'] ]
+        all_nodes = list(flows.from_id.unique()) + list(flows.to_id.unique())
+        for i in range(0,len(all_nodes)):
+            nodes.append( [i,all_nodes[i],"%06x" % random.randint(0, 0xFFFFFF)] )
+            nodal_dict[all_nodes[i]] = i
+
+        # Make links
+        flows['Source']     = flows.from_id.map(nodal_dict)
+        flows['Target']     = flows.to_id.map(nodal_dict)
+        flows['Value']      = flows.value
+        flows['Link Color'] = 'rgba(127, 194, 65, 0.2)'
+            #reindex
+        flows = flows[['Source','Target','Value','Link Color']]
+        count=0
+        links=[ ['Source','Target','Value','Link Color'], ]
+        for i in flows.index:
+            links.append( [ flows.loc[i,'Source'],
+                            flows.loc[i,'Target'],
+                            flows.loc[i,'Value'],
+                            flows.loc[i,'Link Color'] ] )
+        
+        #######
+        # PLOT
+        # Retrieve headers and build dataframes
+        nodes_headers = nodes.pop(0)
+        links_headers = links.pop(0)
+        df_nodes = pd.DataFrame(nodes, columns = nodes_headers)
+        df_links = pd.DataFrame(links, columns = links_headers)
+
+        # Sankey plot setup
+        data_trace = dict(
+            type='sankey',
+            domain = dict(
+            x =  [0,1],
+            y =  [0,1]
+            ),
+            orientation = "h",
+            valueformat = ".0f",
+            node = dict(
+            pad = 10,
+            # thickness = 30,
+            line = dict(
+                color = "black",
+                width = 0
+            ),
+            label =  df_nodes['Label'].dropna(axis=0, how='any'),
+            color = df_nodes['Color']
+            ),
+            link = dict(
+            source = df_links['Source'].dropna(axis=0, how='any'),
+            target = df_links['Target'].dropna(axis=0, how='any'),
+            value = df_links['Value'].dropna(axis=0, how='any'),
+            color = df_links['Link Color'].dropna(axis=0, how='any'),
+        )
+        )
+
+        layout = dict(
+                title = kwargs.get('title','Sankey'),
+            height = kwargs.get('height',720),
+            font = dict(
+            size = kwargs.get('fontsize',12),),)
+
+        fig = dict(data=[data_trace], layout=layout)
+        iplot(fig, validate=False)
