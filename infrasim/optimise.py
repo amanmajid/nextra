@@ -1172,7 +1172,7 @@ class nextra():
                 # <<<<< Does not apply >>>>>
                 
                 # [2] SELF-SUFFICIENCY
-                if self.scenario == 'COO' and self.scenario != 'UTO':
+                if self.scenario == 'COO': #and self.scenario != 'UTO':
                     self.model.addConstr(
                         gp.quicksum( \
                             self.ss_factor * \
@@ -1204,7 +1204,7 @@ class nextra():
                 # <<<<< Does not apply >>>>>
                 
                 # [2] SELF-SUFFICIENCY
-                if self.scenario == 'COO' and self.scenario != 'UTO':
+                if self.scenario == 'COO': #and self.scenario != 'UTO':
                     self.model.addConstr(
                         gp.quicksum( \
                             self.ss_factor * \
