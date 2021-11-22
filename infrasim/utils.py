@@ -612,10 +612,10 @@ def add_time_index_to_edges(self):
 # Scenarios
 #---
 
-def adjust_for_scenario(self,scenario,**kwargs):
-    '''Adjust connectivity for scenario of interest
+def update_connectivity(self,scenario,**kwargs):
+    ''' Update connectivity based on scenario
     '''
-    if self.scenario == 'BAU':
+    if self.scenario == 'BAU' or self.scenario == 'BAS':
         # Business as usual
         # Jordan ->
         self.connectivity['jordan_to_westbank']     = 99999
@@ -691,4 +691,44 @@ def adjust_for_scenario(self,scenario,**kwargs):
         self.connectivity['westbank_to_jordan']     = 0
         #Egypt ->
         self.connectivity['egypt_to_gaza']          = 99999
+    return self
+
+
+def update_scenario(self,connectivity_dict):
+    '''Update edges dataframe to match scenario
+    '''
+    # Jordan --> Israel, West Bank
+    self.edges.loc[(self.edges.from_id.isin(['jordan_generation'])) \
+              & (self.edges.to_id.isin(['west_bank_energy_demand'])),'maximum']     = connectivity_dict['jordan_to_westbank']
+    self.edges.loc[(self.edges.from_id.isin(['jordan_generation'])) \
+              & (self.edges.to_id.isin(['israel_energy_demand'])),'maximum']        = connectivity_dict['jordan_to_israel']
+
+    # Israel --> West Bank, Gaza, Jordan
+    self.edges.loc[(self.edges.from_id.isin(['israel_generation'])) \
+              & (self.edges.to_id.isin(['west_bank_energy_demand'])),'maximum']     = connectivity_dict['israel_to_westbank']
+    self.edges.loc[(self.edges.from_id.isin(['israel_generation'])) \
+              & (self.edges.to_id.isin(['gaza_energy_demand'])),'maximum']          = connectivity_dict['israel_to_gaza']
+    self.edges.loc[(self.edges.from_id.isin(['israel_generation'])) \
+              & (self.edges.to_id.isin(['jordan_energy_demand'])),'maximum']        = connectivity_dict['israel_to_jordan']
+
+    # Egypt --> Gaza
+    self.edges.loc[(self.edges.from_id.isin(['egypt_generation'])) \
+              & (self.edges.to_id.isin(['gaza_energy_demand'])),'maximum']          = connectivity_dict['egypt_to_gaza']
+
+    # West Bank --> Israel, Jordan
+    self.edges.loc[(self.edges.from_id.isin(['west_bank_generation'])) \
+              & (self.edges.to_id.isin(['israel_energy_demand'])),'maximum']        = connectivity_dict['westbank_to_israel']
+    self.edges.loc[(self.edges.from_id.isin(['west_bank_generation'])) \
+              & (self.edges.to_id.isin(['jordan_energy_demand'])),'maximum']        = connectivity_dict['westbank_to_jordan']
+    
+    return self
+
+
+def adjust_for_scenario(self,scenario,**kwargs):
+    '''Adjust connectivity for scenario of interest
+    '''
+    # update connectivity
+    self = update_connectivity(self,scenario)
+    # update edges
+    self = update_scenario(self,self.connectivity)
     return self
