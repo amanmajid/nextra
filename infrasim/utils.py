@@ -134,6 +134,7 @@ def get_flow_at_nodes(flows,list_of_nodes):
     return flows.loc[flows.node.isin(list_of_nodes)].reset_index(drop=True)  
 
 
+
 #---
 # Edge look-ups
 #---
@@ -446,6 +447,53 @@ def fetch_capacity_results(model_run):
     results_capacity_indices        = pd.concat([keys,vals],axis=1)
     results_capacity_indices        = results_capacity_indices[['node','commodity','timestep','value']]
     return results_capacity_indices
+
+
+def fetch_capacity_change_results(model_run):
+    '''Get change in capacity relative to starting timestep
+    '''
+    # get starting capacities
+    starting_capacity = model_run.get_capacities(timestep=1,as_dict=False).copy()
+    # get final capacities
+    final_capacity = model_run.get_capacities(timestep=model_run.results_capacities.timestep.max(),as_dict=False).copy()
+    # compute difference
+    final_capacity['starting_capacity'] = starting_capacity['value']
+    final_capacity['final_capacity'] = final_capacity['value']
+    final_capacity['capacity_change'] = final_capacity['final_capacity'] - final_capacity['starting_capacity']
+    return final_capacity[['node','capacity_change']]
+
+
+def compute_cost_results(model_run,discount_rate=0.68,ignore_negatives=True):
+    '''Compute costs from model run
+    '''
+    # get capacity delta
+    capacities = model_run.results_capacity_change.copy()
+    # ignore negative values
+    if not ignore_negatives:
+        pass
+    else:
+        capacities.loc[capacities.capacity_change < 0, 'capacity_change'] = 0 
+    # map costs
+    capacities['capex'] = capacities.capacity_change * * 10**6 * discount_rate * 10
+    # scenario['capex'] = scenario.Value * scenario.Technology.map(capex) * 10**6 * discount_rate * 10
+    # scenario['opex'] = scenario.Value * scenario.Technology.map(opex) * 10**6 
+    # scenario['totex'] = scenario['capex'] + scenario['opex']
+    # return scenario
+    return capacities
+
+
+def compute_delta(scenario,baseline,ignore_negatives=False):
+    '''Compute delta between two scenarios
+    '''
+    delta = baseline.copy()
+    delta['Value'] = 0
+    delta['Value'] = scenario.Value - baseline.Value
+    delta['Scenario'] = scenario['Scenario']
+    
+    if ignore_negatives is True:
+        delta.loc[delta.Value < 0, 'Value'] = 0
+
+    return delta
 
 
 

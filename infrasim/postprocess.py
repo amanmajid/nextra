@@ -42,15 +42,26 @@ class nextra_postprocess():
         self.flows = model_run.flows
 
         # init results
-        self.results_edge_flows = fetch_edge_flow_results(model_run)
-        self.results_storages   = fetch_storage_results(model_run)
-        self.results_capacities = fetch_capacity_results(model_run)
-    
+        self.results_edge_flows             = fetch_edge_flow_results(model_run)
+        self.results_storages               = fetch_storage_results(model_run)
+        self.results_capacities             = fetch_capacity_results(model_run)
+        self.results_capacity_change        = fetch_capacity_change_results(model_run)
+        self.results_costs                  = compute_cost_results(model_run)
+
 
     def generate_random_colour():
         '''Return random hex colour
         '''
         return "%06x" % random.randint(0, 0xFFFFFF)
+    
+
+    def get_capacities(self,timestep=1,as_dict=False):
+        '''Return capacities from results at a given timestep
+        '''
+        if not as_dict:
+            return self.results_capacities.loc[self.results_capacities.timestep==timestep][['node','value']]
+        else:
+            return self.results_capacities.loc[self.results_capacities.timestep==timestep][['node','value']].set_index('node')['value'].to_dict()
     
 
     def plot_hourly_profile(self,day,month,year=2030,territory=None,**kwargs):
