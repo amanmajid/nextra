@@ -449,13 +449,13 @@ def fetch_capacity_results(model_run):
     return results_capacity_indices
 
 
-def fetch_capacity_change_results(model_run):
+def fetch_capacity_change_results(self):
     '''Get change in capacity relative to starting timestep
     '''
     # get starting capacities
-    starting_capacity = model_run.get_capacities(timestep=1,as_dict=False).copy()
+    starting_capacity = self.get_capacities(timestep=1,as_dict=False).copy()
     # get final capacities
-    final_capacity = model_run.get_capacities(timestep=model_run.results_capacities.timestep.max(),as_dict=False).copy()
+    final_capacity = self.get_capacities(timestep=self.results_capacities.timestep.max(),as_dict=False).copy()
     # compute difference
     final_capacity['starting_capacity'] = starting_capacity['value']
     final_capacity['final_capacity'] = final_capacity['value']
@@ -474,7 +474,7 @@ def compute_cost_results(model_run,discount_rate=0.68,ignore_negatives=True):
     else:
         capacities.loc[capacities.capacity_change < 0, 'capacity_change'] = 0 
     # map costs
-    capacities['capex'] = capacities.capacity_change * * 10**6 * discount_rate * 10
+    capacities['capex'] = capacities.capacity_change * 10**6 * discount_rate * 10
     # scenario['capex'] = scenario.Value * scenario.Technology.map(capex) * 10**6 * discount_rate * 10
     # scenario['opex'] = scenario.Value * scenario.Technology.map(opex) * 10**6 
     # scenario['totex'] = scenario['capex'] + scenario['opex']

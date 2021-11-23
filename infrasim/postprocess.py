@@ -45,8 +45,8 @@ class nextra_postprocess():
         self.results_edge_flows             = fetch_edge_flow_results(model_run)
         self.results_storages               = fetch_storage_results(model_run)
         self.results_capacities             = fetch_capacity_results(model_run)
-        self.results_capacity_change        = fetch_capacity_change_results(model_run)
-        self.results_costs                  = compute_cost_results(model_run)
+        self.results_capacity_change        = self.get_capacity_change()
+        #self.results_costs                  = compute_cost_results(model_run)
 
 
     def generate_random_colour():
@@ -55,13 +55,32 @@ class nextra_postprocess():
         return "%06x" % random.randint(0, 0xFFFFFF)
     
 
-    def get_capacities(self,timestep=1,as_dict=False):
+    def get_capacities(self,timestep=1):
         '''Return capacities from results at a given timestep
         '''
-        if not as_dict:
-            return self.results_capacities.loc[self.results_capacities.timestep==timestep][['node','value']]
-        else:
-            return self.results_capacities.loc[self.results_capacities.timestep==timestep][['node','value']].set_index('node')['value'].to_dict()
+        return self.results_capacities.loc[self.results_capacities.timestep==timestep][['node','value']]
+    
+
+    def get_baseline_capacities(self):
+        '''Return 2020 capacities
+        '''
+        starting_caps = self.nodes[['name','capacity']]
+        starting_caps['node'] = starting_caps.name
+        return starting_caps[['node','capacity']].copy()
+
+
+    def get_capacity_change(self):
+        '''Return change in capacity between first and final timestep
+        '''
+        # get starting capacities
+        starting_capacity = self.get_baseline_capacities().set_index('node')['capacity'].to_dict()
+        # get final capacities
+        final_capacity = self.get_capacities(timestep=self.results_capacities.timestep.max()).reset_index(drop=True).copy()
+        # compute difference
+        final_capacity['starting_capacity'] = final_capacity.node.map(starting_capacity)
+        final_capacity['final_capacity']    = final_capacity['value']
+        final_capacity['capacity_change']   = final_capacity['final_capacity'] - final_capacity['starting_capacity']
+        return final_capacity[['node','capacity_change']]
     
 
     def plot_hourly_profile(self,day,month,year=2030,territory=None,**kwargs):
