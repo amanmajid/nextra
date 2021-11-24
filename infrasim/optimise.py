@@ -538,8 +538,9 @@ class nextra():
                              if t in timesteps_2030),'isr_ccgt')
         
         # Israel's storage targets
+        #   >>> zero out gas storages
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] >= 0\
+            (self.capacity_indices[n,k,t] == 0\
                  for n in ['israel_gas_storage']\
                      for k in ['electricity']\
                          for t in self.timesteps\
@@ -655,8 +656,8 @@ class nextra():
                                             for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['israel_solar','israel_generation',k,t] \
-                            + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                        (self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                            + self.arcFlows['israel_wind','israel_battery_storage',k,t]) \
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'isr_res')
                 
@@ -691,8 +692,8 @@ class nextra():
                                         for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['jordan_solar','jordan_generation',k,t] \
-                            + self.arcFlows['jordan_wind','jordan_generation',k,t] )
+                        (self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_battery_storage',k,t] )
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'jor_res')
                 
@@ -762,8 +763,8 @@ class nextra():
                                             for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['israel_solar','israel_generation',k,t] \
-                            + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                        (self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                            + self.arcFlows['israel_wind','israel_battery_storage',k,t]) \
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'isr_res')
                 
@@ -795,8 +796,8 @@ class nextra():
                                         for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['jordan_solar','jordan_generation',k,t] \
-                            + self.arcFlows['jordan_wind','jordan_generation',k,t] )
+                        (self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_battery_storage',k,t] )
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'jor_res')
                 
@@ -840,8 +841,8 @@ class nextra():
                                         for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['west_bank_solar','west_bank_generation',k,t] \
-                            + self.arcFlows['west_bank_wind','west_bank_generation',k,t] )
+                        (self.arcFlows['west_bank_solar','west_bank_battery_storage',k,t] \
+                            + self.arcFlows['west_bank_wind','west_bank_battery_storage',k,t] )
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'wb_res')
                 
@@ -862,7 +863,7 @@ class nextra():
                                         for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['gaza_solar','gaza_generation',k,t])
+                        (self.arcFlows['gaza_solar','gaza_battery_storage',k,t])
                             for k in ['electricity']
                                 for t in self.timesteps if t in timesteps_2030),'gaza_res')
                 
@@ -889,8 +890,8 @@ class nextra():
                                             for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['israel_solar','israel_generation',k,t] \
-                            + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                        (self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                            + self.arcFlows['israel_wind','israel_battery_storage',k,t]) \
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'isr_res')
                 
@@ -979,11 +980,11 @@ class nextra():
                                             for t in self.timesteps if t in timesteps_2030) \
                     == \
                     gp.quicksum( \
-                        (self.arcFlows['jordan_solar','jordan_generation',k,t] \
-                            + self.arcFlows['jordan_wind','jordan_generation',k,t] \
-                            + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
-                            + self.arcFlows['west_bank_solar','west_bank_generation',k,t]
-                            + self.arcFlows['gaza_solar','gaza_generation',k,t])
+                        (self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_battery_storage',k,t] \
+                            + self.arcFlows['west_bank_wind','west_bank_battery_storage',k,t] \
+                            + self.arcFlows['west_bank_solar','west_bank_battery_storage',k,t]
+                            + self.arcFlows['gaza_solar','gaza_battery_storage',k,t])
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'eag_res')
             
@@ -1000,43 +1001,43 @@ class nextra():
                         #variables['coop_res_target_2030'] * self.res_factor * \
                             self.uto_factor * \
                             # israel
-                            (self.arcFlows['israel_solar','israel_generation',k,t] \
-                                + self.arcFlows['israel_wind','israel_generation',k,t] \
+                            (self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                                + self.arcFlows['israel_wind','israel_battery_storage',k,t] \
                                 + self.arcFlows['israel_diesel','israel_generation',k,t] \
                                 + self.arcFlows['israel_coal','israel_generation',k,t] \
                                 + self.arcFlows['israel_ccgt','israel_generation',k,t] \
                                 + self.arcFlows['israel_natural_gas','israel_gas_storage',k,t] \
                                 # jordan
-                                + self.arcFlows['jordan_wind','jordan_generation',k,t] \
-                                + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                                + self.arcFlows['jordan_wind','jordan_battery_storage',k,t] \
+                                + self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
                                 + self.arcFlows['jordan_natural_gas','jordan_generation',k,t] \
                                 + self.arcFlows['jordan_diesel','jordan_generation',k,t] \
                                 + self.arcFlows['jordan_coal','jordan_generation',k,t] \
                                 + self.arcFlows['jordan_ccgt','jordan_generation',k,t] \
                                 + self.arcFlows['jordan_shale','jordan_generation',k,t] \
                                 # west bank
-                                + self.arcFlows['west_bank_solar','west_bank_generation',k,t] \
-                                + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
+                                + self.arcFlows['west_bank_solar','west_bank_battery_storage',k,t] \
+                                + self.arcFlows['west_bank_wind','west_bank_battery_storage',k,t] \
                                 + self.arcFlows['west_bank_coal','west_bank_generation',k,t] \
                                 + self.arcFlows['west_bank_ccgt','west_bank_generation',k,t] \
                                 + self.arcFlows['west_bank_natural_gas','west_bank_generation',k,t] \
                                 + self.arcFlows['west_bank_diesel','west_bank_generation',k,t] \
                                 # gaza
                                 + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
-                                + self.arcFlows['gaza_solar','gaza_generation',k,t] \
+                                + self.arcFlows['gaza_solar','gaza_battery_storage',k,t] \
                                 + self.arcFlows['gaza_natural_gas','gaza_generation',k,t] \
                                 + self.arcFlows['egypt_generation','gaza_energy_demand',k,t])
                                     for k in ['electricity']
                                             for t in self.timesteps if t in timesteps_2030) \
                     <= \
                     gp.quicksum( \
-                        (self.arcFlows['israel_solar','israel_generation',k,t] \
-                            + self.arcFlows['israel_wind','israel_generation',k,t] \
-                            + self.arcFlows['jordan_solar','jordan_generation',k,t] \
-                            + self.arcFlows['jordan_wind','jordan_generation',k,t] \
-                            + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
-                            + self.arcFlows['west_bank_solar','west_bank_generation',k,t]
-                            + self.arcFlows['gaza_solar','gaza_generation',k,t])
+                        (self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                            + self.arcFlows['israel_wind','israel_battery_storage',k,t] \
+                            + self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
+                            + self.arcFlows['jordan_wind','jordan_battery_storage',k,t] \
+                            + self.arcFlows['west_bank_wind','west_bank_battery_storage',k,t] \
+                            + self.arcFlows['west_bank_solar','west_bank_battery_storage',k,t]
+                            + self.arcFlows['gaza_solar','gaza_battery_storage',k,t])
                                 for k in ['electricity']
                                     for t in self.timesteps if t in timesteps_2030),'coo_res')
             
@@ -1059,10 +1060,10 @@ class nextra():
                 #     gp.quicksum( \
                 #         (self.arcFlows['israel_solar','israel_generation',k,t] \
                 #             + self.arcFlows['israel_wind','israel_generation',k,t] \
-                #             + self.arcFlows['jordan_solar','jordan_generation',k,t] \
-                #             + self.arcFlows['jordan_wind','jordan_generation',k,t] \
-                #             + self.arcFlows['west_bank_wind','west_bank_generation',k,t] \
-                #             + self.arcFlows['west_bank_solar','west_bank_generation',k,t]
+                #             + self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
+                #             + self.arcFlows['jordan_wind','jordan_battery_storage',k,t] \
+                #             + self.arcFlows['west_bank_wind','west_bank_battery_storage',k,t] \
+                #             + self.arcFlows['west_bank_solar','west_bank_battery_storage',k,t]
                 #             + self.arcFlows['gaza_solar','gaza_generation',k,t])
                 #                 for k in ['electricity']
                 #                     for t in self.timesteps if t in reference_timesteps),'coo_res')
@@ -1102,8 +1103,8 @@ class nextra():
                 self.model.addConstr( \
                     gp.quicksum( \
                         self.global_variables['isr_ng_target_2030'] *  \
-                            (self.arcFlows['israel_solar','israel_generation',k,t] \
-                                + self.arcFlows['israel_wind','israel_generation',k,t] \
+                            (self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                                + self.arcFlows['israel_wind','israel_battery_storage',k,t] \
                                 + self.arcFlows['israel_diesel','israel_generation',k,t] \
                                 + self.arcFlows['israel_coal','israel_generation',k,t] \
                                 + self.arcFlows['israel_ccgt','israel_generation',k,t] \
@@ -1129,8 +1130,8 @@ class nextra():
                 # self.model.addConstr( \
                 #     gp.quicksum( \
                 #         variables['jor_ng_target_2030'] * \
-                #             (self.arcFlows['jordan_wind','jordan_generation',k,t] \
-                #                 + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                #             (self.arcFlows['jordan_wind','jordan_battery_storage',k,t] \
+                #                 + self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
                 #                 + self.arcFlows['jordan_natural_gas','jordan_generation',k,t] \
                 #                 + self.arcFlows['jordan_diesel','jordan_generation',k,t] \
                 #                 + self.arcFlows['jordan_coal','jordan_generation',k,t] \
@@ -1148,8 +1149,8 @@ class nextra():
                 # self.model.addConstr( \
                 #     gp.quicksum( \
                 #         variables['jor_shale_target_2030'] * \
-                #             (self.arcFlows['jordan_wind','jordan_generation',k,t] \
-                #                 + self.arcFlows['jordan_solar','jordan_generation',k,t] \
+                #             (self.arcFlows['jordan_wind','jordan_battery_storage',k,t] \
+                #                 + self.arcFlows['jordan_solar','jordan_battery_storage',k,t] \
                 #                 + self.arcFlows['jordan_natural_gas','jordan_generation',k,t] \
                 #                 + self.arcFlows['jordan_diesel','jordan_generation',k,t] \
                 #                 + self.arcFlows['jordan_coal','jordan_generation',k,t] \
@@ -1185,8 +1186,8 @@ class nextra():
                                                 for t in self.timesteps if t in timesteps_2030)
                         <= \
                           gp.quicksum( \
-                              (self.arcFlows['west_bank_solar',j,k,t]
-                                + self.arcFlows['west_bank_wind',j,k,t] \
+                              (self.arcFlows['west_bank_solar','west_bank_battery_storage',k,t]
+                                + self.arcFlows['west_bank_wind','west_bank_battery_storage',k,t] \
                                 + self.arcFlows['west_bank_ccgt',j,k,t] \
                                 + self.arcFlows['west_bank_coal',j,k,t] \
                                 + self.arcFlows['west_bank_diesel',j,k,t] \
@@ -1217,7 +1218,7 @@ class nextra():
                                                 for t in self.timesteps if t in timesteps_2030) \
                             <= \
                             gp.quicksum( \
-                                (self.arcFlows['gaza_solar',j,k,t]
+                                (self.arcFlows['gaza_solar','gaza_battery_storage',k,t]
                                     + self.arcFlows['gaza_diesel',j,k,t] \
                                     + self.arcFlows['gaza_natural_gas',j,k,t])
                                         for j in ['gaza_generation']

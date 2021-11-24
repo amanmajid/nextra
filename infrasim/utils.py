@@ -207,7 +207,7 @@ def make_capacity_indices(self):
     '''Make capacity indices as [(n,k,t)] for algebraic modelling
     '''
     source_nodes = get_source_nodes(self.nodes)
-    node_list    = source_nodes.name.to_list() + ['israel_gas_storage']
+    node_list    = source_nodes.name.to_list() + ['israel_gas_storage','israel_battery_storage','jordan_battery_storage','west_bank_battery_storage','gaza_battery_storage']
     return [(n,k,t) \
         for n in node_list \
             for k in ['electricity'] \
