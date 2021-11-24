@@ -140,6 +140,7 @@ def get_flow_at_nodes(flows,list_of_nodes):
 #---
 
 
+
 #---
 # Data type conversions
 #   Transform one type (e.g. dataframe) into another (e.g. dictionary)
@@ -262,6 +263,7 @@ def add_toplogy(nodes,edges,i='from_id',j='to_id'):
     #find nearest node to the END coordinates of the line -- and return the 'ID' attribute
     edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)['name'])
     return edges
+
 
 
 #---
@@ -446,54 +448,9 @@ def fetch_capacity_results(model_run):
     vals                            = pd.DataFrame(capacity_indices.items(),columns=['key','value'])
     results_capacity_indices        = pd.concat([keys,vals],axis=1)
     results_capacity_indices        = results_capacity_indices[['node','commodity','timestep','value']]
+    # map attributes
+    results_capacity_indices        = map_attributes(model_run,results_capacity_indices,on='node')
     return results_capacity_indices
-
-
-def fetch_capacity_change_results(self):
-    '''Get change in capacity relative to starting timestep
-    '''
-    # get starting capacities
-    starting_capacity = self.get_capacities(timestep=1,as_dict=False).copy()
-    # get final capacities
-    final_capacity = self.get_capacities(timestep=self.results_capacities.timestep.max(),as_dict=False).copy()
-    # compute difference
-    final_capacity['starting_capacity'] = starting_capacity['value']
-    final_capacity['final_capacity'] = final_capacity['value']
-    final_capacity['capacity_change'] = final_capacity['final_capacity'] - final_capacity['starting_capacity']
-    return final_capacity[['node','capacity_change']]
-
-
-def compute_cost_results(model_run,discount_rate=0.68,ignore_negatives=True):
-    '''Compute costs from model run
-    '''
-    # get capacity delta
-    capacities = model_run.results_capacity_change.copy()
-    # ignore negative values
-    if not ignore_negatives:
-        pass
-    else:
-        capacities.loc[capacities.capacity_change < 0, 'capacity_change'] = 0 
-    # map costs
-    capacities['capex'] = capacities.capacity_change * 10**6 * discount_rate * 10
-    # scenario['capex'] = scenario.Value * scenario.Technology.map(capex) * 10**6 * discount_rate * 10
-    # scenario['opex'] = scenario.Value * scenario.Technology.map(opex) * 10**6 
-    # scenario['totex'] = scenario['capex'] + scenario['opex']
-    # return scenario
-    return capacities
-
-
-def compute_delta(scenario,baseline,ignore_negatives=False):
-    '''Compute delta between two scenarios
-    '''
-    delta = baseline.copy()
-    delta['Value'] = 0
-    delta['Value'] = scenario.Value - baseline.Value
-    delta['Scenario'] = scenario['Scenario']
-    
-    if ignore_negatives is True:
-        delta.loc[delta.Value < 0, 'Value'] = 0
-
-    return delta
 
 
 
@@ -501,8 +458,8 @@ def compute_delta(scenario,baseline,ignore_negatives=False):
 # Postprocessing
 #---
 
-def map_tech_and_territory(model_run,results_dataframe,col_to_map='from_id'):
-    '''Map technology and territory to a results dataframe
+def map_attributes(model_run,results_dataframe,on='from_id'):
+    '''Map raw node attributes to map onto results dataframe
     '''
     # get cols to map
     df_to_map = model_run.nodes[['name','subtype','territory']]
@@ -511,12 +468,13 @@ def map_tech_and_territory(model_run,results_dataframe,col_to_map='from_id'):
     # capitalise first letters
     df_to_map.subtype = df_to_map.subtype.str.title()
     # rename cols
-    df_to_map[col_to_map]   = df_to_map['name']
+    df_to_map[on]   = df_to_map['name']
     df_to_map['technology'] = df_to_map['subtype']
     df_to_map['territory']  = df_to_map['territory']
     # reindex dataframe
-    df_to_map = df_to_map[[col_to_map,'technology','territory']]
-    return results_dataframe.merge(df_to_map,on=col_to_map)
+    df_to_map = df_to_map[[on,'technology','territory']]
+    return results_dataframe.merge(df_to_map,on=on)
+
 
 
 #---

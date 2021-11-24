@@ -22,6 +22,7 @@ init_notebook_mode(connected=True)
 
 # relative imports
 from .utils import *
+from .global_variables import *
 
 
 
@@ -46,7 +47,7 @@ class nextra_postprocess():
         self.results_storages               = fetch_storage_results(model_run)
         self.results_capacities             = fetch_capacity_results(model_run)
         self.results_capacity_change        = self.get_capacity_change()
-        #self.results_costs                  = compute_cost_results(model_run)
+        self.results_costs                  = self.compute_costs()
 
 
     def generate_random_colour():
@@ -58,7 +59,7 @@ class nextra_postprocess():
     def get_capacities(self,timestep=1):
         '''Return capacities from results at a given timestep
         '''
-        return self.results_capacities.loc[self.results_capacities.timestep==timestep][['node','value']]
+        return self.results_capacities.loc[self.results_capacities.timestep==timestep][['node','value','technology','territory']]
     
 
     def get_baseline_capacities(self):
@@ -80,8 +81,24 @@ class nextra_postprocess():
         final_capacity['starting_capacity'] = final_capacity.node.map(starting_capacity)
         final_capacity['final_capacity']    = final_capacity['value']
         final_capacity['capacity_change']   = final_capacity['final_capacity'] - final_capacity['starting_capacity']
-        return final_capacity[['node','capacity_change']]
-    
+        return final_capacity[['node','capacity_change','technology','territory']]
+
+
+    def compute_costs(self,discount_rate=0.68,ignore_negatives=True):
+        '''Calculate costs (opex,capex,totex) of plans
+        '''
+        capacities = self.results_capacity_change.copy()
+        # ignore negative values
+        if not ignore_negatives:
+            pass
+        else:
+            capacities.loc[capacities.capacity_change < 0, 'capacity_change'] = 0
+        # map costs
+        capacities['capex'] = capacities.capacity_change * capacities.technology.map(capex) * 10**6 * discount_rate * 10
+        capacities['opex']  = capacities.capacity_change * capacities.technology.map(opex) * 10**6
+        capacities['totex'] = capacities['opex'] + capacities['capex']
+        return capacities
+
 
     def plot_hourly_profile(self,day,month,year=2030,territory=None,**kwargs):
         '''Plot hourly profile of energy supply for a given day
