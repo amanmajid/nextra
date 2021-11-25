@@ -79,6 +79,7 @@ connectivity     = {
 
 
 # costs
+# https://www.eia.gov/analysis/studies/powerplants/capitalcost/pdf/capital_cost_AEO2020.pdf
 capex           = {'Diesel'   : 0.98,         # $/W/year [ASSUMED SAME AS GAS FOR NOW]
                    'Gas'      : 0.98,         # $/W/year
                    'Solar'    : 0.52,         # $/W/year
