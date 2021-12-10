@@ -33,11 +33,10 @@ flows = pd.read_csv(flowpath)
 
 ##########
 # Amend flows
-count=0
 for c in flows.columns:
+    print('Processing: ' + c)
     if 'solar' in c or 'wind' in c:
         for i in flows[c].index:
-            
             idx = data.loc[(data.hour == flows.loc[i,'hour']) & \
                            (data.day == flows.loc[i,'day']) & \
                            (data.month == flows.loc[i,'month']) ]
@@ -47,8 +46,6 @@ for c in flows.columns:
             
             
             flows.loc[i,c] = val
-            count = count + 1
-            print(count)
             
 ##########
 # Save
