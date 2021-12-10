@@ -14,9 +14,10 @@ Created on Wed Aug 19 14:14:46 2020
 import sys
 sys.path.append('../')
 import pandas as pd
-from infrasim.submodels import *
-from infrasim.params import *
+from infrasim.utils import *
+from infrasim.global_variables import *
 import numpy
+from tqdm import tqdm
 
 #%%
 # Forecast energy demands
@@ -66,7 +67,7 @@ def time_series_forecast(flows,fields,start,end,freq='H',exceptions=None):
     for f in fields:
         new_flows[f] = float(0)
         # loop over each row
-        for i in tqdm(range(0,len(new_flows))):
+        for i in tqdm(range(0,len(new_flows)),desc=f):
 
             try:
                 baseline_value = flows.loc[(flows.Hour==new_flows.at[i,'Hour']) & \
@@ -82,24 +83,24 @@ def time_series_forecast(flows,fields,start,end,freq='H',exceptions=None):
             else:
                 # get demand growth
                 if f.__contains__('Jordan'):
-                    growth_rate = variables['jordan_demand_growth_rate']
+                    growth_rate = global_variables['jordan_demand_growth_rate']
                 elif f.__contains__('Israel'):
-                    growth_rate = variables['israel_demand_growth_rate']
+                    growth_rate = global_variables['israel_demand_growth_rate']
                 elif f.__contains__('West Bank'):
-                    growth_rate = variables['palestine_demand_growth_rate']
+                    growth_rate = global_variables['palestine_demand_growth_rate']
                 elif f.__contains__('Gaza'):
-                    growth_rate = variables['palestine_demand_growth_rate']
+                    growth_rate = global_variables['palestine_demand_growth_rate']
                 # calculate
                 new_flows.at[i,f] = baseline_value * ( (1+growth_rate)**(new_flows.at[i,'Year']-flows.iloc[-1]['Year']) )
 
     return new_flows
 
 # read historical
-flows = pd.read_csv('../data/csv/raw_flows.csv')
+flows = pd.read_csv('../data/_raw/flows/raw_flows.csv')
 
 # define start and end
 start       = '1/1/2018'
-end         = '12/1/2030'
+end         = '12/1/2031'
 # define fields to forecast and exceptions
 fields      = ['Israel energy demand',
                'Jordan energy demand',
@@ -125,7 +126,8 @@ exceptions  = ['Israel wind',
 
 # run
 new_flows   = time_series_forecast(flows,fields,start,end,freq='H',exceptions=exceptions)
-# add timestep
-new_flows['Timestep'] = new_flows.index + 1
 # save
-new_flows.to_csv('../data/csv/processed_flows.csv')
+new_flows.to_csv('../data/nextra/nodal_flows/processed_flows.csv',index=False)
+# get an index of 2030
+new_flows= new_flows.loc[new_flows.Year==2030].reset_index(drop=True)
+new_flows.to_csv('../data/nextra/nodal_flows/processed_flows_2030.csv',index=False)
