@@ -1,1 +1,15 @@
 manuscript/*
+data/spatial/population-density.shx
+data/spatial/population-density.shp
+data/spatial/population-density.qmd
+data/spatial/population-density.dbf
+data/spatial/population-density.dbf
+data/spatial/population-density.qmd
+data/spatial/population-density.shp
+data/spatial/population-density.shx
+data/spatial/_gitignore/population-density.cpg
+data/spatial/_gitignore/population-density.dbf
+data/spatial/_gitignore/population-density.prj
+data/spatial/_gitignore/population-density.qmd
+data/spatial/_gitignore/population-density.shp
+data/spatial/_gitignore/population-density.shx
