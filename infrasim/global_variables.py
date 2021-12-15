@@ -85,6 +85,7 @@ capex           = {'Diesel'   : 0.98,         # $/W/year [ASSUMED SAME AS GAS FO
                    'Solar'    : 0.52,         # $/W/year
                    'Coal'     : 4.00,         # $/W/year
                    'Storage'  : 0.16,         # $/W/year
+                   'Battery'  : 0.16,         # $/W/year
                    'Wind'     : 1.09,         # $/W/year
                    'Shale'    : 1.00,}        # $/W/year
 
@@ -94,6 +95,7 @@ opex            =  {'Diesel'   : 0.0470,       # $/W/year [ASSUMED SAME AS GAS F
                     'Solar'    : 0.0089,       # $/W/year
                     'Coal'     : 0.0470,       # $/W/year [ASSUMED SAME AS GAS FOR NOW]
                     'Storage'  : 0.0027,       # $/W/year
+                    'Battery'  : 0.0027,       # $/W/year
                     'Wind'     : 0.0236,       # $/W/year
                     'Shale'    : 0.0470,}      # $/W/year [ASSUMED SAME AS GAS FOR NOW]
 
@@ -103,7 +105,8 @@ co2             =  {'Diesel'   : 848,          # g/kWh
                     'Gas'      : 474,          # g/kWh
                     'Solar'    : 0,            # g/kWh
                     'Coal'     : 880,          # g/kWh
-                    'Storage'  : 474,          # g/kWh
+                    'Storage'  : 0,            # g/kWh
+                    'Battery'  : 0,            # g/kWh
                     'Wind'     : 0,            # g/kWh
                     'Shale'    : 848,}         # g/kWh
 
@@ -112,7 +115,8 @@ nox             =  {'Diesel'   : 0.43,         # g/kWh
                     'Gas'      : 0.24,         # g/kWh
                     'Solar'    : 0,            # g/kWh
                     'Coal'     : 0.46,         # g/kWh
-                    'Storage'  : 0.24,         # g/kWh
+                    'Storage'  : 0,            # g/kWh
+                    'Battery'  : 0,            # g/kWh
                     'Wind'     : 0,            # g/kWh
                     'Shale'    : 0.43,}        # g/kWh
 
@@ -121,6 +125,7 @@ sox             =  {'Diesel'   : 0.14,         # g/kWh
                     'Gas'      : 0.08,         # g/kWh
                     'Solar'    : 0,            # g/kWh
                     'Coal'     : 0.46,         # g/kWh
-                    'Storage'  : 0.08,         # g/kWh
+                    'Storage'  : 0,            # g/kWh
+                    'Battery'  : 0,            # g/kWh
                     'Wind'     : 0,            # g/kWh
                     'Shale'    : 0.14,}        # g/kWh
