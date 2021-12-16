@@ -13,3 +13,4 @@ data/spatial/_gitignore/population-density.prj
 data/spatial/_gitignore/population-density.qmd
 data/spatial/_gitignore/population-density.shp
 data/spatial/_gitignore/population-density.shx
+data/_raw/gridfinder/grid.gpkg
