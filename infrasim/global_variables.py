@@ -80,24 +80,22 @@ connectivity     = {
 
 # costs
 # https://www.eia.gov/analysis/studies/powerplants/capitalcost/pdf/capital_cost_AEO2020.pdf
-capex           = {'Diesel'   : 0.98,         # $/W/year [ASSUMED SAME AS GAS FOR NOW]
-                   'Gas'      : 0.98,         # $/W/year
-                   'Solar'    : 0.52,         # $/W/year
-                   'Coal'     : 4.00,         # $/W/year
-                   'Storage'  : 0.16,         # $/W/year
-                   'Battery'  : 0.16,         # $/W/year
-                   'Wind'     : 1.09,         # $/W/year
-                   'Shale'    : 1.00,}        # $/W/year
+capex           = {'Diesel'   : 1175,         # $/kW
+                   'Gas'      : 1175,         # $/kW
+                   'Solar'    : 1313,         # $/kW
+                   'Coal'     : 3676,         # $/kW
+                   'Battery'  : 1389,         # $/kW
+                   'Wind'     : 1677,         # $/kW
+                   'Shale'    : 1175,}        # $/kW
 
 
-opex            =  {'Diesel'   : 0.0470,       # $/W/year [ASSUMED SAME AS GAS FOR NOW]
-                    'Gas'      : 0.0470,       # $/W/year
-                    'Solar'    : 0.0089,       # $/W/year
-                    'Coal'     : 0.0470,       # $/W/year [ASSUMED SAME AS GAS FOR NOW]
-                    'Storage'  : 0.0027,       # $/W/year
-                    'Battery'  : 0.0027,       # $/W/year
-                    'Wind'     : 0.0236,       # $/W/year
-                    'Shale'    : 0.0470,}      # $/W/year [ASSUMED SAME AS GAS FOR NOW]
+opex            =  {'Diesel'   : 21.00,       # $/kW-year
+                    'Gas'      : 21.00,       # $/kW-year
+                    'Solar'    : 15.25,       # $/kW-year
+                    'Coal'     : 45.08,       # $/kW-year
+                    'Battery'  : 24.80,       # $/kW-year
+                    'Wind'     : 35.14,       # $/kW-year
+                    'Shale'    : 21.00,}      # $/kW-year
 
 
 # emission variables
