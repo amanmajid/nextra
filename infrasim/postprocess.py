@@ -94,8 +94,8 @@ class nextra_postprocess():
         else:
             capacities.loc[capacities.capacity_change < 0, 'capacity_change'] = 0
         # map costs
-        capacities['capex'] = capacities.capacity_change * capacities.technology.map(capex) * 10**6 * discount_rate * 10
-        capacities['opex']  = capacities.capacity_change * capacities.technology.map(opex) * 10**6
+        capacities['capex'] = capacities.capacity_change * capacities.technology.map(capex) * 10**3 * discount_rate     # $ = MW * (1000 kW/MW) $/kW * discount_rate
+        capacities['opex']  = capacities.capacity_change * capacities.technology.map(opex) * 10**3                      # $/yr = MW * (1000 kW/MW) $/kW-year 
         capacities['totex'] = capacities['opex'] + capacities['capex']
         return capacities
 
