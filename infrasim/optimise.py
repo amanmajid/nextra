@@ -291,7 +291,6 @@ class nextra():
                 
                 # index nodes by technology
                 idx_nodes = get_nodes_by_technology(self.nodes,technology=technology).name.to_list()
-                print(idx_nodes)
                 
                 # constrain supply
                 self.model.addConstrs(
