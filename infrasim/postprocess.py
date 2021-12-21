@@ -112,7 +112,7 @@ class nextra_postprocess():
         # drop generation nodes
         idx = idx.loc[~idx.from_id.str.contains('generation')].reset_index(drop=True)
         # map tech and territory
-        idx = map_tech_and_territory(self,idx)
+        idx = map_attributes(self,idx)
         if territory is None:
             # sum across all regions
             idx = idx.groupby(by=['technology','hour']).sum().reset_index()

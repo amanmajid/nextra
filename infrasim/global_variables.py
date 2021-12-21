@@ -14,13 +14,15 @@ global_variables = {
                     'baseload_coefficient'              : 0.5,
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
+                    # -RAMPING RATE
+                    # https://www.researchgate.net/post/What_is_the_typical_MW_minute_ramping_capability_for_each_type_of_reserve
                     'ocgt_ramping_rate'                 : 1200,         # MW/h
                     'ccgt_ramping_rate'                 : 600,          # MW/h
                     'coal_ramping_rate'                 : 120,          # MW/h
                     'solar_ramping_rate'                : 12000,        # MW/h
                     'wind_ramping_rate'                 : 1800,         # MW/h
                     'nuclear_ramping_rate'              : 1200,         # MW/h
-                    'nat_gas_ramping_rate'              : 1800,         # MW/h
+                    'nat_gas_ramping_rate'              : 3000,         # MW/h
                     'pumped_hydro_ramping_rate'         : 12000,        # MW/h
                     'diesel_ramping_rate'               : 120,          # MW/h
                     'shale_ramping_rate'                : 180,          # MW/h

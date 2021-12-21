@@ -291,7 +291,8 @@ class nextra():
                 
                 # index nodes by technology
                 idx_nodes = get_nodes_by_technology(self.nodes,technology=technology).name.to_list()
-                
+                #print(idx_nodes)
+
                 # constrain supply
                 self.model.addConstrs(
                     (self.arcFlows.sum(i,'*',k,t)  <= self.capacity_indices[i,k,t] \
@@ -309,8 +310,8 @@ class nextra():
                                          for i in idx_nodes),technology+'_supply')
 
         # open-cycle gas turbine (OCGT) generation
-        baseload_supply(technology='ocgt',ramping_rate=self.global_variables['ocgt_ramping_rate'])
-        # closed-cycle gas turbine (ccgt) generation
+        # baseload_supply(technology='ocgt',ramping_rate=self.global_variables['ocgt_ramping_rate'])
+        # coal converted gas turbine (ccgt) generation
         baseload_supply(technology='ccgt',ramping_rate=self.global_variables['ccgt_ramping_rate'])
         # Coal generation
         baseload_supply(technology='coal',ramping_rate=self.global_variables['coal_ramping_rate'])
@@ -321,7 +322,7 @@ class nextra():
         # Bio-gas generation
         baseload_supply(technology='shale',ramping_rate=self.global_variables['shale_ramping_rate'])
         # Natural gas generation
-        baseload_supply(technology='natural_gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
+        # baseload_supply(technology='natural gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
         
         
         
