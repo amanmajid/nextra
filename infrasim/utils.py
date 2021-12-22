@@ -471,6 +471,9 @@ def map_attributes(model_run,results_dataframe,on='from_id'):
     df_to_map[on]   = df_to_map['name']
     df_to_map['technology'] = df_to_map['subtype']
     df_to_map['territory']  = df_to_map['territory']
+    # adjust technologies
+    df_to_map.loc[df_to_map.technology.str.contains('Ccgt'),'technology'] = 'Gas'
+    df_to_map.loc[df_to_map.technology.str.contains('Natural Gas'),'technology'] = 'Gas'
     # reindex dataframe
     df_to_map = df_to_map[[on,'technology','territory']]
     return results_dataframe.merge(df_to_map,on=on)
