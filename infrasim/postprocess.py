@@ -15,6 +15,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import warnings
 
 import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
@@ -156,6 +157,12 @@ class nextra_postprocess():
         '''
         # get edge flows
         flows = self.results_edge_flows.copy()
+        # remove israel_gas_storage_node
+        if 'israel_gas_storage' in flows.from_id.unique():
+            flows.loc[flows.from_id=='israel_gas_storage','from_id'] = 'israel_natural_gas'
+            flows.loc[flows.to_id=='israel_gas_storage','to_id'] = 'israel_generation'
+            flows = flows.groupby(by=['from_id','to_id','commodity','hour','day','month','year','timestep','scenario']).min().reset_index()
+            warnings.warn('israel_gas_storage removed')
         # sum across all timesteps
         flows = flows.groupby(by=['from_id','to_id']).sum().reset_index(drop=False)
         # Make nodes 
