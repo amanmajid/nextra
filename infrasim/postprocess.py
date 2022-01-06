@@ -17,8 +17,11 @@ import pandas as pd
 import numpy as np
 import warnings
 
+import plotly.io as pio
 import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+
+
 init_notebook_mode(connected=True)
 
 # relative imports
@@ -231,4 +234,4 @@ class nextra_postprocess():
             size = kwargs.get('fontsize',12),),)
 
         fig = dict(data=[data_trace], layout=layout)
-        iplot(fig, validate=False)
+        iplot(fig,validate=False)
