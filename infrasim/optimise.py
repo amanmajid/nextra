@@ -78,7 +78,66 @@ class nextra():
                 self = manage_kwargs(self,key,value)
         
         # adjust scenario
-        self = adjust_for_scenario(self,scenario)
+        flow_max = 10**9
+        if self.scenario == 'BAU' or self.scenario == 'BAS':
+            # Business as usual
+            # Jordan ->
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
+            self.connectivity['jordan_to_israel']       = 0
+            #Israel ->
+            self.connectivity['israel_to_westbank']     = kwargs.get("israel_to_westbank", flow_max)
+            self.connectivity['israel_to_jordan']       = 0
+            self.connectivity['israel_to_gaza']         = kwargs.get("israel_to_gaza", flow_max)
+            #West Bank ->
+            self.connectivity['westbank_to_israel']     = 0
+            self.connectivity['westbank_to_jordan']     = 0
+            #Egypt ->
+            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", flow_max)
+        elif self.scenario == 'NCO':
+            # No cooperation: each state acts as an individual entity
+            # Jordan ->
+            self.connectivity['jordan_to_westbank']     = 0
+            self.connectivity['jordan_to_israel']       = 0
+            #Israel ->
+            self.connectivity['israel_to_westbank']     = 0
+            self.connectivity['israel_to_jordan']       = 0
+            self.connectivity['israel_to_gaza']         = 0
+            #West Bank ->
+            self.connectivity['westbank_to_israel']     = 0
+            self.connectivity['westbank_to_jordan']     = 0
+            #Egypt ->
+            self.connectivity['egypt_to_gaza']          = 0
+        elif self.scenario == 'EAG':
+            # Extended arab grid: palestine turns to jordan; israel an energy island
+            # Jordan ->
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
+            self.connectivity['jordan_to_israel']       = 0
+            #Israel ->
+            self.connectivity['israel_to_westbank']     = 0
+            self.connectivity['israel_to_jordan']       = 0
+            self.connectivity['israel_to_gaza']         = 0
+            #West Bank ->
+            self.connectivity['westbank_to_israel']     = 0
+            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", flow_max)
+            #Egypt ->
+            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", flow_max)
+        elif self.scenario == 'COO' or self.scenario == 'UTO':
+            # Cooperation between each state
+            # --        
+            # Jordan ->
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
+            self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", flow_max)
+            #Israel ->
+            self.connectivity['israel_to_westbank']     = kwargs.get("israel_to_westbank", flow_max)
+            self.connectivity['israel_to_jordan']       = kwargs.get("israel_to_jordan", flow_max)
+            self.connectivity['israel_to_gaza']         = kwargs.get("israel_to_gaza", flow_max)
+            #West Bank ->
+            self.connectivity['westbank_to_israel']     = kwargs.get("westbank_to_israel", flow_max)
+            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", flow_max)
+            #Egypt ->
+            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", flow_max)
+
+        self = update_for_scenario(self,self.connectivity)
 
         # define sets
         self = define_sets(self)
@@ -1000,7 +1059,7 @@ class nextra():
                 self.model.addConstr( \
                     gp.quicksum( \
                         #variables['coop_res_target_2030'] * self.res_factor * \
-                            self.uto_factor * \
+                            self.coo_factor * \
                             # israel
                             (self.arcFlows['israel_solar','israel_battery_storage',k,t] \
                                 + self.arcFlows['israel_wind','israel_battery_storage',k,t] \

@@ -299,10 +299,10 @@ def manage_kwargs(self,key=None,value=None):
     else:
         self.res_factor = 1
     # uto factor
-    if key == 'uto_res_factor':
-        self.uto_factor = value
+    if key == 'coo_res_factor':
+        self.coo_factor = value
     else:
-        self.uto_factor = self.global_variables['coop_res_target_2030']
+        self.coo_factor = self.global_variables['coop_res_target_2030']
     # model name
     if key == 'model_name':
         self.__name__ = value
@@ -674,7 +674,7 @@ def update_connectivity(self,scenario,**kwargs):
         # --        
         # Jordan ->
         self.connectivity['jordan_to_westbank']     = 99999
-        self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", 9999)
+        self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", 99999)
         #Israel ->
         self.connectivity['israel_to_westbank']     = 99999
         self.connectivity['israel_to_jordan']       = 99999
@@ -690,7 +690,7 @@ def update_connectivity(self,scenario,**kwargs):
         # --        
         # Jordan ->
         self.connectivity['jordan_to_westbank']     = 99999
-        self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", 9999)
+        self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", 99999)
         #Israel ->
         self.connectivity['israel_to_westbank']     = 99999
         self.connectivity['israel_to_jordan']       = 99999
@@ -703,7 +703,7 @@ def update_connectivity(self,scenario,**kwargs):
     return self
 
 
-def update_scenario(self,connectivity_dict):
+def update_for_scenario(self,connectivity_dict):
     '''Update edges dataframe to match scenario
     '''
     # Jordan --> Israel, West Bank
@@ -730,14 +730,4 @@ def update_scenario(self,connectivity_dict):
     self.edges.loc[(self.edges.from_id.isin(['west_bank_generation'])) \
               & (self.edges.to_id.isin(['jordan_energy_demand'])),'maximum']        = connectivity_dict['westbank_to_jordan']
     
-    return self
-
-
-def adjust_for_scenario(self,scenario,**kwargs):
-    '''Adjust connectivity for scenario of interest
-    '''
-    # update connectivity
-    self = update_connectivity(self,scenario)
-    # update edges
-    self = update_scenario(self,self.connectivity)
     return self
