@@ -1,0 +1,67 @@
+import os
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+import warnings
+warnings.filterwarnings('ignore')
+
+import sys
+sys.path.append('../')
+
+from infrasim.optimise import *
+from infrasim.utils import *
+
+
+#File paths
+nodes = '../data/nextra/spatial/network/nodes.shp'
+edges = '../data/nextra/spatial/network/edges.shp'
+flows = '../data/nextra/nodal_flows/processed_flows_2030.csv'
+
+# Params
+timesteps=None#7000
+super_source=False
+pprint=True
+save_figures=True
+
+infrasim_init_directories()
+
+scenarios = {'BAS' : False,
+             'BAU' : True,
+             'NCO' : True,
+             'EAG' : True,
+             'COO' : True,
+             'UTO' : True,
+            }
+
+results = {}
+for s in scenarios:
+        
+    model_run = nextra(nodes,edges,flows,
+                       scenario=s,
+                       energy_objective=scenarios[s],
+                       timesteps=timesteps,
+                       #super_source=True,
+                       #super_sink=True,
+                       #res_factor=99,
+                       #model_name='meow',
+                      )
+
+    model_run.build()
+    model_run.run(pprint=False)
+    try:
+        model_results = model_run.get_results()
+        # add scenarios to results
+        if s == 'BAU' and scenarios[s] == False:
+            s = 'BAS'
+        model_results.results_capacities['scenario']       = s
+        model_results.results_storages['scenario']         = s
+        model_results.results_edge_flows['scenario']       = s
+        model_results.results_capacity_change['scenario']  = s
+        model_results.results_costs['scenario']            = s
+        # append results
+        results[s] = model_results
+        print('> Completed: ' + s)
+    except:
+        print('> FAILED! ' + s)
+
+print('> Done.')
