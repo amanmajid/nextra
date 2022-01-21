@@ -1,6 +1,7 @@
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
+import pickle 
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -12,10 +13,17 @@ from infrasim.optimise import *
 from infrasim.utils import *
 
 
+# save
+def save_object(obj, filename):
+    with open(filename, 'wb') as outp:  # Overwrites any existing file.
+        pickle.dump(obj, outp, pickle.HIGHEST_PROTOCOL)
+
+
 #File paths
 nodes = '../data/nextra/spatial/network/nodes.shp'
 edges = '../data/nextra/spatial/network/edges.shp'
 flows = '../data/nextra/nodal_flows/processed_flows_2030.csv'
+
 
 # Params
 timesteps=None#7000
@@ -63,5 +71,8 @@ for s in scenarios:
         print('> Completed: ' + s)
     except:
         print('> FAILED! ' + s)
+
+
+save_object(results, '../outputs/model_run_results.pkl')
 
 print('> Done.')
