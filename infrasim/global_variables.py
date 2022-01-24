@@ -54,7 +54,7 @@ global_variables = {
                     'egypt_to_gaza_export'              : 999999999,    # MWh (assume infinite)
                     # -COOPERATION
                     'coop_res_target_2030'              : 0.3,          # %
-                    'self_sufficiency_factor'           : 0.2,          # %
+                    'self_sufficiency_factor'           : 0.3,          # %
                     # -EXTENDED ARAB GRID
                     'eag_res_target_2030'               : 0.3,          # %
                     'eag_ng_target_2030'                : 0.5,          # %
@@ -129,3 +129,12 @@ sox             =  {'Diesel'   : 0.14,         # g/kWh
                     'Battery'  : 0,            # g/kWh
                     'Wind'     : 0,            # g/kWh
                     'Shale'    : 0.14,}        # g/kWh
+
+water_use       =  {'Diesel'   : 0.0397,       # g/kWh
+                    'Gas'      : 0.0398,       # g/kWh
+                    'Solar'    : 0,            # g/kWh
+                    'Coal'     : 0.0397,       # g/kWh
+                    'Storage'  : 0,            # g/kWh
+                    'Battery'  : 0,            # g/kWh
+                    'Wind'     : 0,            # g/kWh
+                    'Shale'    : 0.0397,}      # g/kWh

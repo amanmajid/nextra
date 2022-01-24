@@ -38,7 +38,7 @@ scenarios = {'BAS' : False,
              'NCO' : True,
              'EAG' : True,
              'COO' : True,
-             'UTO' : True,
+             #'UTO' : True,
             }
 
 results = {}
@@ -73,6 +73,6 @@ for s in scenarios:
         print('> FAILED! ' + s)
 
 
-save_object(results, '../outputs/model_run_results.pkl')
+save_object(results, '../outputs/results/model_run_results.pkl')
 
 print('> Done.')

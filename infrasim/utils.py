@@ -637,7 +637,7 @@ def update_connectivity(self,scenario,**kwargs):
         self.connectivity['westbank_to_israel']     = 0
         self.connectivity['westbank_to_jordan']     = 0
         #Egypt ->
-        self.connectivity['egypt_to_gaza']          = 99999
+        self.connectivity['egypt_to_gaza']          = 27
 
     elif self.scenario == 'NCO':
         # No cooperation: each state acts as an individual entity
@@ -667,7 +667,7 @@ def update_connectivity(self,scenario,**kwargs):
         self.connectivity['westbank_to_israel']     = 0
         self.connectivity['westbank_to_jordan']     = 0
         #Egypt ->
-        self.connectivity['egypt_to_gaza']          = 99999
+        self.connectivity['egypt_to_gaza']          = 27
 
     elif self.scenario == 'COO':
         # Cooperation between each state
@@ -683,7 +683,7 @@ def update_connectivity(self,scenario,**kwargs):
         self.connectivity['westbank_to_israel']     = 0
         self.connectivity['westbank_to_jordan']     = 0
         #Egypt ->
-        self.connectivity['egypt_to_gaza']          = 99999
+        self.connectivity['egypt_to_gaza']          = 27
     
     elif self.scenario == 'UTO':
         # Cooperation between each state

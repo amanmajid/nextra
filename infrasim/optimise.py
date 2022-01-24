@@ -79,10 +79,14 @@ class nextra():
         
         # adjust scenario
         flow_max = 10**9
+        # current grid capacities (https://openknowledge.worldbank.org/handle/10986/28468)
+        egypt_to_gaza           = 27     # MW
+        jordan_to_westbank      = 100    # MW
+
         if self.scenario == 'BAU' or self.scenario == 'BAS':
             # Business as usual
             # Jordan ->
-            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", jordan_to_westbank)
             self.connectivity['jordan_to_israel']       = 0
             #Israel ->
             self.connectivity['israel_to_westbank']     = kwargs.get("israel_to_westbank", flow_max)
@@ -92,7 +96,7 @@ class nextra():
             self.connectivity['westbank_to_israel']     = 0
             self.connectivity['westbank_to_jordan']     = 0
             #Egypt ->
-            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", flow_max)
+            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", egypt_to_gaza)
         elif self.scenario == 'NCO':
             # No cooperation: each state acts as an individual entity
             # Jordan ->
@@ -110,7 +114,7 @@ class nextra():
         elif self.scenario == 'EAG':
             # Extended arab grid: palestine turns to jordan; israel an energy island
             # Jordan ->
-            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", jordan_to_westbank)
             self.connectivity['jordan_to_israel']       = 0
             #Israel ->
             self.connectivity['israel_to_westbank']     = 0
@@ -118,14 +122,14 @@ class nextra():
             self.connectivity['israel_to_gaza']         = 0
             #West Bank ->
             self.connectivity['westbank_to_israel']     = 0
-            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", flow_max)
+            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", jordan_to_westbank)
             #Egypt ->
-            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", flow_max)
+            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", egypt_to_gaza)
         elif self.scenario == 'COO' or self.scenario == 'UTO':
             # Cooperation between each state
             # --        
             # Jordan ->
-            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", jordan_to_westbank)
             self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", flow_max)
             #Israel ->
             self.connectivity['israel_to_westbank']     = kwargs.get("israel_to_westbank", flow_max)
@@ -133,9 +137,9 @@ class nextra():
             self.connectivity['israel_to_gaza']         = kwargs.get("israel_to_gaza", flow_max)
             #West Bank ->
             self.connectivity['westbank_to_israel']     = kwargs.get("westbank_to_israel", flow_max)
-            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", flow_max)
+            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", jordan_to_westbank)
             #Egypt ->
-            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", flow_max)
+            self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", egypt_to_gaza)
 
         self = update_for_scenario(self,self.connectivity)
 
@@ -570,7 +574,7 @@ class nextra():
 
         # There can only be a maximum of 700 MW of wind capacity due to land constraints
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] == self.global_variables['isr_max_wind_cap']\
+            (self.capacity_indices[n,k,t] <= self.global_variables['isr_max_wind_cap']\
                  for n in ['israel_wind']\
                      for k in ['electricity']\
                          for t in self.timesteps),'isr_wind')
@@ -618,9 +622,16 @@ class nextra():
                  for n,k,t in self.capacity_indices\
                      if t in timesteps_2030 and n in high_carbon_techs),'jor_carbon')
 
-        # No more wind capacity should be added
+        # # No more wind capacity should be added
+        # self.model.addConstrs(
+        #     (self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
+        #          for n in ['jordan_wind']\
+        #              for k in ['electricity']\
+        #                  for t in self.timesteps),'jor_wind')
+
+        # Jordan wind ratio
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
+            (self.capacity_indices['jordan_solar',k,t] * 0.3 >= self.capacity_indices[n,k,t]\
                  for n in ['jordan_wind']\
                      for k in ['electricity']\
                          for t in self.timesteps),'jor_wind')
@@ -646,7 +657,7 @@ class nextra():
 
         # Wind in West Bank
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] == 0\
+            (self.capacity_indices[n,k,t] == 50\
                  for n in ['west_bank_wind']\
                      for k in ['electricity']\
                          for t in timesteps_2030),'wb_wind')
@@ -1012,7 +1023,21 @@ class nextra():
                 # <<<<< Does not apply >>>>>
                 
                 # [2] SELF-SUFFICIENCY
-                # <<<<< Does not apply >>>>>
+                self.model.addConstr(
+                    gp.quicksum( \
+                        self.ss_factor * \
+                            # sum of total demand
+                            (self.arcFlows['west_bank_generation',j,k,t] \
+                                + self.arcFlows['israel_generation',j,k,t] \
+                                + self.arcFlows['jordan_generation',j,k,t])
+                                    for j in ['west_bank_energy_demand']
+                                        for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030)
+                    <= \
+                        gp.quicksum( \
+                            (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'wb_ss')
                 
                 
                 #-----
@@ -1023,7 +1048,21 @@ class nextra():
                 # <<<<< Does not apply >>>>>
             
                 # [2] SELF-SUFFICIENCY
-                # <<<<< Does not apply >>>>>
+                self.model.addConstr(
+                    gp.quicksum( \
+                        self.ss_factor * \
+                            # sum of total demand
+                            (self.arcFlows['gaza_generation',j,k,t] \
+                                + self.arcFlows['israel_generation',j,k,t] \
+                                + self.arcFlows['egypt_generation',j,k,t])
+                                    for j in ['gaza_energy_demand']
+                                        for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030) \
+                        <= \
+                        gp.quicksum( \
+                            (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'gaz_ss')
                 
                 #-----
                 # JORDAN AND PALESTINE INTEGRATED RES TARGET
@@ -1246,15 +1285,9 @@ class nextra():
                                                 for t in self.timesteps if t in timesteps_2030)
                         <= \
                           gp.quicksum( \
-                              (self.arcFlows['west_bank_solar','west_bank_battery_storage',k,t]
-                                + self.arcFlows['west_bank_wind','west_bank_battery_storage',k,t] \
-                                + self.arcFlows['west_bank_ccgt',j,k,t] \
-                                + self.arcFlows['west_bank_coal',j,k,t] \
-                                + self.arcFlows['west_bank_diesel',j,k,t] \
-                                + self.arcFlows['west_bank_natural_gas',j,k,t])
-                                    for j in ['west_bank_generation']
-                                        for k in ['electricity']
-                                            for t in self.timesteps if t in timesteps_2030),'wb_ss')
+                              (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030),'wb_ss')
                 
                 
                 #-----
@@ -1278,12 +1311,10 @@ class nextra():
                                                 for t in self.timesteps if t in timesteps_2030) \
                             <= \
                             gp.quicksum( \
-                                (self.arcFlows['gaza_solar','gaza_battery_storage',k,t]
-                                    + self.arcFlows['gaza_diesel',j,k,t] \
-                                    + self.arcFlows['gaza_natural_gas',j,k,t])
-                                        for j in ['gaza_generation']
-                                            for k in ['electricity']
-                                                for t in self.timesteps if t in timesteps_2030),'gaz_ss')
+                                (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                                    for k in ['electricity']
+                                        for t in self.timesteps if t in timesteps_2030),'gaz_ss')
+
         
         
     def run(self,pprint=True,write=True):

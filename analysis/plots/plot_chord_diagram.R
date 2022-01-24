@@ -9,7 +9,7 @@ colors <- c(ISR = '#537BEF',
             EGY = 'black',
             JOR = '#27B02B')
 
-for (scenario in c('NCO','COO','EAG','UTO','BAU'))
+for (scenario in c('NCO','COO','EAG','BAU')) #,'UTO'
 {
   print(paste('> Running:', scenario))
   df <- read.csv(file = paste('chord_data/',scenario,'.csv',sep=''))
