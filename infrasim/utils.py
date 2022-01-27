@@ -32,12 +32,15 @@ from .global_variables import *
 # Plotting colours
 #---
 
-technology_color_dict = {'Solar'     : 'gold', 
-                         'Coal'      : 'darkgray', 
-                         'Gas'       : 'teal', 
-                         'Shale'     : 'chocolate', 
-                         'Diesel'    : 'darkred', 
-                         'Wind'      : 'darkorange'}
+technology_color_dict = {'Solar'                : 'gold', 
+                         'Coal'                 : 'darkgray', 
+                         'Gas'                  : 'moccasin', 
+                         'Shale'                : 'chocolate', 
+                         'Diesel'               : 'darkred', 
+                         'Battery Charge'       : 'lightgreen', 
+                         'Battery'              : 'teal', 
+                         'Battery Discharge'    : 'teal', 
+                         'Wind'                 : 'darkorange'}
 
 #---
 # Conversions
