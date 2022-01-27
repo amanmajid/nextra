@@ -71,11 +71,26 @@ class nextra():
         self.flows.node = adjust_nodal_names(self.flows.node)
         
         # handle kwargs
-        if not kwargs:
-            self = manage_kwargs(self)
+        self.coo_factor = kwargs.get('coo_res_factor',self.global_variables['coop_res_target_2030'])
+        self.ss_factor  = kwargs.get('self_sufficiency_factor',self.global_variables['self_sufficiency_factor'])
+        self.__name__   = kwargs.get('model_name','nextra')
+        
+        if not kwargs.get('super_source',False):
+            self.super_source = False
         else:
-            for key,value in kwargs.items():
-                self = manage_kwargs(self,key,value)
+            self.super_source = True
+            self.edges = add_super_source(self.nodes,self.edges)
+        if not kwargs.get('super_sink',False):
+            self.super_sink = False
+        else:
+            self.super_sink = True
+            self.edges = add_super_sink(self.nodes,self.edges)
+        
+        # if not kwargs:
+        #     self = manage_kwargs(self)
+        # else:
+        #     for key,value in kwargs.items():
+        #         self = manage_kwargs(self,key,value)
         
         # adjust scenario
         flow_max = 10**9
@@ -1109,7 +1124,6 @@ class nextra():
             #========================================
             
             if self.scenario == 'COO' or self.scenario == 'UTO':
-                
                 # [1] COMBINED RES TARGET
                 self.model.addConstr( \
                     gp.quicksum( \

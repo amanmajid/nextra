@@ -295,51 +295,51 @@ def init_vars(self,scenario,energy_objective):
     return self
 
 
-def manage_kwargs(self,key=None,value=None):
-    '''Manage kwargs
-    '''
-    # self sufficiency factor
-    if key == 'self_sufficiency_factor':
-        if not self.energy_objective:
-            self.ss_factor = 0
-        else:
-            self.ss_factor = value
-    else:
-        self.ss_factor = self.global_variables['self_sufficiency_factor']
-    # res factor
-    if key == 'res_factor':
-        self.res_factor = value
-    else:
-        self.res_factor = 1
-    # uto factor
-    if key == 'coo_res_factor':
-        self.coo_factor = value
-    else:
-        self.coo_factor = self.global_variables['coop_res_target_2030']
-    # model name
-    if key == 'model_name':
-        self.__name__ = value
-    else:
-        self.__name__       = 'nextra'
+# def manage_kwargs(self,key=None,value=None):
+#     '''Manage kwargs
+#     '''
+    # # self sufficiency factor
+    # if key == 'self_sufficiency_factor':
+    #     if not self.energy_objective:
+    #         self.ss_factor = 0
+    #     else:
+    #         self.ss_factor = value
+    # else:
+    #     self.ss_factor = self.global_variables['self_sufficiency_factor']
+    # # res factor
+    # if key == 'res_factor':
+    #     self.res_factor = value
+    # else:
+    #     self.res_factor = 1
+    # # uto factor
+    # if key == 'coo_res_factor':
+    #     self.coo_factor = value
+    # else:
+    #     self.coo_factor = self.global_variables['coop_res_target_2030']
+    # # model name
+    # if key == 'model_name':
+    #     self.__name__ = value
+    # else:
+    #     self.__name__       = 'nextra'
     # super source
-    if key == 'super_source':
-        if value:
-            self.edges = add_super_source(self.nodes,self.edges)
-            self.super_source = value
-        else:
-            self.super_source = False
-    else:
-        self.super_source = False
-    # super source
-    if key == 'super_sink':
-        if value:
-            self.edges = add_super_sink(self.nodes,self.edges)
-            self.super_sink = value
-        else:
-            self.super_sink = False
-    else:
-        self.super_sink = False
-    return self
+    # if key == 'super_source':
+    #     if value:
+    #         self.edges = add_super_source(self.nodes,self.edges)
+    #         self.super_source = value
+    #     else:
+    #         self.super_source = False
+    # else:
+    #     self.super_source = False
+    # # super source
+    # if key == 'super_sink':
+    #     if value:
+    #         self.edges = add_super_sink(self.nodes,self.edges)
+    #         self.super_sink = value
+    #     else:
+    #         self.super_sink = False
+    # else:
+    #     self.super_sink = False
+    # return self
 
 
 def read_node_data(path_to_nodes):
