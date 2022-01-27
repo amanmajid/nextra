@@ -156,6 +156,10 @@ class nextra():
         self.results_dir = self.global_variables['results_directory'] + self.model.ModelName
         create_dir(self.results_dir)
 
+        # wind and solar price factors for sensitivity mode
+        self.solar_price_factor = kwargs.get('solar_price_factor',1)
+        self.wind_price_factor  = kwargs.get('wind_price_factor',1)
+
 
     def build(self):
         '''Build optimisation model using GurobiPy
@@ -197,6 +201,18 @@ class nextra():
         # create cost/capex dict
         self.cost_dict  = make_cost_dict(self)
         self.capex_dict = make_capex_dict(self)
+
+        # solar and wind factors
+        if self.solar_price_factor != 1:
+            for k in self.capex_dict.keys():
+                if 'solar' in k[0]:
+                    self.capex_dict[k] = self.capex_dict[k] * self.solar_price_factor
+
+        if self.wind_price_factor != 1:
+            for k in self.capex_dict.keys():
+                if 'wind' in k[0]:
+                    self.capex_dict[k] = self.capex_dict[k] * self.wind_price_factor
+
 
         #---
         # SET OBJECTIVES
