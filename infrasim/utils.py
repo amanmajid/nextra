@@ -28,6 +28,16 @@ from shapely.geometry import Point
 from .global_variables import *
 
 
+#---
+# Plotting colours
+#---
+
+technology_color_dict = {'Solar'     : 'gold', 
+                         'Coal'      : 'darkgray', 
+                         'Gas'       : 'teal', 
+                         'Shale'     : 'chocolate', 
+                         'Diesel'    : 'darkred', 
+                         'Wind'      : 'darkorange'}
 
 #---
 # Conversions
@@ -468,7 +478,7 @@ def map_attributes(model_run,results_dataframe,on='from_id'):
     # capitalise first letters
     df_to_map.subtype = df_to_map.subtype.str.title()
     # rename cols
-    df_to_map[on]   = df_to_map['name']
+    df_to_map[on]           = df_to_map['name']
     df_to_map['technology'] = df_to_map['subtype']
     df_to_map['territory']  = df_to_map['territory']
     # adjust technologies

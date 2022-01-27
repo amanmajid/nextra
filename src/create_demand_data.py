@@ -83,13 +83,13 @@ def time_series_forecast(flows,fields,start,end,freq='H',exceptions=None):
             else:
                 # get demand growth
                 if f.__contains__('jordan'):
-                    growth_rate = global_variables['jordan_demand_growth_rate']
+                    growth_rate = 0.04 #global_variables['jordan_demand_growth_rate'] 
                 elif f.__contains__('israel'):
-                    growth_rate = global_variables['israel_demand_growth_rate']
+                    growth_rate = 0.038 #global_variables['israel_demand_growth_rate']
                 elif f.__contains__('west_bank'):
-                    growth_rate = global_variables['palestine_demand_growth_rate']
+                    growth_rate = 0.04 #global_variables['palestine_demand_growth_rate']
                 elif f.__contains__('gaza'):
-                    growth_rate = global_variables['palestine_demand_growth_rate']
+                    growth_rate = 0.04 #global_variables['palestine_demand_growth_rate']
                 # calculate
                 new_flows.at[i,f] = baseline_value * ( (1+growth_rate)**(new_flows.at[i,'year']-flows.iloc[-1]['year']) )
 
@@ -130,4 +130,4 @@ new_flows   = time_series_forecast(flows,fields,start,end,freq='H',exceptions=ex
 new_flows.to_csv('../data/nextra/nodal_flows/processed_flows.csv',index=False)
 # get an index of 2030
 new_flows= new_flows.loc[new_flows.year==2030].reset_index(drop=True)
-new_flows.to_csv('../data/nextra/nodal_flows/processed_flows_2030.csv',index=False)
+new_flows.to_csv('../data/nextra/nodal_flows/processed_flows_2030_high.csv',index=False)

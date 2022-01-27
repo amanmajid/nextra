@@ -125,13 +125,17 @@ class nextra_postprocess():
             idx = idx.loc[idx.territory.isin([territory])].reset_index(drop=True)
         # reindex
         idx = idx[['hour','value','technology']]
+        # battery charging/discharging
+        idx.loc[(idx.value <= 0) & (idx.technology == 'Battery'),'technology'] = 'Battery Discharge'
+        idx.loc[(idx.value > 0) & (idx.technology == 'Battery'),'technology'] = 'Battery Charge'
         # pivot table
         idx = idx.pivot_table(columns='technology',index='hour',values='value')
         # plot
         idx.plot.area(ax=kwargs.get("ax", None),
-                    cmap=kwargs.get("cmap", 'YlGnBu'),
-                    linewidth=kwargs.get("linewidth", 0),
-                    alpha=kwargs.get("alpha", 1),)
+                      #cmap=kwargs.get("cmap", 'YlGnBu'),
+                      color=[technology_color_dict.get(x, '#333333') for x in idx.columns],
+                      linewidth=kwargs.get("linewidth", 0),
+                      alpha=kwargs.get("alpha", 1),)
     
 
     def plot_flows_heatmap(self,var,**kwargs):
