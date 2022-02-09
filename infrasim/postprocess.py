@@ -53,6 +53,25 @@ class nextra_postprocess():
         self.results_capacity_change        = self.get_capacity_change()
         self.results_costs                  = self.compute_costs()
 
+        # remove gas storage from results
+        self.results_edge_flows             = self.drop_node_from_edge_flows(node_to_remove='israel_gas_storage')
+
+
+    def get_regional_capacity(self,territory):
+        '''Return capacity for a given territory
+        '''
+        caps = self.results_capacities[self.results_capacities.territory==territory]
+        caps = caps.reset_index(drop=True)
+        return caps.groupby(by=['node','technology']).max().reset_index()
+    
+
+    def get_regional_capacity_change(self,territory):
+        '''Return capacity for a given territory
+        '''
+        caps = self.results_capacity_change[self.results_capacity_change.territory==territory]
+        caps = caps.reset_index(drop=True)
+        return caps.groupby(by=['node','technology']).max().reset_index()
+
 
     def generate_random_colour():
         '''Return random hex colour
@@ -239,3 +258,23 @@ class nextra_postprocess():
 
         fig = dict(data=[data_trace], layout=layout)
         iplot(fig,validate=False)
+
+
+    def drop_node_from_edge_flows(self,node_to_remove):
+        '''Function to drop junction from edge flow results
+        '''
+        df = self.results_edge_flows.copy()
+        # get new i,j
+        new_i = df[df.to_id == node_to_remove].from_id.unique()[0]
+        new_j = df[df.from_id == node_to_remove].to_id.unique()[0]
+        # change i
+        df.loc[df.from_id == node_to_remove,'from_id'] = new_i
+        # change j
+        df.loc[df.to_id == node_to_remove,'to_id'] = new_j
+        # drop
+        size_before = df.shape[0]
+        df = df.groupby(by=['from_id','to_id','commodity','hour','day','month','year']).mean().reset_index()
+        size_after = df.shape[0]
+        # print size difference
+        # print('Removed ' + str(size_before - size_after) + ' rows')
+        return df

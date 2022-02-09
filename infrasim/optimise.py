@@ -71,6 +71,7 @@ class nextra():
         self.flows.node = adjust_nodal_names(self.flows.node)
         
         # handle kwargs
+        self.res_factor = kwargs.get('res_factor',1)
         self.coo_factor = kwargs.get('coo_res_factor',self.global_variables['coop_res_target_2030'])
         self.ss_factor  = kwargs.get('self_sufficiency_factor',self.global_variables['self_sufficiency_factor'])
         self.__name__   = kwargs.get('model_name','nextra')
