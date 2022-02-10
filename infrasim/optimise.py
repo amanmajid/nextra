@@ -299,6 +299,23 @@ class nextra():
 
 
         #----------------------------------------------------------------------
+        # BATTERY FLOW BOUNDS
+        #----------------------------------------------------------------------
+
+        # # Battery charge rate
+        # self.model.addConstrs(
+        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_charge_rate']
+        #          for i,j,k,t in self.arcFlows \
+        #              if 'battery' in i),'battery_charge_rate')
+
+        #  # Battery discharge rate
+        # self.model.addConstrs(
+        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_discharge_rate']
+        #          for i,j,k,t in self.arcFlows \
+        #              if 'battery' in j),'battery_discharge_rate')
+
+
+        #----------------------------------------------------------------------
         # CAPACITY CHANGES
         #----------------------------------------------------------------------
         
@@ -481,10 +498,10 @@ class nextra():
         # Assign a max capacity to control the decision variable
         #---
 
-        # Max capacity - i.e. we can't build anything above 10,000 MW
-        self.model.addConstrs(
-            (self.capacity_indices[n,k,t] <= self.global_variables['maximum_capacity'] \
-                 for n,k,t in self.capacity_indices),'cap_max')
+        # # Max capacity - i.e. we can't build anything above 10,000 MW
+        # self.model.addConstrs(
+        #     (self.capacity_indices[n,k,t] <= self.global_variables['maximum_capacity'] \
+        #          for n,k,t in self.capacity_indices),'cap_max')
         
             
         #---
@@ -604,12 +621,18 @@ class nextra():
                  for n,k,t in self.capacity_indices \
                      if t in timesteps_2030 and n in high_carbon_techs),'isr_carb1')
 
-        # There can only be a maximum of 700 MW of wind capacity due to land constraints
+        # Israel wind ratio
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] <= self.global_variables['isr_max_wind_cap']\
-                 for n in ['israel_wind']\
-                     for k in ['electricity']\
-                         for t in self.timesteps),'isr_wind')
+            (self.capacity_indices['israel_solar',k,t] * 0.05 >= self.capacity_indices['israel_wind',k,t]\
+                for k in ['electricity']\
+                    for t in self.timesteps),'isr_wind_ratio')
+
+        # # There can only be a maximum of 700 MW of wind capacity due to land constraints
+        # self.model.addConstrs(
+        #     (self.capacity_indices[n,k,t] <= self.global_variables['isr_max_wind_cap']\
+        #          for n in ['israel_wind']\
+        #              for k in ['electricity']\
+        #                  for t in self.timesteps),'isr_wind')
 
         # Additional capacity of carbon-intensive technologies cannot be built
         high_carbon_techs = ['israel_coal', 'israel_diesel']
@@ -663,10 +686,9 @@ class nextra():
 
         # Jordan wind ratio
         self.model.addConstrs(
-            (self.capacity_indices['jordan_solar',k,t] * 0.3 >= self.capacity_indices[n,k,t]\
-                 for n in ['jordan_wind']\
-                     for k in ['electricity']\
-                         for t in self.timesteps),'jor_wind')
+            (self.capacity_indices['jordan_solar',k,t] * 0.3 >= self.capacity_indices['jordan_wind',k,t]\
+                for k in ['electricity']\
+                    for t in self.timesteps),'jor_wind')
 
         # jordan_solar should be more than baseline
         self.model.addConstrs(
@@ -694,10 +716,10 @@ class nextra():
                      for k in ['electricity']\
                          for t in timesteps_2030),'wb_wind')
         
-        # Baseload technologies in West Bank
+        # Baseload technologies in West Bank (#,'west_bank_natural_gas')
         self.model.addConstrs(
             (self.capacity_indices[n,k,t] == 0\
-                 for n in ['west_bank_coal','west_bank_natural_gas','west_bank_ccgt']\
+                 for n in ['west_bank_coal','west_bank_ccgt','west_bank_diesel']\
                      for k in ['electricity']\
                          for t in timesteps_2030),'wb_baseload')
 
@@ -708,7 +730,7 @@ class nextra():
 
         # gaza_diesel is at least 60 MW
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] >= self.global_variables['gaz_diesel_cap']\
+            (self.capacity_indices[n,k,t] == self.global_variables['gaz_diesel_cap']\
                  for n in ['gaza_diesel']\
                      for k in ['electricity']\
                          for t in timesteps_2030),'gaza_diesel')
@@ -722,7 +744,7 @@ class nextra():
         
         # Natural gas in Gaza
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] == 0\
+            (self.capacity_indices[n,k,t] >= 0\
                  for n in ['gaza_natural_gas']\
                      for k in ['electricity']\
                          for t in timesteps_2030),'gaza_ng')
@@ -1197,29 +1219,6 @@ class nextra():
                 #             + self.arcFlows['gaza_solar','gaza_generation',k,t])
                 #                 for k in ['electricity']
                 #                     for t in self.timesteps if t in reference_timesteps),'coo_res')
-                
-                # # RES should only be in Jordan
-                # # no further addition in israel
-                # self.model.addConstrs((
-                #     self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.Name.isin([n]),'Capacity'].iloc[0]
-                #     for n in ['israel_solar']
-                #     for k in ['electricity']
-                #     for t in reference_timesteps),'isr_sol_cap')
-                
-                # # # no further addition in west bank
-                # self.model.addConstrs((
-                #     self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.Name.isin([n]),'Capacity'].iloc[0]
-                #     for n in ['west_bank_solar']
-                #     for k in ['electricity']
-                #     for t in reference_timesteps),'wb_sol_cap')
-                
-                # # # no further addition in gaza
-                # self.model.addConstrs((
-                #     self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.Name.isin([n]),'Capacity'].iloc[0]
-                #     for n in ['gaza_solar']
-                #     for k in ['electricity']
-                #     for t in reference_timesteps),'gz_sol_cap')
-                
             
             
                 #-----

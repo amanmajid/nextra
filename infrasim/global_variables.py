@@ -14,6 +14,9 @@ global_variables = {
                     'baseload_coefficient'              : 0.5,
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
+                    # -BATTERY PARAMS
+                    'battery_charge_rate'               : 200,          # MW
+                    'battery_discharge_rate'            : 300,          # MW
                     # -RAMPING RATE
                     # https://www.researchgate.net/post/What_is_the_typical_MW_minute_ramping_capability_for_each_type_of_reserve
                     'ocgt_ramping_rate'                 : 1200,         # MW/h

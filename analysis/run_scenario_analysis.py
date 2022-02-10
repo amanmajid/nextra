@@ -22,7 +22,7 @@ def save_object(obj, filename):
 #File paths
 nodes = '../data/nextra/spatial/network/nodes.shp'
 edges = '../data/nextra/spatial/network/edges.shp'
-flows = '../data/nextra/nodal_flows/processed_flows_2030.csv'
+flows = '../data/nextra/nodal_flows/processed_flows_2030_res_nin.csv'
 
 
 # Params

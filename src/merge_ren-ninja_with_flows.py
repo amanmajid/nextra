@@ -35,7 +35,7 @@ flows = pd.read_csv(flowpath)
 # Amend flows
 for c in flows.columns:
     print('Processing: ' + c)
-    if 'solar' in c or 'wind' in c:
+    if 'wind' in c or 'solar' in c:
         for i in flows[c].index:
             idx = data.loc[(data.hour == flows.loc[i,'hour']) & \
                            (data.day == flows.loc[i,'day']) & \
@@ -50,4 +50,4 @@ for c in flows.columns:
 ##########
 # Save
 
-flows.to_csv('../data/nextra/nodal_flows/processed_flows_2030_rn.csv',index=False)
+flows.to_csv('../data/nextra/nodal_flows/processed_flows_2030_res_nin.csv',index=False)
