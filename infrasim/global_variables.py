@@ -30,9 +30,9 @@ global_variables = {
                     'diesel_ramping_rate'               : 120,          # MW/h
                     'shale_ramping_rate'                : 180,          # MW/h
                     # -DEMAND GROWTH
-                    'jordan_demand_growth_rate'         : 0.03,
-                    'israel_demand_growth_rate'         : 0.028,
-                    'palestine_demand_growth_rate'      : 0.03,
+                    'jordan_demand_growth_rate'         : 0.03,         # From Jordan's reports
+                    'israel_demand_growth_rate'         : 0.028,        # From Nurit
+                    'palestine_demand_growth_rate'      : 0.05,         # From Nurit
                     'peak_demand_factor'                : 1,
                     # -ISRAEL
                     'isr_res_target_2030'               : 0.3,          # %
