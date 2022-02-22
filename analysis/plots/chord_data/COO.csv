@@ -1,11 +1,13 @@
 from_territory,to_territory,value
-Egypt supply,Gaza demand,63.70236713
-Gaza supply,Gaza demand,556.0467459
-Israel supply,Gaza demand,1233.74004
-Israel supply,Israel demand,65439.10338
-Israel supply,Jordan demand,1475.074443
-Israel supply,West Bank demand,4133.041398
-Jordan supply,Israel demand,24458.9152
-Jordan supply,Jordan demand,26801.2428
-Jordan supply,West Bank demand,857.1217058
-West Bank supply,West Bank demand,2138.64133
+EGY,GZA,0.0
+GZA,GZA,556.0467458668105
+ISR,GZA,1297.442407022515
+ISR,ISR,23437.572474754405
+ISR,JOR,9797.877765154535
+ISR,WBK,4232.128549335635
+JOR,ISR,47113.053073578296
+JOR,JOR,17631.425744959954
+JOR,WBK,758.0345546299842
+WBK,ISR,19347.3930283264
+WBK,JOR,847.0137326091517
+WBK,WBK,2138.64133027098
