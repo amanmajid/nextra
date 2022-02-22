@@ -54,7 +54,7 @@ global_variables = {
                     'gaz_res_target_2030'               : 0.3,          # %
                     'gaz_ng_target_2030'                : 0.7,          # %
                     'gaz_diesel_cap'                    : 60,           # MW
-                    'egypt_to_gaza_export'              : 999999999,    # MWh (assume infinite)
+                    'egypt_to_gaza_export'              : 0,            # Zero as of 2018
                     # -COOPERATION
                     'coop_res_target_2030'              : 0.3,          # %
                     'self_sufficiency_factor'           : 0.3,          # %
