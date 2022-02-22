@@ -34,8 +34,8 @@ save_figures=True
 infrasim_init_directories()
 
 scenarios = {'BAS' : False,
-             'BAU' : True,
-             'NCO' : True,
+             #'BAU' : True,
+             #'NCO' : True,
              'EAG' : True,
              'COO' : True,
              #'UTO' : True,
@@ -55,7 +55,7 @@ for s in scenarios:
                       )
 
     model_run.build()
-    model_run.run(pprint=False)
+    model_run.run(pprint=pprint)
     try:
         model_results = model_run.get_results()
         # add scenarios to results

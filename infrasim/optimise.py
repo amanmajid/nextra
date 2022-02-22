@@ -382,6 +382,9 @@ class nextra():
         
         # get energy supply nodes
         source_nodes = get_source_nodes(self.nodes).name.to_list()
+        # get rid of solar and wind
+        source_nodes = [i for i in source_nodes if 'solar' not in i]
+        source_nodes = [i for i in source_nodes if 'wind' not in i]
         # get supply dict
         supply_dict  = make_supply_dict(self)
 
@@ -521,7 +524,7 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     <= self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
+                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
                          for t in self.timesteps \
                              for k in self.commodities \
                                  for i in solar_asset),'solar_supply')
