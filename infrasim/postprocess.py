@@ -367,11 +367,14 @@ class nextra_postprocess():
             c = c[c.node==node].value.max()
         # index by time
         t = t.loc[(t.month==month) & (t.year==year) & (t.day<=days)].reset_index(drop=True)
+        # calculate SOC
+        t['soc'] = t.value.divide(c) * 100
         # plot
         if not ax:
             f,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
-        sns.lineplot(x='timestep',y='value',data=t,color='teal',ax=ax)
-        ax.axhline(y=c,color='black',linestyle='--')
+        sns.lineplot(x='timestep',y='soc',data=t,color='teal',ax=ax)
+        ax.axhline(y=100,color='black',linestyle='--')
+        ax.set_ylabel('SOC [%]')
 
     
     def plot_supply_curve(self,region='israel',days=1,month=6,year=2030,ax=None,blend_curtailment=True):
