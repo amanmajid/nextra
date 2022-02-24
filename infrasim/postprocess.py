@@ -372,3 +372,72 @@ class nextra_postprocess():
             f,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
         sns.lineplot(x='timestep',y='value',data=t,color='teal',ax=ax)
         ax.axhline(y=c,color='black',linestyle='--')
+
+    
+    def plot_supply_curve(self,region='israel',days=1,month=6,year=2030,ax=None):
+        '''Plot supply and demand curves for a given region
+        '''
+        flows = self.results_edge_flows.copy()
+        # tag curtailed
+        flows.loc[flows.to_id.str.contains('curtail'),'from_id'] = \
+        flows.loc[flows.to_id.str.contains('curtail'),'from_id'] + '_curtailed'
+        # identify battery charge/discharge
+        flows['state'] = ''
+        flows['prefix'] = flows['from_id'].str.split('_',expand=True)[0]
+        flows.loc[flows.prefix=='west','prefix'] = 'west_bank'
+        # tag discharge
+        flows.loc[(flows.from_id.str.contains('battery')),'state'] = \
+            flows.loc[(flows.from_id.str.contains('battery')),'prefix'] + '_' + 'battery_discharge'
+        # tag discharge
+        flows.loc[(flows.to_id.str.contains('battery')),'state'] = \
+            flows.loc[(flows.to_id.str.contains('battery')),'prefix'] + '_' + 'battery_charge'
+        # change from_id for battery nodes
+        flows.loc[flows.state!='','from_id'] = flows.loc[flows.state!='','state']
+        # sum flows for each node at each timestep
+        flows = flows.groupby(by=['from_id','timestep','hour','day','month','year','scenario']).sum().reset_index()
+        # drop generation
+        flows = flows[~flows.from_id.str.contains('generation')].reset_index(drop=True)
+        # index flows
+        flows = flows.loc[(flows.from_id.str.contains(region))].reset_index(drop=True)
+        # index by time
+        flows = flows.loc[(flows.month==month) \
+                        & (flows.year==year) \
+                        & (flows.day<=days)].reset_index(drop=True)
+        # remove technologies with zero capacity
+        zero_caps = flows.groupby(by='from_id').sum().reset_index()
+        zero_caps = zero_caps.loc[zero_caps.value == 0, 'from_id'].to_list()
+        flows = flows.loc[~flows.from_id.isin(zero_caps)].reset_index(drop=True)
+
+        # make curtailed flows negative
+        flows.loc[flows.from_id.str.contains('curtail'),'value'] = \
+            -flows.loc[flows.from_id.str.contains('curtail'),'value']
+        # make battery charge negative
+        flows.loc[flows.from_id.str.contains('battery_charge'),'value'] = \
+            -flows.loc[flows.from_id.str.contains('battery_charge'),'value']
+        # get demand curve
+        demand = self.flows.copy()
+        demand = demand[demand.node.str.contains('demand')].reset_index(drop=True)
+        demand = demand.loc[demand.node.str.contains(region)].reset_index(drop=True)
+        # index by time
+        demand = demand.loc[(demand.month==month) \
+                            & (demand.year==year) \
+                            & (demand.day<=days)].reset_index(drop=True)
+        # pivot table
+        idx = flows.pivot_table(columns='from_id',index='timestep',values='value')
+        dem = demand.pivot_table(columns='node',index='timestep',values='value')
+
+        # plot
+        if not ax:
+            f,ax = plt.subplots(figsize=(20,8),nrows=1,ncols=1)
+
+        dem.plot.line(ax=ax,
+                    linewidth=2,
+                    color='navy',
+                    marker='o',
+                    alpha=1)
+
+        idx.plot.area(ax=ax,
+                    stacked=True,
+                    linewidth=0,
+                    color=[supply_color_dict.get(x, '#333333') for x in idx.columns],
+                    alpha=0.7)

@@ -32,6 +32,7 @@ pprint=False
 save_figures=True
 super_sink=False
 super_source=False
+curtailment=True
 
 infrasim_init_directories()
 
@@ -52,6 +53,7 @@ for s in scenarios:
                        timesteps=timesteps,
                        super_source=super_source,
                        super_sink=super_sink,
+                       curtailment=curtailment,
                        #res_factor=99,
                        #model_name='meow',
                       )
