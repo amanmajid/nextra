@@ -374,13 +374,17 @@ class nextra_postprocess():
         ax.axhline(y=c,color='black',linestyle='--')
 
     
-    def plot_supply_curve(self,region='israel',days=1,month=6,year=2030,ax=None):
+    def plot_supply_curve(self,region='israel',days=1,month=6,year=2030,ax=None,blend_curtailment=True):
         '''Plot supply and demand curves for a given region
         '''
         flows = self.results_edge_flows.copy()
         # tag curtailed
         flows.loc[flows.to_id.str.contains('curtail'),'from_id'] = \
         flows.loc[flows.to_id.str.contains('curtail'),'from_id'] + '_curtailed'
+        if not blend_curtailment:
+            pass
+        else:
+            flows.loc[flows.to_id.str.contains('curtail'),'from_id'] = region + '_' + 'curtailed'
         # identify battery charge/discharge
         flows['state'] = ''
         flows['prefix'] = flows['from_id'].str.split('_',expand=True)[0]
@@ -438,6 +442,6 @@ class nextra_postprocess():
 
         idx.plot.area(ax=ax,
                     stacked=True,
-                    linewidth=0,
+                    linewidth=1,
                     color=[supply_color_dict.get(x, '#333333') for x in idx.columns],
                     alpha=0.7)

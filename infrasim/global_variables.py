@@ -15,6 +15,8 @@ global_variables = {
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
                     # -BATTERY PARAMS
+                    'battery_capacity_min_percentage'   : 0.2,          # Percentage of total renewable capacity (solar + wind) installed
+                    'battery_capacity_max_percentage'   : 0.4,          # Percentage of total renewable capacity (solar + wind) installed
                     'battery_charge_rate'               : 200*24,       # MW
                     'battery_discharge_rate'            : 300*24,       # MW
                     'battery_charge_hours'              : [8,9,10,11,12,13,14,15,16],
