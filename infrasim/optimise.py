@@ -506,7 +506,7 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     <= self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
+                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
                          for t in self.timesteps \
                              for k in self.commodities \
                                  for i in solar_asset),'solar_supply')
@@ -527,7 +527,7 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     <= self.capacity_indices.sum(i,k,t) * supply_dict[region+'_wind',t] \
+                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_wind',t] \
                          for t in self.timesteps \
                              for k in self.commodities \
                                  for i in wind_asset),'wind_supply')
@@ -537,12 +537,30 @@ class nextra():
         # Battery storage requirements
         #---
         
+        battery_nodes = ['israel_battery_storage','jordan_battery_storage','gaza_battery_storage','west_bank_battery_storage']
+
         # do not build battery storage
         self.model.addConstrs(
             (self.capacity_indices[n,k,t] == 0 \
-                for n in ['israel_battery_storage','jordan_battery_storage','gaza_battery_storage','west_bank_battery_storage'] \
+                for n in battery_nodes \
                     for k in self.commodities \
                         for t in self.timesteps),'zero_bat')
+
+        #---
+        # Battery inflow cannot exceed volume
+        self.model.addConstrs( \
+            (self.arcFlows.sum('*',j,k,t) <= self.capacity_indices.sum(j,k,t) \
+                for k in self.commodities \
+                    for t in self.timesteps
+                        for j in battery_nodes),'stor_inflow') 
+
+        #---
+        # Battery outflow cannot exceed volume
+        self.model.addConstrs( \
+            (self.arcFlows.sum(i,'*',k,t) <= self.capacity_indices.sum(i,k,t) \
+                for k in self.commodities \
+                    for t in self.timesteps
+                        for i in battery_nodes),'stor_outflow') 
 
         #---
         # Battery dynamics
