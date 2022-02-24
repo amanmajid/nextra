@@ -427,20 +427,20 @@ class nextra():
                                     for k in ['electricity'] \
                                         for i in idx_nodes),technology+'_supply')
 
-        # # open-cycle gas turbine (OCGT) generation
-        # # baseload_supply(technology='ocgt',ramping_rate=self.global_variables['ocgt_ramping_rate'])
-        # # coal converted gas turbine (ccgt) generation
-        # baseload_supply(technology='ccgt',ramping_rate=self.global_variables['ccgt_ramping_rate'])
-        # # Coal generation
-        # baseload_supply(technology='coal',ramping_rate=self.global_variables['coal_ramping_rate'])
-        # # Diesel generation
-        # baseload_supply(technology='diesel',ramping_rate=self.global_variables['diesel_ramping_rate'])
-        # # Bio-gas generation
-        # baseload_supply(technology='biogas',ramping_rate=self.global_variables['ccgt_ramping_rate'])
-        # # Bio-gas generation
-        # baseload_supply(technology='shale',ramping_rate=self.global_variables['shale_ramping_rate'])
-        # # Natural gas generation
-        # baseload_supply(technology='natural gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
+        # open-cycle gas turbine (OCGT) generation
+        # baseload_supply(technology='ocgt',ramping_rate=self.global_variables['ocgt_ramping_rate'])
+        # coal converted gas turbine (ccgt) generation
+        baseload_supply(technology='ccgt',ramping_rate=self.global_variables['ccgt_ramping_rate'])
+        # Coal generation
+        baseload_supply(technology='coal',ramping_rate=self.global_variables['coal_ramping_rate'])
+        # Diesel generation
+        baseload_supply(technology='diesel',ramping_rate=self.global_variables['diesel_ramping_rate'])
+        # Bio-gas generation
+        baseload_supply(technology='biogas',ramping_rate=self.global_variables['ccgt_ramping_rate'])
+        # Bio-gas generation
+        baseload_supply(technology='shale',ramping_rate=self.global_variables['shale_ramping_rate'])
+        # Natural gas generation
+        baseload_supply(technology='natural gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
         
         
         
