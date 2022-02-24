@@ -645,48 +645,67 @@ class nextra():
                             for t in self.timesteps),'egypt_import')
         
             
-        # #---
-        # # Israel's baseload output
-        # #---
+        #---
+        # Israel's baseload output
+        #---
 
-        # # Coal output must always be half of total capacity
-        # self.model.addConstrs(
-        #     (self.arcFlows.sum(i,'*',k,t)  \
-        #         >= self.global_variables['isr_min_coal_output'] * self.capacity_indices.sum(i,k,t) \
-        #             for i in ['israel_coal'] \
-        #                 for k in ['electricity'] \
-        #                     for t in self.timesteps),'isr_coal_base')
+        # Coal output must always be half of total capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['isr_min_coal_output'] * self.capacity_indices.sum(i,k,t) \
+                    for i in ['israel_coal'] \
+                        for k in ['electricity'] \
+                            for t in self.timesteps),'isr_coal_base')
 
-        # # CCGT output must always be half of total capacity
-        # self.model.addConstrs(
-        #     (self.arcFlows.sum(i,'*',k,t)  \
-        #          >= self.global_variables['isr_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
-        #              for i in ['israel_ccgt'] \
-        #                  for k in ['electricity']\
-        #                      for t in self.timesteps),'isr_ng_base')
+        # CCGT output must always be half of total capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                 >= self.global_variables['isr_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
+                     for i in ['israel_ccgt'] \
+                         for k in ['electricity']\
+                             for t in self.timesteps),'isr_ng_base')
         
         
-        # #---
-        # # Jordan's baseload output
-        # #---
+        #---
+        # Jordan's baseload output
+        #---
         
-        # # Shale output must be at least half of capacity
-        # self.model.addConstrs(
-        #     (self.arcFlows.sum(i,'*',k,t)  \
-        #         >= self.global_variables['jor_min_shale_output'] * self.capacity_indices.sum(i,k,t)\
-        #             for i in ['jordan_shale'] \
-        #                 for k in ['electricity'] \
-        #                     for t in self.timesteps),'shale_base')
+        # Shale output must be at least half of capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['jor_min_shale_output'] * self.capacity_indices.sum(i,k,t)\
+                    for i in ['jordan_shale'] \
+                        for k in ['electricity'] \
+                            for t in self.timesteps),'shale_base')
         
-        # # Natural gas output must be at least half of capacity
-        # self.model.addConstrs(
-        #     (self.arcFlows.sum(i,'*',k,t)  \
-        #         >= self.global_variables['jor_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
-        #             for i in ['jordan_natural_gas']\
-        #                 for k in ['electricity']\
-        #                     for t in self.timesteps),'ng_base')
-            
-            
+        # Natural gas output must be at least half of capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['jor_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
+                    for i in ['jordan_natural_gas']\
+                        for k in ['electricity']\
+                            for t in self.timesteps),'ng_base')
+        
+
+        #---
+        # Palestine's baseload output
+        #---
+        
+        # West Bank - Natural gas output must be at least half of capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['jor_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
+                    for i in ['west_bank_natural_gas']\
+                        for k in ['electricity']\
+                            for t in self.timesteps),'ng_base')
+        
+        # Gaza - Natural gas output must be at least half of capacity
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t)  \
+                >= self.global_variables['jor_min_gas_output'] * self.capacity_indices.sum(i,k,t)\
+                    for i in ['gaza_natural_gas']\
+                        for k in ['electricity']\
+                            for t in self.timesteps),'ng_base')
             
         #----------------------------------------------------------------------
         # TARGETS FOR 2030
