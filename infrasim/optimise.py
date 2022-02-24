@@ -561,18 +561,34 @@ class nextra():
         battery_nodes = ['israel_battery_storage','jordan_battery_storage','gaza_battery_storage','west_bank_battery_storage']
 
         # battery storage minimum
-        self.model.addConstrs(
-            (self.capacity_indices[n,k,t] >= 0 \
-                for n in battery_nodes \
-                    for k in self.commodities \
-                        for t in self.timesteps),'zero_bat')
+        for i in ['israel','jordan','west_bank','gaza']:
+            if i != 'gaza':
+                self.model.addConstrs(
+                    (self.capacity_indices[i + '_battery_storage',k,t] >= \
+                        global_variables['battery_capacity_min_percentage'] * (self.capacity_indices[i + '_solar',k,t] + self.capacity_indices[i + '_wind',k,t]) \
+                        for k in self.commodities \
+                            for t in self.timesteps),'bat_min')
+            else:
+                self.model.addConstrs(
+                    (self.capacity_indices[i + '_battery_storage',k,t] >= \
+                        global_variables['battery_capacity_min_percentage'] * (self.capacity_indices[i + '_solar',k,t]) \
+                        for k in self.commodities \
+                            for t in self.timesteps),'bat_min')
         
-        # # battery storage maximum
-        # self.model.addConstrs(
-        #     (self.capacity_indices[n,k,t] <= 5000 \
-        #         for n in battery_nodes \
-        #             for k in self.commodities \
-        #                 for t in self.timesteps),'zero_bat')
+        # battery storage maximum
+        for i in ['israel','jordan','west_bank','gaza']:
+            if i != 'gaza':
+                self.model.addConstrs(
+                    (self.capacity_indices[i + '_battery_storage',k,t] <= \
+                        global_variables['battery_capacity_max_percentage'] * (self.capacity_indices[i + '_solar',k,t] + self.capacity_indices[i + '_wind',k,t]) \
+                        for k in self.commodities \
+                            for t in self.timesteps),'bat_min')
+            else:
+                self.model.addConstrs(
+                    (self.capacity_indices[i + '_battery_storage',k,t] <= \
+                        global_variables['battery_capacity_max_percentage'] * (self.capacity_indices[i + '_solar',k,t]) \
+                        for k in self.commodities \
+                            for t in self.timesteps),'bat_min')
 
         #---
         # Battery inflow cannot exceed volume
