@@ -86,6 +86,11 @@ class nextra():
         else:
             self.super_sink = True
             self.edges = add_super_sink(self.nodes,self.edges)
+        if not kwargs.get('curtailment',True):
+            self.curtailment = False
+        else:
+            self.curtailment = True
+            self.edges = add_curtailment_sink(self.nodes,self.edges)
         
         # if not kwargs:
         #     self = manage_kwargs(self)
@@ -277,6 +282,14 @@ class nextra():
                      for t in self.timesteps
                          for k in self.commodities),'super_sink_demand')
         
+        if not self.curtailment:
+            pass
+        else:
+            # constrain
+            self.model.addConstrs(
+                (self.arcFlows.sum('*','res_curtailment_sink',k,t)  >= 0
+                     for t in self.timesteps
+                         for k in self.commodities),'res_curtailment')
         
         
         #----------------------------------------------------------------------
@@ -547,12 +560,19 @@ class nextra():
         
         battery_nodes = ['israel_battery_storage','jordan_battery_storage','gaza_battery_storage','west_bank_battery_storage']
 
-        # do not build battery storage
+        # battery storage minimum
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] == 0 \
+            (self.capacity_indices[n,k,t] >= 0 \
                 for n in battery_nodes \
                     for k in self.commodities \
                         for t in self.timesteps),'zero_bat')
+        
+        # # battery storage maximum
+        # self.model.addConstrs(
+        #     (self.capacity_indices[n,k,t] <= 5000 \
+        #         for n in battery_nodes \
+        #             for k in self.commodities \
+        #                 for t in self.timesteps),'zero_bat')
 
         #---
         # Battery inflow cannot exceed volume
@@ -574,28 +594,27 @@ class nextra():
         # Battery dynamics
         #---
 
-        # charging_timesteps      = self.flows.loc[self.flows.hour.isin(global_variables['battery_charge_hours'])].timestep.to_list()
-        # discharging_timesteps   = self.flows.loc[~self.flows.hour.isin(global_variables['battery_charge_hours'])].timestep.to_list()
-        # storage_nodes           = get_storage_nodes(self.nodes).name.to_list()
+        charging_timesteps      = self.flows.loc[self.flows.hour.isin(global_variables['battery_charge_hours'])].timestep.to_list()
+        discharging_timesteps   = self.flows.loc[~self.flows.hour.isin(global_variables['battery_charge_hours'])].timestep.to_list()
 
-        # # Set maximum charging rate
-        # self.model.addConstrs(
-        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_charge_rate']
-        #          for i,j,k,t in self.arcFlows \
-        #              if 'battery' in i),'battery_charge_rate')
+        # Set maximum charging rate
+        self.model.addConstrs(
+            (self.arcFlows[i,j,k,t] <= self.global_variables['battery_charge_rate']
+                 for i,j,k,t in self.arcFlows \
+                     if 'battery' in i),'battery_charge_rate')
 
-        #  # Set maximum discharging rate
-        # self.model.addConstrs(
-        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_discharge_rate']
-        #          for i,j,k,t in self.arcFlows \
-        #              if 'battery' in j),'battery_discharge_rate')
+         # Set maximum discharging rate
+        self.model.addConstrs(
+            (self.arcFlows[i,j,k,t] <= self.global_variables['battery_discharge_rate']
+                 for i,j,k,t in self.arcFlows \
+                     if 'battery' in j),'battery_discharge_rate')
 
-        # # battery charged between 08:00 and 16:00
-        # self.model.addConstrs(
-        #     (self.arcFlows.sum(i,'*',k,t)  <= 50 \
-        #         for i in storage_nodes if 'battery' in i \
-        #             for k in ['electricity'] \
-        #                 for t in charging_timesteps),'bat_chg')
+        # battery charged between 08:00 and 16:00
+        self.model.addConstrs(
+            (self.arcFlows.sum(i,'*',k,t) == 0 \
+                for i in battery_nodes \
+                    for k in ['electricity'] \
+                        for t in charging_timesteps),'bat_chg')
 
         # # battery not charged outside of 08:00 and 16:00
         # self.model.addConstrs(

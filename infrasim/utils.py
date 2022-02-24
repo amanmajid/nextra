@@ -42,6 +42,18 @@ technology_color_dict = {'Solar'                : 'gold',
                          'Battery Discharge'    : 'teal', 
                          'Wind'                 : 'darkorange'}
 
+supply_color_dict     = {'israel_solar'             : 'gold', 
+                         'israel_coal'              : 'darkgray', 
+                         'israel_natural_gas'       : 'moccasin', 
+                         'israel_ccgt'              : 'moccasin', 
+                         'israel_shale'             : 'chocolate', 
+                         'israel_diesel'            : 'darkred', 
+                         'israel_battery_charge'    : 'lightgreen', 
+                         'israel_battery_discharge' : 'teal', 
+                         'israel_solar_curtailed'   : 'red', 
+                         'israel_wind'              : 'darkorange'}
+
+
 #---
 # Conversions
 #---
@@ -586,6 +598,23 @@ def add_super_sink(nodes,edges):
     for commodity in edges.commodity.unique():
         tmp_edges = pd.DataFrame({'from_id'     : nodes.name.unique(),
                                   'to_id'       : 'super_sink',
+                                  'commodity'   : commodity,
+                                  'cost'        : global_variables['super_source_maximum'],
+                                  'minimum'     : 0,
+                                  'maximum'     : global_variables['super_source_maximum']
+                                  })
+        new_edges.append(tmp_edges)
+    new_edges = pd.concat(new_edges,ignore_index=True)
+    return edges.append(new_edges, ignore_index=True)
+
+
+def add_curtailment_sink(nodes,edges):
+    '''Add res_curtailment node to network to absorb excess RES supply
+    '''
+    new_edges = []
+    for commodity in edges.commodity.unique():
+        tmp_edges = pd.DataFrame({'from_id'     : nodes[nodes.subtype.isin(['solar','wind'])].name.unique(),
+                                  'to_id'       : 'curtailment',
                                   'commodity'   : commodity,
                                   'cost'        : global_variables['super_source_maximum'],
                                   'minimum'     : 0,
