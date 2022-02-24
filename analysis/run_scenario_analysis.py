@@ -37,9 +37,9 @@ curtailment=True
 infrasim_init_directories()
 
 scenarios = {'BAS' : False,
-             #'BAU' : True,
+             'BAU' : True,
              'NCO' : True,
-             #'EAG' : True,
+             'EAG' : True,
              'COO' : True,
              #'UTO' : True,
             }
