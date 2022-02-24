@@ -15,8 +15,9 @@ global_variables = {
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
                     # -BATTERY PARAMS
-                    'battery_charge_rate'               : 200,          # MW
-                    'battery_discharge_rate'            : 300,          # MW
+                    'battery_charge_rate'               : 200*24,       # MW
+                    'battery_discharge_rate'            : 300*24,       # MW
+                    'battery_charge_hours'              : [8,9,10,11,12,13,14,15,16],
                     # -RAMPING RATE
                     # https://www.researchgate.net/post/What_is_the_typical_MW_minute_ramping_capability_for_each_type_of_reserve
                     'ocgt_ramping_rate'                 : 1200,         # MW/h
@@ -89,7 +90,7 @@ capex           = {'Diesel'   : 1175,         # $/kW
                    'Gas'      : 1175,         # $/kW
                    'Solar'    : 1313,         # $/kW
                    'Coal'     : 3676,         # $/kW
-                   'Battery'  : 1389,         # $/kW
+                   'Battery'  : 1389,         # $/kW 
                    'Wind'     : 1677,         # $/kW
                    'Shale'    : 1175,}        # $/kW
 

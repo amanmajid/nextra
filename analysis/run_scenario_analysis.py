@@ -26,17 +26,17 @@ flows = '../data/nextra/nodal_flows/processed_flows_2030_res_nin.csv'
 
 
 # Params
-timesteps=None#7000
+timesteps=24*31#7000
 super_source=False
-pprint=True
+pprint=False
 save_figures=True
 
 infrasim_init_directories()
 
 scenarios = {'BAS' : False,
              #'BAU' : True,
-             #'NCO' : True,
-             'EAG' : True,
+             'NCO' : True,
+             #'EAG' : True,
              'COO' : True,
              #'UTO' : True,
             }

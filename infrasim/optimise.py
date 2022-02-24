@@ -299,23 +299,6 @@ class nextra():
 
 
         #----------------------------------------------------------------------
-        # BATTERY FLOW BOUNDS
-        #----------------------------------------------------------------------
-
-        # # Battery charge rate
-        # self.model.addConstrs(
-        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_charge_rate']
-        #          for i,j,k,t in self.arcFlows \
-        #              if 'battery' in i),'battery_charge_rate')
-
-        #  # Battery discharge rate
-        # self.model.addConstrs(
-        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_discharge_rate']
-        #          for i,j,k,t in self.arcFlows \
-        #              if 'battery' in j),'battery_discharge_rate')
-
-
-        #----------------------------------------------------------------------
         # CAPACITY CHANGES
         #----------------------------------------------------------------------
         
@@ -353,7 +336,7 @@ class nextra():
                     self.capacity_change[n,k,t] == 0
                         for n,k,t in self.capacity_indices if t>timestep_1),'cap_changes')
         
-        
+
         
         #----------------------------------------------------------------------
         # ENERGY DEMAND
@@ -406,7 +389,6 @@ class nextra():
                 
                 # index nodes by technology
                 idx_nodes = get_nodes_by_technology(self.nodes,technology=technology).name.to_list()
-                #print(idx_nodes)
 
                 # constrain supply
                 self.model.addConstrs(
@@ -437,7 +419,7 @@ class nextra():
         # Bio-gas generation
         baseload_supply(technology='shale',ramping_rate=self.global_variables['shale_ramping_rate'])
         # Natural gas generation
-        # baseload_supply(technology='natural gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
+        baseload_supply(technology='natural gas',ramping_rate=self.global_variables['nat_gas_ramping_rate'])
         
         
         
@@ -524,7 +506,7 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
+                     <= self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
                          for t in self.timesteps \
                              for k in self.commodities \
                                  for i in solar_asset),'solar_supply')
@@ -549,13 +531,58 @@ class nextra():
                          for t in self.timesteps \
                              for k in self.commodities \
                                  for i in wind_asset),'wind_supply')
+
+
+        #---
+        # Battery storage requirements
+        #---
         
+        # do not build battery storage
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == 0 \
+                for n in ['israel_battery_storage','jordan_battery_storage','gaza_battery_storage','west_bank_battery_storage'] \
+                    for k in self.commodities \
+                        for t in self.timesteps),'zero_bat')
+
+        #---
+        # Battery dynamics
+        #---
+
+        # charging_timesteps      = self.flows.loc[self.flows.hour.isin(global_variables['battery_charge_hours'])].timestep.to_list()
+        # discharging_timesteps   = self.flows.loc[~self.flows.hour.isin(global_variables['battery_charge_hours'])].timestep.to_list()
+        # storage_nodes           = get_storage_nodes(self.nodes).name.to_list()
+
+        # # Set maximum charging rate
+        # self.model.addConstrs(
+        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_charge_rate']
+        #          for i,j,k,t in self.arcFlows \
+        #              if 'battery' in i),'battery_charge_rate')
+
+        #  # Set maximum discharging rate
+        # self.model.addConstrs(
+        #     (self.arcFlows[i,j,k,t] <= self.global_variables['battery_discharge_rate']
+        #          for i,j,k,t in self.arcFlows \
+        #              if 'battery' in j),'battery_discharge_rate')
+
+        # # battery charged between 08:00 and 16:00
+        # self.model.addConstrs(
+        #     (self.arcFlows.sum(i,'*',k,t)  <= 50 \
+        #         for i in storage_nodes if 'battery' in i \
+        #             for k in ['electricity'] \
+        #                 for t in charging_timesteps),'bat_chg')
+
+        # # battery not charged outside of 08:00 and 16:00
+        # self.model.addConstrs(
+        #         (self.arcFlows.sum('*',j,k,t)  <= 2000 \
+        #             for j in storage_nodes if 'battery' in j \
+        #                 for k in ['electricity'] \
+        #                     for t in discharging_timesteps),'bat_dis')
+
         
         #---
         # Egyptian export to Gaza
         #---
 
-        # assume as infinite: it is capped by the constraint on the arc
         self.model.addConstrs(
             (self.arcFlows.sum(i,j,k,t) <= self.global_variables['egypt_to_gaza_export'] \
                 for i in ['egypt_generation'] \
@@ -624,18 +651,12 @@ class nextra():
                  for n,k,t in self.capacity_indices \
                      if t in timesteps_2030 and n in high_carbon_techs),'isr_carb1')
 
-        # Israel wind ratio
+        # There can only be a maximum of 700 MW of wind capacity due to land constraints
         self.model.addConstrs(
-            (self.capacity_indices['israel_solar',k,t] * 0.05 >= self.capacity_indices['israel_wind',k,t]\
-                for k in ['electricity']\
-                    for t in self.timesteps),'isr_wind_ratio')
-
-        # # There can only be a maximum of 700 MW of wind capacity due to land constraints
-        # self.model.addConstrs(
-        #     (self.capacity_indices[n,k,t] <= self.global_variables['isr_max_wind_cap']\
-        #          for n in ['israel_wind']\
-        #              for k in ['electricity']\
-        #                  for t in self.timesteps),'isr_wind')
+            (self.capacity_indices[n,k,t] <= self.global_variables['isr_max_wind_cap']\
+                 for n in ['israel_wind']\
+                     for k in ['electricity']\
+                         for t in self.timesteps),'isr_wind')
 
         # Additional capacity of carbon-intensive technologies cannot be built
         high_carbon_techs = ['israel_coal', 'israel_diesel']
@@ -680,19 +701,6 @@ class nextra():
                  for n,k,t in self.capacity_indices\
                      if t in timesteps_2030 and n in high_carbon_techs),'jor_carbon')
 
-        # # No more wind capacity should be added
-        # self.model.addConstrs(
-        #     (self.capacity_indices[n,k,t] == self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
-        #          for n in ['jordan_wind']\
-        #              for k in ['electricity']\
-        #                  for t in self.timesteps),'jor_wind')
-
-        # Jordan wind ratio
-        self.model.addConstrs(
-            (self.capacity_indices['jordan_solar',k,t] * 0.3 >= self.capacity_indices['jordan_wind',k,t]\
-                for k in ['electricity']\
-                    for t in self.timesteps),'jor_wind')
-
         # jordan_solar should be more than baseline
         self.model.addConstrs(
             (self.capacity_indices[n,k,t] >= self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
@@ -731,9 +739,9 @@ class nextra():
         # Gaza's energy targets
         #---
 
-        # gaza_diesel is at least 60 MW
+        # gaza_diesel is 0 MW due to plans to convert existing plant to gas
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] == self.global_variables['gaz_diesel_cap']\
+            (self.capacity_indices[n,k,t] == 0\
                  for n in ['gaza_diesel']\
                      for k in ['electricity']\
                          for t in timesteps_2030),'gaza_diesel')
@@ -745,15 +753,31 @@ class nextra():
                      for k in ['electricity']\
                          for t in timesteps_2030),'gaza_solar')
         
-        # Natural gas in Gaza
+        # Natural gas in Gaza at least capacity of diesel today (due to plans to convert existing plant to gas)
         self.model.addConstrs(
-            (self.capacity_indices[n,k,t] >= 0\
+            (self.capacity_indices[n,k,t] >= self.global_variables['gaz_diesel_cap']\
                  for n in ['gaza_natural_gas']\
                      for k in ['electricity']\
                          for t in timesteps_2030),'gaza_ng')
         
+
+        #---
+        # CAPACITY RATIOS
+        #---
+        
+        # Jordan wind ratio
+        self.model.addConstrs(
+            (self.capacity_indices['jordan_solar',k,t] * 0.3 >= self.capacity_indices['jordan_wind',k,t]\
+                for k in ['electricity']\
+                    for t in self.timesteps),'jor_wind')
+        
+        # # Israel wind ratio
+        # self.model.addConstrs(
+        #     (self.capacity_indices['israel_solar',k,t] * 0.05 >= self.capacity_indices['israel_wind',k,t]\
+        #         for k in ['electricity']\
+        #             for t in self.timesteps),'isr_wind_ratio')
             
-            
+
         #----------------------------------------------------------------------
         # ENERGY GOALS
         #----------------------------------------------------------------------
@@ -894,10 +918,11 @@ class nextra():
                     == \
                     gp.quicksum( \
                         (self.arcFlows['israel_solar','israel_generation',k,t] \
-                            + self.arcFlows['israel_wind','israel_generation',k,t] \
-                                + self.arcFlows['israel_battery_storage','israel_generation',k,t]) \
-                                    for k in ['electricity']
-                                        for t in self.timesteps if t in timesteps_2030),'isr_res')
+                            + self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                                + self.arcFlows['israel_wind','israel_battery_storage',k,t] \
+                                    + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                                        for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030),'isr_res')
                 
                 # [2] NATURAL GAS
                 self.model.addConstr( \
