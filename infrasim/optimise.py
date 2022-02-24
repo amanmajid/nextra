@@ -399,12 +399,20 @@ class nextra():
 
                 # constrain ramping rate
                 if 'hour' in self.flows.columns:
+                    # case if positive change
                     self.model.addConstrs(
                         (self.arcFlows.sum(i,'*',k,t) - \
-                             self.arcFlows.sum(i,'*',k,t-1) <= ramping_rate \
-                                 for t in self.timesteps if t>1 \
-                                     for k in ['electricity'] \
-                                         for i in idx_nodes),technology+'_supply')
+                            self.arcFlows.sum(i,'*',k,t-1) <= ramping_rate \
+                                for t in self.timesteps if t>1 \
+                                    for k in ['electricity'] \
+                                        for i in idx_nodes),technology+'_supply')
+                    # case if negative change
+                    self.model.addConstrs(
+                        (self.arcFlows.sum(i,'*',k,t) - \
+                            self.arcFlows.sum(i,'*',k,t-1) >= -ramping_rate \
+                                for t in self.timesteps if t>1 \
+                                    for k in ['electricity'] \
+                                        for i in idx_nodes),technology+'_supply')
 
         # open-cycle gas turbine (OCGT) generation
         # baseload_supply(technology='ocgt',ramping_rate=self.global_variables['ocgt_ramping_rate'])

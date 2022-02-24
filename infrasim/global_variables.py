@@ -20,16 +20,16 @@ global_variables = {
                     'battery_charge_hours'              : [8,9,10,11,12,13,14,15,16],
                     # -RAMPING RATE
                     # https://www.researchgate.net/post/What_is_the_typical_MW_minute_ramping_capability_for_each_type_of_reserve
-                    'ocgt_ramping_rate'                 : 1200,         # MW/h
-                    'ccgt_ramping_rate'                 : 600,          # MW/h
-                    'coal_ramping_rate'                 : 120,          # MW/h
+                    'ocgt_ramping_rate'                 : 3500,         # MW/h
+                    'ccgt_ramping_rate'                 : 3500,         # MW/h
+                    'coal_ramping_rate'                 : 240,          # MW/h
                     'solar_ramping_rate'                : 12000,        # MW/h
-                    'wind_ramping_rate'                 : 1800,         # MW/h
+                    'wind_ramping_rate'                 : 3600,         # MW/h
                     'nuclear_ramping_rate'              : 1200,         # MW/h
-                    'nat_gas_ramping_rate'              : 3000,         # MW/h
+                    'nat_gas_ramping_rate'              : 3500,         # MW/h
                     'pumped_hydro_ramping_rate'         : 12000,        # MW/h
-                    'diesel_ramping_rate'               : 120,          # MW/h
-                    'shale_ramping_rate'                : 180,          # MW/h
+                    'diesel_ramping_rate'               : 420,          # MW/h
+                    'shale_ramping_rate'                : 420,          # MW/h
                     # -DEMAND GROWTH
                     'jordan_demand_growth_rate'         : 0.03,         # From Jordan's reports
                     'israel_demand_growth_rate'         : 0.028,        # From Nurit
