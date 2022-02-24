@@ -632,13 +632,6 @@ class nextra():
                     for k in ['electricity'] \
                         for t in charging_timesteps),'bat_chg')
 
-        # # battery not charged outside of 08:00 and 16:00
-        # self.model.addConstrs(
-        #         (self.arcFlows.sum('*',j,k,t)  <= 2000 \
-        #             for j in storage_nodes if 'battery' in j \
-        #                 for k in ['electricity'] \
-        #                     for t in discharging_timesteps),'bat_dis')
-
         
         #---
         # Egyptian export to Gaza
@@ -1100,7 +1093,7 @@ class nextra():
                 #-----
                 # ISRAEL
                 #-----
-        
+
                 # [1] RES
                 self.model.addConstr( \
                     gp.quicksum( \
@@ -1111,10 +1104,11 @@ class nextra():
                     == \
                     gp.quicksum( \
                         (self.arcFlows['israel_solar','israel_generation',k,t] \
-                            + self.arcFlows['israel_solar','israel_generation',k,t] \
-                                + self.arcFlows['israel_battery_storage','israel_generation',k,t]) \
-                                    for k in ['electricity']
-                                        for t in self.timesteps if t in timesteps_2030),'isr_res')
+                            + self.arcFlows['israel_solar','israel_battery_storage',k,t] \
+                                + self.arcFlows['israel_wind','israel_battery_storage',k,t] \
+                                    + self.arcFlows['israel_wind','israel_generation',k,t]) \
+                                        for k in ['electricity']
+                                            for t in self.timesteps if t in timesteps_2030),'isr_res')
                 
                 # [2] NATURAL GAS
                 self.model.addConstr( \
