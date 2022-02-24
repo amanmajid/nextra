@@ -278,3 +278,97 @@ class nextra_postprocess():
         # print size difference
         # print('Removed ' + str(size_before - size_after) + ' rows')
         return df
+
+    
+    def plot_battery_charge(self,node,days=10,month=6,year=2030):
+        '''Plot battery charge and discharge
+        '''
+    
+
+    def plot_solar_capacity_factor(self,node='all',ax=None,color='teal'):
+        '''Plot daily average capacity factors
+        '''
+        s = self.results_edge_flows.copy()
+        c = self.get_capacities().copy()
+
+        if node == 'all':
+            s = s.loc[s.from_id.str.contains('solar')]
+            c = c.loc[c.node.str.contains('solar')]
+        else:
+            s = s.loc[s.from_id==node]
+            c = c.loc[c.node==node]
+
+        # sum across timesteps
+        s = s.groupby(by=['timestep','hour','day','month','year']).sum().reset_index()    
+        c = c.value.sum()
+
+        # compute capacity factors
+        s['cf'] = s['value'].divide(c) * 100
+
+        # compute capacity factors monthly mean
+        s = s.groupby(by=['day','month']).mean().reset_index()
+
+        # overwrite timestep
+        s['timestep'] = s.index + 1
+        
+        if not ax:
+            f,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
+            
+        sns.lineplot(x='timestep',y='cf',data=s,label=node,ax=ax,color=color)
+        # plot mean
+        ax.axhline(y=s.cf.mean(), color='black', linestyle='--')
+    
+
+    def plot_wind_capacity_factor(self,node='all',ax=None,color='teal'):
+        '''Plot daily average capacity factors
+        '''
+        s = self.results_edge_flows.copy()
+        c = self.get_capacities().copy()
+
+        if node == 'all':
+            s = s.loc[s.from_id.str.contains('wind')]
+            c = c.loc[c.node.str.contains('wind')]
+        else:
+            s = s.loc[s.from_id==node]
+            c = c.loc[c.node==node]
+
+        # sum across timesteps
+        s = s.groupby(by=['timestep','hour','day','month','year']).sum().reset_index()    
+        c = c.value.sum()
+
+        # compute capacity factors
+        s['cf'] = s['value'].divide(c) * 100
+
+        # compute capacity factors monthly mean
+        s = s.groupby(by=['day','month']).mean().reset_index()
+
+        # overwrite timestep
+        s['timestep'] = s.index + 1
+        
+        if not ax:
+            f,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
+            
+        sns.lineplot(x='timestep',y='cf',data=s,label=node,ax=ax,color=color)
+        # plot mean
+        ax.axhline(y=s.cf.mean(), color='black', linestyle='--')
+
+    
+    def plot_battery_storage_volume(self,node='all',days=1,month=6,year=2030,ax=None,color='teal'):
+        '''Plot battery storage volumes as a time series
+        '''
+        t = self.results_storages.copy()
+        c = self.results_capacities.copy()
+
+        if node == 'all':
+            t = t.loc[t.node.str.contains('battery')].reset_index(drop=True)
+            c = c[c.node.str.contains('storage')].value.sum()
+        else:
+            t = t.loc[t.node==node].reset_index(drop=True)
+            c = c[c.node==node].value.max()
+        # index by time
+        t = t.loc[(t.month==month) & (t.year==year) & (t.day<=days)].reset_index(drop=True)
+        # plot
+        if not ax:
+            f,ax = plt.subplots(nrows=1,ncols=1,figsize=(8,4))
+        sns.lineplot(x='timestep',y='value',data=t,color='teal',ax=ax)
+        ax.axhline(y=c,color='black',linestyle='--')

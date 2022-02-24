@@ -141,6 +141,12 @@ def get_timesteps_by_year(self,year):
     return self.time_ref[self.time_ref.year==year].timestep.to_list()
 
 
+def get_timesteps_battery_charging(self,year):
+    '''Return all timesteps (t) for battery charging times
+    '''
+    return self.time_ref[self.time_ref.year==year].timestep.to_list()
+
+
 def get_flow_at_nodes(flows,list_of_nodes):
     '''Return flows of specific nodes 
     '''
