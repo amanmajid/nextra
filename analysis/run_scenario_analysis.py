@@ -30,7 +30,8 @@ timesteps=24*31#7000
 super_source=False
 pprint=False
 save_figures=True
-super_sink=True
+super_sink=False
+super_source=False
 
 infrasim_init_directories()
 
@@ -49,7 +50,7 @@ for s in scenarios:
                        scenario=s,
                        energy_objective=scenarios[s],
                        timesteps=timesteps,
-                       #super_source=True,
+                       super_source=super_source,
                        super_sink=super_sink,
                        #res_factor=99,
                        #model_name='meow',
