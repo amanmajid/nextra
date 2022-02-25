@@ -22,7 +22,7 @@ from tqdm import tqdm
 #%%
 # Forecast energy demands
 
-def time_series_forecast(flows,fields,start,end,freq='H',exceptions=None):
+def time_series_forecast(flows,fields,start,end,freq='H',growth_scenario='low',exceptions=None):
     '''
     Time series forecasting model
 
@@ -63,6 +63,13 @@ def time_series_forecast(flows,fields,start,end,freq='H',exceptions=None):
     if 'hour' in flows.columns.tolist():
         new_flows['hour'] = new_flows.date.dt.hour
 
+    # define growth rates
+    growth_rate_dict = { #isr,jor,pal
+                        'low'       : [0.028,0.030,0.050],
+                        'medium'    : [0.030,0.040,0.055],
+                        'high'      : [0.035,0.050,0.060],
+                        }
+
     # loop over each column
     for f in fields:
         new_flows[f] = float(0)
@@ -78,20 +85,16 @@ def time_series_forecast(flows,fields,start,end,freq='H',exceptions=None):
                 baseline_value = numpy.nan
 
             # Exceptions
-            if f in exceptions:
-                new_flows.at[i,f] = baseline_value
-            else:
-                # get demand growth
-                if f.__contains__('jordan'):
-                    growth_rate = 0.04 #global_variables['jordan_demand_growth_rate'] 
-                elif f.__contains__('israel'):
-                    growth_rate = 0.038 #global_variables['israel_demand_growth_rate']
-                elif f.__contains__('west_bank'):
-                    growth_rate = 0.04 #global_variables['palestine_demand_growth_rate']
-                elif f.__contains__('gaza'):
-                    growth_rate = 0.04 #global_variables['palestine_demand_growth_rate']
-                # calculate
-                new_flows.at[i,f] = baseline_value * ( (1+growth_rate)**(new_flows.at[i,'year']-flows.iloc[-1]['year']) )
+            if f.__contains__('jordan'):
+                growth_rate = growth_rate_dict[growth_scenario][1] #global_variables['jordan_demand_growth_rate'] 
+            elif f.__contains__('israel'):
+                growth_rate = growth_rate_dict[growth_scenario][0] #global_variables['israel_demand_growth_rate']
+            elif f.__contains__('west_bank'):
+                growth_rate = growth_rate_dict[growth_scenario][2] #global_variables['palestine_demand_growth_rate']
+            elif f.__contains__('gaza'):
+                growth_rate = growth_rate_dict[growth_scenario][2] #global_variables['palestine_demand_growth_rate']
+            # calculate
+            new_flows.at[i,f] = baseline_value * ( (1+growth_rate)**(new_flows.at[i,'year']-flows.iloc[-1]['year']) )
 
     return new_flows
 
@@ -115,19 +118,53 @@ fields      = ['israel_energy_demand',
                'gaza_wind',
                'gaza_solar']
 
-exceptions  = ['israel_wind',
-               'israel_solar',
-               'jordan_wind',
-               'jordan_solar',
-               'west_bank_wind',
-               'west_bank_solar',
-               'gaza_wind',
-               'Gaza solar']
+# read renewables ninja data
+basepath = '../data/_raw/renewable_ninja/'
+
+# load
+data = []
+for f in os.listdir(basepath):
+    if '.csv' in f:
+        d = pd.read_csv(basepath+f,skiprows=3)
+        d['region'] = f.split('.')[0].split('_')[0]
+        d['type'] = f.split('.')[0].split('_')[1]
+        data.append(d)
+data = pd.concat(data,ignore_index=True)
+
+# format datetime
+data['time'] = pd.to_datetime(data['time'])
+data['hour'] = data['time'].dt.hour 
+data['day'] = data['time'].dt.day
+data['month'] = data['time'].dt.month
+
+# reindex
+data = data[['hour','day','month','region','type','electricity']]
 
 # run
-new_flows   = time_series_forecast(flows,fields,start,end,freq='H',exceptions=exceptions)
-# save
-new_flows.to_csv('../data/nextra/nodal_flows/processed_flows.csv',index=False)
-# get an index of 2030
-new_flows= new_flows.loc[new_flows.year==2030].reset_index(drop=True)
-new_flows.to_csv('../data/nextra/nodal_flows/processed_flows_2030_high.csv',index=False)
+for g in ['low','medium','high']:
+    print('Running: ' + g)
+    new_flows   = time_series_forecast(flows,fields,start,end,freq='H',growth_scenario=g,exceptions=None)
+    # save
+    new_flows.to_csv('../data/nextra/nodal_flows/processed_flows_' + g + '.csv',index=False)
+    ##########
+    # get an index of 2030
+    new_flows= new_flows.loc[new_flows.year==2030].reset_index(drop=True)
+    ##########
+    # merge with res ninja data
+    print('merging with renewable ninja data...')
+    for c in new_flows.columns:
+        print('Processing: ' + c)
+        if 'wind' in c or 'solar' in c:
+            for i in new_flows[c].index:
+                idx = data.loc[(data.hour == new_flows.loc[i,'hour']) & \
+                               (data.day == new_flows.loc[i,'day']) & \
+                               (data.month == new_flows.loc[i,'month']) ]
+                            
+                val = idx.loc[ (idx.region.str.contains(c.split('_')[0])) & \
+                               (idx.type.str.contains(c.split('_')[-1])), 'electricity'].iloc[0]
+                
+                
+                new_flows.loc[i,c] = val
+    print('done')
+    # save
+    new_flows.to_csv('../data/nextra/nodal_flows/processed_flows_2030_' + g + '.csv',index=False)

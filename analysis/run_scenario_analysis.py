@@ -22,7 +22,7 @@ def save_object(obj, filename):
 #File paths
 nodes = '../data/nextra/spatial/network/nodes.shp'
 edges = '../data/nextra/spatial/network/edges.shp'
-flows = '../data/nextra/nodal_flows/processed_flows_2030_res_nin.csv'
+flows = '../data/nextra/nodal_flows/processed_flows_2030_low.csv'
 
 
 # Params
@@ -37,10 +37,10 @@ curtailment=True
 infrasim_init_directories()
 
 scenarios = {'BAS' : False,
-             'BAU' : True,
+             #'BAU' : True,
              'NCO' : True,
-             'EAG' : True,
-             'COO' : True,
+             #'EAG' : True,
+             #'COO' : True,
              #'UTO' : True,
             }
 

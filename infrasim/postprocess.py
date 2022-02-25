@@ -387,7 +387,8 @@ class nextra_postprocess():
         if not blend_curtailment:
             pass
         else:
-            flows.loc[flows.to_id.str.contains('curtail'),'from_id'] = region + '_' + 'curtailed'
+            flows.loc[(flows.to_id.str.contains('curtail')) \
+                      & (flows.from_id.str.contains(region)),'from_id'] = region + '_' + 'curtailed'
         # identify battery charge/discharge
         flows['state'] = ''
         flows['prefix'] = flows['from_id'].str.split('_',expand=True)[0]
