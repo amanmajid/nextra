@@ -27,23 +27,23 @@ nodes <- data.frame(
 links$IDsource <- match(links$from_territory, nodes$name)-1 
 links$IDtarget <- match(links$to_territory, nodes$name)-1
 
-node_colour <- 'd3.scaleOrdinal().domain(["EGY_SUPPLY", 
-                                          "GZA_SUPPLY",
-                                          "GZA_DEMAND", 
-                                          "ISR_SUPPLY", 
-                                          "ISR_DEMAND", 
-                                          "JOR_SUPPLY", 
-                                          "JOR_DEMAND", 
-                                          "WBK_SUPPLY", 
-                                          "WBK_DEMAND",]).range(["black",
-                                                                "#FFC50F" ,
-                                                                "#FFC50F", 
-                                                                "#537BEF", 
-                                                                "#537BEF", 
-                                                                "#27B02B", 
-                                                                "#27B02B", 
-                                                                "#F43D3D",
-                                                                "#F43D3D"])'
+node_colour <- 'd3.scaleOrdinal().domain(["Egypt Supply", 
+                                          "Gaza supply",
+                                          "Gaza demand", 
+                                          "Israel supply", 
+                                          "Israel demand", 
+                                          "Jordan supply", 
+                                          "Jordan demand", 
+                                          "West Bank supply", 
+                                          "West Bank demand",]).range(["black",
+                                                                      "#FFC50F" ,
+                                                                      "#FFC50F", 
+                                                                      "#537BEF", 
+                                                                      "#537BEF", 
+                                                                      "#27B02B", 
+                                                                      "#27B02B", 
+                                                                      "#F43D3D",
+                                                                      "#F43D3D"])'
 
 
 edge_colour <- 'd3.scaleOrdinal().domain(["type_a",
@@ -67,7 +67,7 @@ p <- sankeyNetwork(Links = links,
                    units = 'kWh',
                    nodePadding = 20,
                    nodeWidth = 15,
-                   colourScale=my_color,
+                   #colourScale=my_color,
                    sinksRight=FALSE)
 
 p
