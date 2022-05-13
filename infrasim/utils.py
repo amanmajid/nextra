@@ -22,6 +22,7 @@ import datetime
 import os
 import shutil
 import snkit
+import time
 from shapely.geometry import Point
 
 # relative imports
@@ -589,6 +590,19 @@ def lowercase_columns(dataframe):
     '''
     dataframe.columns = [x.lower() for x in dataframe.columns]
     return dataframe
+
+
+def time_elapsed(start_time):
+    '''Return time elapsed
+    '''
+    end = time.time()
+    temp = end-start_time
+    hours = temp//3600
+    temp = temp - 3600*hours
+    minutes = temp//60
+    seconds = temp - 60*minutes
+    #print('%dh:%dm:%ds' %(hours,minutes,seconds))
+    return hours,minutes,seconds
 
 
 

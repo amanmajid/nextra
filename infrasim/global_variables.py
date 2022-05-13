@@ -16,7 +16,7 @@ global_variables = {
                     'peak_demand_reserve'               : 0.2,
                     'maximum_curtailment'               : 0.01,         # Percentage of total generation (zero curtailment usually makes model infeasible)
                     # -BATTERY PARAMS
-                    'battery_capacity_min_percentage'   : 0.00,         # Percentage of total renewable capacity (solar + wind) installed
+                    'battery_capacity_min_percentage'   : 0.10,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_capacity_max_percentage'   : 0.80,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_charge_rate'               : 200*24,       # MW
                     'battery_discharge_rate'            : 300*24,       # MW

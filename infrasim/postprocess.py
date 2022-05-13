@@ -170,6 +170,7 @@ class nextra_postprocess():
         # plot
         idx.plot.area(ax=kwargs.get("ax", None),
                       #cmap=kwargs.get("cmap", 'YlGnBu'),
+                      figsize=kwargs.get("figsize", (8,5)),
                       color=[technology_color_dict.get(x, '#333333') for x in idx.columns],
                       linewidth=kwargs.get("linewidth", 0),
                       alpha=kwargs.get("alpha", 1),)
