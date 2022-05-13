@@ -581,43 +581,6 @@ class nextra():
 
 
 
-            # # constrain: [Supply]-[Demand]=0.2*[Supply]
-            # self.model.addConstr(
-            #     gp.quicksum(
-            #         # supply
-            #         ((self.arcFlows['gaza_solar','gaza_generation',k,t] \
-            #             + self.arcFlows['gaza_solar','curtailment',k,t] \
-            #             + self.arcFlows['gaza_solar','gaza_battery_storage',k,t] \
-            #             + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
-            #             + self.arcFlows['gaza_natural_gas','gaza_generation',k,t]) \
-            #         # demand
-            #         - (self.arcFlows['gaza_generation','gaza_energy_demand',k,t]))
-            #                 for k in self.commodities
-            #                     for t in self.timesteps)
-            #     <= \
-            #     gp.quicksum(
-            #         (0.2 * \
-            #         (self.arcFlows['gaza_solar','gaza_generation',k,t] \
-            #             + self.arcFlows['gaza_solar','curtailment',k,t] \
-            #             + self.arcFlows['gaza_solar','gaza_battery_storage',k,t] \
-            #             + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
-            #             + self.arcFlows['gaza_natural_gas','gaza_generation',k,t])
-            #                 for k in self.commodities
-            #                     for t in self.timesteps)),'max_curtail')
-
-                # # net demand = supply - demand
-                # ((self.arcFlows.sum('gaza_solar','gaza_generation',k,t) \
-                #     + self.arcFlows.sum('gaza_natural_gas','gaza_generation',k,t) \
-                #         + self.arcFlows.sum('gaza_diesel','gaza_generation',k,t) \
-                #             + self.arcFlows.sum('gaza_solar','curtailment',k,t)) \
-                #                 - (self.arcFlows.sum('*','gaza_energy_demand',k,t)) \
-                #                     <= 0.2 * (self.arcFlows.sum('gaza_solar','gaza_generation',k,t) \
-                #                                 + self.arcFlows.sum('gaza_natural_gas','gaza_generation',k,t) \
-                #                                     + self.arcFlows.sum('gaza_diesel','gaza_generation',k,t) \
-                #                                         + self.arcFlows.sum('gaza_solar','curtailment',k,t) \
-                #                                             for t in self.timesteps \
-                #                                                 for k in self.commodities),'max_curtail')
-
         #---
         # Battery storage requirements
         #---
