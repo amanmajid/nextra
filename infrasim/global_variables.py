@@ -14,12 +14,13 @@ global_variables = {
                     'baseload_coefficient'              : 0.5,
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
+                    'maximum_curtailment'               : 0.01,         # Percentage of total generation (zero curtailment usually makes model infeasible)
                     # -BATTERY PARAMS
-                    'battery_capacity_min_percentage'   : 0.10,         # Percentage of total renewable capacity (solar + wind) installed
-                    'battery_capacity_max_percentage'   : 0.40,         # Percentage of total renewable capacity (solar + wind) installed
+                    'battery_capacity_min_percentage'   : 0.00,         # Percentage of total renewable capacity (solar + wind) installed
+                    'battery_capacity_max_percentage'   : 0.80,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_charge_rate'               : 200*24,       # MW
                     'battery_discharge_rate'            : 300*24,       # MW
-                    'battery_charge_hours'              : [8,9,10,11,12,13,14,15,16],
+                    'battery_charge_hours'              : [9,10,11,12,13,14],
                     # -RAMPING RATE
                     # https://www.researchgate.net/post/What_is_the_typical_MW_minute_ramping_capability_for_each_type_of_reserve
                     'ocgt_ramping_rate'                 : 3500,         # MW/h

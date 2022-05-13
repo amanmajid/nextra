@@ -13,6 +13,8 @@ from infrasim.optimise import *
 from infrasim.utils import *
 
 
+print('ready, baby')
+
 # save
 def save_object(obj, filename):
     with open(filename, 'wb') as outp:  # Overwrites any existing file.
@@ -26,7 +28,7 @@ flows = '../data/nextra/nodal_flows/processed_flows_2030_low.csv'
 
 
 # Params
-timesteps=None#24*30
+timesteps=24*30#7000
 super_source=False
 pprint=False
 save_figures=True
@@ -37,7 +39,7 @@ curtailment=True
 infrasim_init_directories()
 
 scenarios = {'BAS' : False,
-             'BAU' : True,
+             #'BAU' : True,
              'NCO' : True,
              #'EAG' : True,
              #'COO' : True,
