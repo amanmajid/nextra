@@ -20,7 +20,7 @@ import warnings
 import plotly.io as pio
 import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-
+pio.renderers.default = 'iframe'
 
 init_notebook_mode(connected=True)
 
@@ -105,6 +105,24 @@ class nextra_postprocess():
         final_capacity['final_capacity']    = final_capacity['value']
         final_capacity['capacity_change']   = final_capacity['final_capacity'] - final_capacity['starting_capacity']
         return final_capacity[['node','capacity_change','technology','territory']]
+    
+
+    def get_battery_charging_timesteps(self):
+        '''Return timesteps in which battery is charged as a dataframe
+        '''
+        r = self.results_edge_flows.copy()
+        r = r.loc[ (r.from_id.str.contains('jordan_battery')) & (r.hour.isin(global_variables['battery_charge_hours'])) ]
+        r = r.sort_values(by=['day','month'])
+
+        hour_mins = r.groupby(by=['day','month']).min().reset_index()
+        hour_maxs = r.groupby(by=['day','month']).max().reset_index()
+
+        hour_mins['vtype'] = 't1'
+        hour_maxs['vtype'] = 't2'
+
+        r = pd.concat([hour_mins,hour_maxs],ignore_index=True).sort_values(by=['month','day']).reset_index(drop=True)
+        r = r[['day','month','timestep','vtype']]
+        return r.pivot_table('timestep',['day','month'],'vtype').reset_index()[['day','month','t1','t2']]
 
 
     def compute_costs(self,discount_rate=0.68,ignore_negatives=True):
@@ -376,8 +394,31 @@ class nextra_postprocess():
         ax.axhline(y=100,color='black',linestyle='--')
         ax.set_ylabel('SOC [%]')
 
+
+    def plot_total_supply(self,as_percent=True,**kwargs):
+        '''Visualise total supply by technology (including curtailment)
+        '''
+        c = map_attributes(self,self.results_edge_flows).copy()
+        c = c.loc[ (c.to_id.str.contains('generation')) | (c.to_id.str.contains('curtailment')) | (c.to_id.str.contains('battery')) ]
+        c = c.loc[~c.from_id.str.contains('battery')].reset_index(drop=True)
+        c.loc[(c.to_id.str.contains('curtailment')),'technology'] = 'Curtailment'
+        c = c.groupby(by='technology').sum().reset_index()
+        c = c.sort_values(by='value').reset_index(drop=True)
+        c = c.pivot_table(columns=['technology'],values='value')
+        if not as_percent:
+            pass
+        else:
+            c = c.divide(c.sum(axis=1).iloc[0])*100
+        # plot
+        ax = c.plot.bar(stacked=kwargs.get("stacked", False),
+                        figsize=kwargs.get("figsize", (8,5)),
+                        cmap=kwargs.get("cmap", 'RdYlGn'),
+                        edgecolor='black')
+        for p in ax.patches:
+            ax.annotate(str(np.round(p.get_height(),decimals=2)) + '%', (p.get_x() * 1.05, p.get_height() * 1.02))
+
     
-    def plot_supply_curve(self,region='israel',days=1,month=6,year=2030,ax=None,blend_curtailment=True):
+    def plot_supply_curve(self,region='israel',days=1,month=6,year=2030,ax=None,blend_curtailment=True,shade_battery_charge=True):
         '''Plot supply and demand curves for a given region
         '''
         flows = self.results_edge_flows.copy()
@@ -449,3 +490,12 @@ class nextra_postprocess():
                     linewidth=1,
                     color=[supply_color_dict.get(x, '#333333') for x in idx.columns],
                     alpha=0.7)
+
+        # shade battery charge
+        if not shade_battery_charge:
+            pass
+        else:
+            charging_timesteps = self.get_battery_charging_timesteps()
+            for i in charging_timesteps.index:
+                plt.axvspan(charging_timesteps.loc[i].t1, charging_timesteps.loc[i].t2, 
+                            facecolor='white', edgecolor='black', alpha=0.4,zorder=0)

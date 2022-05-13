@@ -563,29 +563,47 @@ class nextra():
         #       if +ive: we have excess supply
         #       if -ive: we have insufficient supply
 
-        # if not self.curtailment:
-        #     pass
-        # else:
-        #     # constrain
-        #     self.model.addConstr(
-        #         gp.quicksum(
-        #             # supply - demand
-        #             ((self.arcFlows['gaza_solar','gaza_generation',k,t] \
-        #                 + self.arcFlows['gaza_solar','curtailment',k,t] \
-        #                 + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
-        #                 + self.arcFlows['gaza_natural_gas','gaza_generation',k,t]) \
-        #                 - (self.arcFlows['gaza_generation','gaza_energy_demand',k,t]))
-        #                     for k in self.commodities
-        #                         for t in self.timesteps)
-        #         <= \
-        #         gp.quicksum(
-        #             (0.0 * \
-        #                 (self.arcFlows['gaza_solar','gaza_generation',k,t] \
-        #                     + self.arcFlows['gaza_solar','curtailment',k,t] \
-        #                     + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
-        #                     + self.arcFlows['gaza_natural_gas','gaza_generation',k,t])
-        #                         for k in self.commodities
-        #                             for t in self.timesteps)),'max_curtail')
+        if not self.curtailment:
+            pass
+        else:
+            self.model.addConstr(
+                gp.quicksum(
+                    # total curtailment
+                    (self.arcFlows['gaza_solar','curtailment',k,t]) \
+                        for k in self.commodities
+                                for t in self.timesteps)
+                <= \
+                gp.quicksum(
+                    (0.01 * \
+                        (self.arcFlows['gaza_generation','gaza_energy_demand',k,t]) \
+                            for k in self.commodities
+                                    for t in self.timesteps)),'max_curtail')
+
+
+
+            # # constrain: [Supply]-[Demand]=0.2*[Supply]
+            # self.model.addConstr(
+            #     gp.quicksum(
+            #         # supply
+            #         ((self.arcFlows['gaza_solar','gaza_generation',k,t] \
+            #             + self.arcFlows['gaza_solar','curtailment',k,t] \
+            #             + self.arcFlows['gaza_solar','gaza_battery_storage',k,t] \
+            #             + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
+            #             + self.arcFlows['gaza_natural_gas','gaza_generation',k,t]) \
+            #         # demand
+            #         - (self.arcFlows['gaza_generation','gaza_energy_demand',k,t]))
+            #                 for k in self.commodities
+            #                     for t in self.timesteps)
+            #     <= \
+            #     gp.quicksum(
+            #         (0.2 * \
+            #         (self.arcFlows['gaza_solar','gaza_generation',k,t] \
+            #             + self.arcFlows['gaza_solar','curtailment',k,t] \
+            #             + self.arcFlows['gaza_solar','gaza_battery_storage',k,t] \
+            #             + self.arcFlows['gaza_diesel','gaza_generation',k,t] \
+            #             + self.arcFlows['gaza_natural_gas','gaza_generation',k,t])
+            #                 for k in self.commodities
+            #                     for t in self.timesteps)),'max_curtail')
 
                 # # net demand = supply - demand
                 # ((self.arcFlows.sum('gaza_solar','gaza_generation',k,t) \
@@ -596,7 +614,7 @@ class nextra():
                 #                     <= 0.2 * (self.arcFlows.sum('gaza_solar','gaza_generation',k,t) \
                 #                                 + self.arcFlows.sum('gaza_natural_gas','gaza_generation',k,t) \
                 #                                     + self.arcFlows.sum('gaza_diesel','gaza_generation',k,t) \
-                #                                         + self.arcFlows.sum('gaza_solar','curtailment',k,t)) \
+                #                                         + self.arcFlows.sum('gaza_solar','curtailment',k,t) \
                 #                                             for t in self.timesteps \
                 #                                                 for k in self.commodities),'max_curtail')
 
@@ -639,7 +657,7 @@ class nextra():
                             for t in self.timesteps),'bat_min')
 
         #---
-        # Battery inflow cannot exceed volume
+        # Battery inflow cannot exceed capacity
         self.model.addConstrs( \
             (self.arcFlows.sum('*',j,k,t) <= self.capacity_indices.sum(j,k,t) \
                 for k in self.commodities \
@@ -647,7 +665,7 @@ class nextra():
                         for j in battery_nodes),'stor_inflow') 
 
         #---
-        # Battery outflow cannot exceed volume
+        # Battery outflow cannot exceed capacity
         self.model.addConstrs( \
             (self.arcFlows.sum(i,'*',k,t) <= self.capacity_indices.sum(i,k,t) \
                 for k in self.commodities \
@@ -673,12 +691,19 @@ class nextra():
                  for i,j,k,t in self.arcFlows \
                      if 'battery' in j),'battery_discharge_rate')
 
-        # battery charged between 08:00 and 16:00
+        # battery charging window
         self.model.addConstrs(
             (self.arcFlows.sum(i,'*',k,t) == 0 \
                 for i in battery_nodes \
                     for k in ['electricity'] \
                         for t in charging_timesteps),'bat_chg')
+        
+        # battery discharging window
+        self.model.addConstrs(
+            (self.arcFlows.sum('*',j,k,t) == 0 \
+                for j in battery_nodes \
+                    for k in ['electricity'] \
+                        for t in self.timesteps if t not in charging_timesteps),'bat_dischg')
 
         
         #---
