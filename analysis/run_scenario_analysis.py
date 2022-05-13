@@ -2,6 +2,7 @@ import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pickle 
+import time
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -26,7 +27,7 @@ flows = '../data/nextra/nodal_flows/processed_flows_2030_low.csv'
 
 
 # Params
-timesteps=None#24*30
+timesteps=24*30
 super_source=False
 pprint=False
 save_figures=True
@@ -39,14 +40,14 @@ infrasim_init_directories()
 scenarios = {'BAS' : False,
              'BAU' : True,
              'NCO' : True,
-             #'EAG' : True,
-             #'COO' : True,
+             'EAG' : True,
+             'COO' : True,
              #'UTO' : True,
             }
 
 results = {}
 for s in scenarios:
-        
+    start_time = time.time()
     model_run = nextra(nodes,edges,flows,
                        scenario=s,
                        energy_objective=scenarios[s],
@@ -72,7 +73,9 @@ for s in scenarios:
         model_results.results_costs['scenario']            = s
         # append results
         results[s] = model_results
-        print('> Completed: ' + s)
+        # get time
+        hours,minutes,seconds = time_elapsed(start_time)
+        print('> Completed: ' + s + ' in ' + '%dh:%dm:%ds' %(hours,minutes,seconds))
     except:
         print('> FAILED! ' + s)
 

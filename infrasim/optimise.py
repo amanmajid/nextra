@@ -558,26 +558,41 @@ class nextra():
         # Limiting curtailment
         #---
 
-        # Expressed as a function of net demand
-        #   net_demand = total_supply - total_demand 
-        #       if +ive: we have excess supply
-        #       if -ive: we have insufficient supply
+        # Expressed as a function of demand
+        #   Constrained as: SUM_CURTAILMENT <= x * SUM_DEMAND
+        #       where, x is a fractional quantity defined in global variables
 
         if not self.curtailment:
             pass
         else:
             self.model.addConstr(
                 gp.quicksum(
-                    # total curtailment
-                    (self.arcFlows['gaza_solar','curtailment',k,t]) \
-                        for k in self.commodities
-                                for t in self.timesteps)
+                    # sum of curtailment
+                    (self.arcFlows['gaza_solar','curtailment',k,t] \
+                        + self.arcFlows['israel_solar','curtailment',k,t] \
+                        + self.arcFlows['israel_wind','curtailment',k,t] \
+                        + self.arcFlows['jordan_solar','curtailment',k,t] \
+                        + self.arcFlows['jordan_wind','curtailment',k,t] \
+                        + self.arcFlows['west_bank_solar','curtailment',k,t] \
+                        + self.arcFlows['west_bank_wind','curtailment',k,t] \
+                            for k in self.commodities
+                                    for t in self.timesteps))
                 <= \
                 gp.quicksum(
-                    (0.01 * \
-                        (self.arcFlows['gaza_generation','gaza_energy_demand',k,t]) \
+                    (global_variables['maximum_curtailment'] * \
+                        (self.arcFlows['gaza_generation','gaza_energy_demand',k,t] \
+                            + self.arcFlows['israel_generation','gaza_energy_demand',k,t]
+                            + self.arcFlows['israel_generation','israel_energy_demand',k,t]
+                            + self.arcFlows['israel_generation','jordan_energy_demand',k,t]
+                            + self.arcFlows['israel_generation','west_bank_energy_demand',k,t]
+                            + self.arcFlows['jordan_generation','israel_energy_demand',k,t]
+                            + self.arcFlows['jordan_generation','jordan_energy_demand',k,t]
+                            + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t]
+                            + self.arcFlows['west_bank_generation','israel_energy_demand',k,t]
+                            + self.arcFlows['west_bank_generation','jordan_energy_demand',k,t]
+                            + self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t]) \
                             for k in self.commodities
-                                    for t in self.timesteps)),'max_curtail')
+                                for t in self.timesteps)),'max_curtail')
 
 
 
@@ -877,7 +892,7 @@ class nextra():
         
         # Jordan wind ratio
         self.model.addConstrs(
-            (self.capacity_indices['jordan_solar',k,t] * 0.3 >= self.capacity_indices['jordan_wind',k,t]\
+            (self.capacity_indices['jordan_solar',k,t] * 0.8 >= self.capacity_indices['jordan_wind',k,t]\
                 for k in ['electricity']\
                     for t in self.timesteps),'jor_wind')
         
