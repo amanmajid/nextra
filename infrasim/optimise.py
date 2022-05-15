@@ -722,12 +722,12 @@ class nextra():
         #---
         
         # Shale output must be at least half of capacity
-        self.model.addConstrs(
-            (self.arcFlows.sum(i,'*',k,t)  \
-                >= self.global_variables['jor_min_shale_output'] * self.capacity_indices.sum(i,k,t)\
-                    for i in ['jordan_shale'] \
-                        for k in ['electricity'] \
-                            for t in self.timesteps),'shale_base')
+        # self.model.addConstrs(
+        #     (self.arcFlows.sum(i,'*',k,t)  \
+        #         >= self.global_variables['jor_min_shale_output'] * self.capacity_indices.sum(i,k,t)\
+        #             for i in ['jordan_shale'] \
+        #                 for k in ['electricity'] \
+        #                     for t in self.timesteps),'shale_base')
         
         # Natural gas output must be at least half of capacity
         self.model.addConstrs(
@@ -839,6 +839,15 @@ class nextra():
                  for n in ['jordan_natural_gas']\
                      for k in ['electricity']\
                          for t in self.timesteps),'jor_sol2')
+        
+        # ZERO SHALE IN JORDAN
+        #   >>> temporary to debug
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] == 0\
+                 for n in ['jordan_shale']\
+                     for k in ['electricity']\
+                         for t in self.timesteps\
+                             if t in timesteps_2030),'jor_shale')
 
 
         #---

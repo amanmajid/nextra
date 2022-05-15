@@ -14,7 +14,7 @@ global_variables = {
                     'baseload_coefficient'              : 0.5,
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
-                    'maximum_curtailment'               : 0.01,         # Percentage of total generation (zero curtailment usually makes model infeasible)
+                    'maximum_curtailment'               : 0.20,         # Percentage of total generation (zero curtailment usually makes model infeasible)
                     # -BATTERY PARAMS
                     'battery_capacity_min_percentage'   : 0.10,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_capacity_max_percentage'   : 0.80,         # Percentage of total renewable capacity (solar + wind) installed
