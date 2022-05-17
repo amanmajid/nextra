@@ -27,7 +27,7 @@ flows = '../data/nextra/nodal_flows/processed_flows_2030_low.csv'
 
 
 # Params
-timesteps=24*30
+timesteps=None
 super_source=False
 pprint=False
 save_figures=True
