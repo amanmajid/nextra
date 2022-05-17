@@ -107,7 +107,7 @@ class nextra():
         if self.scenario == 'BAU' or self.scenario == 'BAS':
             # Business as usual
             # Jordan ->
-            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", jordan_to_westbank)
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
             self.connectivity['jordan_to_israel']       = 0
             #Israel ->
             self.connectivity['israel_to_westbank']     = kwargs.get("israel_to_westbank", flow_max)
@@ -135,7 +135,7 @@ class nextra():
         elif self.scenario == 'EAG':
             # Extended arab grid: palestine turns to jordan; israel an energy island
             # Jordan ->
-            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", jordan_to_westbank)
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
             self.connectivity['jordan_to_israel']       = 0
             #Israel ->
             self.connectivity['israel_to_westbank']     = 0
@@ -143,14 +143,14 @@ class nextra():
             self.connectivity['israel_to_gaza']         = 0
             #West Bank ->
             self.connectivity['westbank_to_israel']     = 0
-            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", jordan_to_westbank)
+            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", flow_max)
             #Egypt ->
             self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", egypt_to_gaza)
         elif self.scenario == 'COO' or self.scenario == 'UTO':
             # Cooperation between each state
             # --        
             # Jordan ->
-            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", jordan_to_westbank)
+            self.connectivity['jordan_to_westbank']     = kwargs.get("jordan_to_westbank", flow_max)
             self.connectivity['jordan_to_israel']       = kwargs.get("jordan_to_israel", flow_max)
             #Israel ->
             self.connectivity['israel_to_westbank']     = kwargs.get("israel_to_westbank", flow_max)
@@ -158,7 +158,7 @@ class nextra():
             self.connectivity['israel_to_gaza']         = kwargs.get("israel_to_gaza", flow_max)
             #West Bank ->
             self.connectivity['westbank_to_israel']     = kwargs.get("westbank_to_israel", flow_max)
-            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", jordan_to_westbank)
+            self.connectivity['westbank_to_jordan']     = kwargs.get("westbank_to_jordan", flow_max)
             #Egypt ->
             self.connectivity['egypt_to_gaza']          = kwargs.get("egypt_to_gaza", egypt_to_gaza)
 
