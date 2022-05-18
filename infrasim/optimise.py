@@ -62,6 +62,9 @@ class nextra():
         # add topology to edges
         self.edges = add_toplogy(self.nodes,self.edges)
 
+        # add costs to nodes and edges
+        self = append_cost_to_network_data(self)
+
         # read flow data
         self.flows = read_flow_data(path_to_flows,
                                     year=kwargs.get("year", False),

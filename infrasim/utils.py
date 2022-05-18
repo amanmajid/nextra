@@ -325,13 +325,13 @@ def tidy_flow_data(flows):
                       value_name='value')
     
 
-def add_toplogy(nodes,edges,i='from_id',j='to_id'):
+def add_toplogy(nodes,edges,i='from_id',j='to_id',field_to_read='name'):
     '''Add i,j,k notation to edges
     '''
     #find nearest node to the START coordinates of the line -- and return the 'ID' attribute
-    edges[i] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[0]), nodes)['name'])
+    edges[i] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[0]), nodes)[field_to_read])
     #find nearest node to the END coordinates of the line -- and return the 'ID' attribute
-    edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)['name'])
+    edges[j] = edges.geometry.apply(lambda geom: snkit.network.nearest(Point(geom.coords[-1]), nodes)[field_to_read])
     return edges
 
 
@@ -523,6 +523,18 @@ def fetch_capacity_results(model_run):
     return results_capacity_indices
 
 
+def append_cost_to_network_data(self):
+    '''Append costs from global variables into network datasets
+    '''
+    self.nodes.capex    = 10**6
+    self.edges.cost     = 10**6
+    # nodes
+    for k in capex.keys():
+        self.nodes.loc[self.nodes.subtype.str.contains(k,case=False),'capex'] = capex[k]
+    # edges
+    for k in opex.keys():
+        self.edges.loc[self.edges.from_subty.str.contains(k,case=False),'cost'] = opex[k]
+    return self
 
 #---
 # Postprocessing
