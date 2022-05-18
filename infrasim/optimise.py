@@ -892,7 +892,7 @@ class nextra():
         
         # Jordan wind ratio
         self.model.addConstrs(
-            (self.capacity_indices['jordan_solar',k,t] * 0.8 >= self.capacity_indices['jordan_wind',k,t]\
+            (self.capacity_indices['jordan_solar',k,t] * 0.6 >= self.capacity_indices['jordan_wind',k,t]\
                 for k in ['electricity']\
                     for t in self.timesteps),'jor_wind')
         
