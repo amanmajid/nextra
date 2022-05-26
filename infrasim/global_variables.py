@@ -53,7 +53,7 @@ global_variables = {
                     'jor_min_gas_output'                : 0.1,          # % of capacity [ASK GROUP]
                     # -WEST BANK
                     'pal_res_target_2030'               : 0.3,          # %
-                    'pal_ng_target_2030'                : 0.7,          # %
+                    'pal_ng_target_2030'                : 0.3,          # %
                     # -GAZA
                     'gaz_res_target_2030'               : 0.3,          # %
                     'gaz_ng_target_2030'                : 0.7,          # %
