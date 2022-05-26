@@ -769,6 +769,10 @@ class nextra():
         timesteps_2030 = get_timesteps_by_year(self, year=2030)
         
         #---
+        # Emissions reductions
+        #---
+
+        #---
         # Israel's energy targets
         #---
 
@@ -893,11 +897,11 @@ class nextra():
         # CAPACITY RATIOS
         #---
         
-        # Jordan wind ratio
-        self.model.addConstrs(
-            (self.capacity_indices['jordan_solar',k,t] * 0.6 >= self.capacity_indices['jordan_wind',k,t]\
-                for k in ['electricity']\
-                    for t in self.timesteps),'jor_wind')
+        # # Jordan wind ratio
+        # self.model.addConstrs(
+        #     (self.capacity_indices['jordan_solar',k,t] * 0.2 >= self.capacity_indices['jordan_wind',k,t]\
+        #         for k in ['electricity']\
+        #             for t in self.timesteps),'jor_wind')
         
         # # Israel wind ratio
         # self.model.addConstrs(
@@ -1012,12 +1016,20 @@ class nextra():
                                 for t in self.timesteps if t in timesteps_2030),'jor_shale')
     
     
-                # #-----
-                # # WEST BANK
-                # #-----
+                #-----
+                # WEST BANK
+                #-----
         
                 # [1] RES
                 # <<<<< Does not apply >>>>>
+
+                # [2] NO CAPACITY ADDITIONS ALLOWED UNDER BAU
+                unexpandable = ['west_bank_natural_gas']
+                self.model.addConstrs(
+                    (self.capacity_indices[n,k,t] == 0\
+                        for n in unexpandable\
+                            for k in ['electricity']\
+                                for t in self.timesteps),'wb_gas_change')
         
         
                 #-----
@@ -1026,6 +1038,14 @@ class nextra():
         
                 # [1] RES
                 # <<<<< Does not apply >>>>>
+
+                # # [2] NO CAPACITY ADDITIONS ALLOWED UNDER BAU
+                # unexpandable = ['gaza_natural_gas']
+                # self.model.addConstrs(
+                #     (self.capacity_indices[n,k,t] == 0\
+                #         for n in unexpandable\
+                #             for k in ['electricity']\
+                #                 for t in self.timesteps),'gz_gas_change')
             
             
             #========================================
@@ -1256,10 +1276,10 @@ class nextra():
                                             for k in ['electricity']
                                                 for t in self.timesteps if t in timesteps_2030)
                     <= \
-                        gp.quicksum( \
-                            (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
-                                for k in ['electricity']
-                                    for t in self.timesteps if t in timesteps_2030),'wb_ss')
+                    gp.quicksum( \
+                        (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'wb_ss')
                 
                 
                 #-----
@@ -1420,8 +1440,7 @@ class nextra():
                 # JORDAN
                 #-----
 
-                # ZERO SHALE IN JORDAN
-                #   >>> temporary to debug
+                # ZERO SHALE IN JORDAN UNDER COO/UTO
                 self.model.addConstrs(
                     (self.capacity_indices[n,k,t] == 0\
                         for n in ['jordan_shale']\
@@ -1449,7 +1468,7 @@ class nextra():
                                             for j in ['west_bank_energy_demand']
                                                 for k in ['electricity']
                                                     for t in self.timesteps if t in timesteps_2030)
-                        <= \
+                        == \
                           gp.quicksum( \
                               (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
                                     for k in ['electricity']
@@ -1475,7 +1494,7 @@ class nextra():
                                             for j in ['gaza_energy_demand']
                                                 for k in ['electricity']
                                                     for t in self.timesteps if t in timesteps_2030) \
-                            <= \
+                            == \
                             gp.quicksum( \
                                 (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
                                     for k in ['electricity']

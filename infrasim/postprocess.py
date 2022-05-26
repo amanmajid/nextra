@@ -125,6 +125,16 @@ class nextra_postprocess():
         return r.pivot_table('timestep',['day','month'],'vtype').reset_index()[['day','month','t1','t2']]
 
 
+    def get_self_sufficiency(self,region='west_bank'):
+        '''Get percentage self-sufficiency for a given region
+        '''
+        df = self.results_edge_flows.copy()
+        df = df.loc[df.to_id == region + '_energy_demand'].groupby(by='from_id').sum().reset_index()
+        df['pctg_supply'] = df['value'].divide(df['value'].sum()) * 100
+        df = df[['from_id','pctg_supply']]
+        return df
+
+
     def compute_costs(self,discount_rate=0.68,ignore_negatives=True):
         '''Calculate costs (opex,capex,totex) of plans
         '''
@@ -175,6 +185,14 @@ class nextra_postprocess():
                       linewidth=kwargs.get("linewidth", 0),
                       alpha=kwargs.get("alpha", 1),)
     
+
+    def plot_self_sufficiency(self,region='west_bank'):
+        '''Plot percentage self-sufficiency for a given region
+        '''
+        df = self.get_self_sufficiency(region)
+        df.set_index('from_id').plot.bar(rot=0)
+        plt.xlabel('')
+
 
     def plot_flows_heatmap(self,var,**kwargs):
         '''Plot a heatmap from flows data (x: month, y: hour, z: var)
