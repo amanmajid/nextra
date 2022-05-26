@@ -775,7 +775,9 @@ class nextra():
         if self.scenario != 'BAS':
 
             self.model.addConstr( \
-                0.7 * 61343/(24*365) * len(self.timesteps) * 10**6 >= \
+                # here we adjust the total emissions for the number of timesteps being simulated
+                global_variables['emissions_reduction_2030'] * global_variables['BAS_emissions_in_2030'] /(24*365) * len(self.timesteps) * 10**6 >= \
+                    # sum total emissions in simulation
                     gp.quicksum( \
                         # diesel
                         (co2['Diesel'] * \

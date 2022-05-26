@@ -15,6 +15,8 @@ global_variables = {
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
                     'maximum_curtailment'               : 0.15,         # Percentage of total generation (zero curtailment usually makes model infeasible)
+                    'emissions_reduction_2030'          : 0.30,         # Percentage reduction in total emissions to 2030 relative to BAS scenario
+                    'BAS_emissions_in_2030'             : 61343,        # Total estimated CO2 emissions (tonnes) under BAS in 2030
                     # -BATTERY PARAMS
                     'battery_capacity_min_percentage'   : 0.10,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_capacity_max_percentage'   : 0.80,         # Percentage of total renewable capacity (solar + wind) installed
