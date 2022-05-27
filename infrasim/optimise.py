@@ -772,12 +772,15 @@ class nextra():
         # Emissions reductions
         #---
 
-        if self.scenario != 'BAS':
+        # 
+        emission_reduction = \
+                (1-global_variables['emissions_reduction_2030']) * (global_variables['BAS_emissions_in_2030']/(24*365)) * len(self.timesteps) * 10**6
+                #0.7 * 61343/(24*365) * len(self.timesteps) * 10**6 >= \
 
+        if self.scenario != 'BAS':
+            # constr 
             self.model.addConstr( \
-                # here we adjust the total emissions for the number of timesteps being simulated
-                global_variables['emissions_reduction_2030'] * global_variables['BAS_emissions_in_2030'] /(24*365) * len(self.timesteps) * 10**6 >= \
-                    # sum total emissions in simulation
+                emission_reduction >= \
                     gp.quicksum( \
                         # diesel
                         (co2['Diesel'] * \
@@ -1317,6 +1320,19 @@ class nextra():
                             for k in ['electricity']
                                 for t in self.timesteps if t in timesteps_2030),'wb_ss')
                 
+                # [3] CAPACITY ADDITIONS IN WEST BANK UNDER EAG
+                unexpandable = ['west_bank_natural_gas']
+                self.model.addConstrs(
+                    (self.capacity_indices[n,k,t] == 0\
+                        for n in unexpandable\
+                            for k in ['electricity']\
+                                for t in self.timesteps),'wb_gas_change')
+
+                self.model.addConstrs(
+                    (self.capacity_indices['west_bank_solar',k,t] <= 1500 \
+                        for n in unexpandable\
+                            for k in ['electricity']\
+                                for t in self.timesteps),'wb_solar_chg')
                 
                 #-----
                 # GAZA
@@ -1336,12 +1352,12 @@ class nextra():
                                         for j in ['gaza_energy_demand']
                                             for k in ['electricity']
                                                 for t in self.timesteps if t in timesteps_2030) \
-                        <= \
-                        gp.quicksum( \
-                            (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
-                                for k in ['electricity']
-                                    for t in self.timesteps if t in timesteps_2030),'gaz_ss')
-                
+                    <= \
+                    gp.quicksum( \
+                        (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                            for k in ['electricity']
+                                for t in self.timesteps if t in timesteps_2030),'gaz_ss')
+
                 #-----
                 # JORDAN AND PALESTINE INTEGRATED RES TARGET
                 #-----
