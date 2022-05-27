@@ -17,13 +17,6 @@ import pandas as pd
 import numpy as np
 import warnings
 
-import plotly.io as pio
-import plotly.graph_objs as go
-from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-pio.renderers.default = 'iframe'
-
-init_notebook_mode(connected=True)
-
 # relative imports
 from .utils import *
 from .global_variables import *
@@ -218,6 +211,13 @@ class nextra_postprocess():
     def plot_flows_sankey(self,**kwargs):
         '''Plot a sankey diagram visualising flows
         '''
+        
+        import plotly.io as pio
+        import plotly.graph_objs as go
+        from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+        pio.renderers.default = 'iframe'
+        init_notebook_mode(connected=True)
+
         # get edge flows
         flows = self.results_edge_flows.copy()
         # remove israel_gas_storage_node
