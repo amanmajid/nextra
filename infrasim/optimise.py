@@ -1338,8 +1338,31 @@ class nextra():
                 # GAZA
                 #-----
     
-                # [1] RES
-                # <<<<< Does not apply >>>>>
+                # [1] RES (hard coded as with NCO scenario)
+                self.model.addConstrs(
+                    (self.capacity_indices[n,k,t] == 2535\
+                        for n in ['gaza_solar']\
+                            for k in ['electricity']\
+                                for t in self.timesteps),'gaza_sol_hard')
+
+                self.model.addConstrs(
+                    (self.capacity_indices[n,k,t] == 2028\
+                        for n in ['gaza_battery_storage']\
+                            for k in ['electricity']\
+                                for t in self.timesteps),'gaza_sol_hard')
+
+                # self.model.addConstr( \
+                #     gp.quicksum( \
+                #         self.global_variables['gaz_res_target_2030'] * self.res_factor * \
+                #             (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                #                     for k in ['electricity']
+                #                         for t in self.timesteps if t in timesteps_2030) \
+                #     <= \
+                #     gp.quicksum( \
+                #         (self.arcFlows['gaza_solar','gaza_generation',k,t] \
+                #             + self.arcFlows['gaza_solar','gaza_battery_storage',k,t])
+                #                 for k in ['electricity']
+                #                     for t in self.timesteps if t in timesteps_2030),'gaza_res')
             
                 # [2] SELF-SUFFICIENCY
                 self.model.addConstr(
