@@ -241,7 +241,7 @@ class nextra_postprocess():
         flows['Source']     = flows.from_id.map(nodal_dict)
         flows['Target']     = flows.to_id.map(nodal_dict)
         flows['Value']      = flows.value
-        flows['Link Color'] = 'rgba(127, 194, 65, 0.2)'
+        flows['Link Color'] = 'rgba(189, 189, 189, 0.2)'
             #reindex
         flows = flows[['Source','Target','Value','Link Color']]
         count=0
@@ -277,7 +277,7 @@ class nextra_postprocess():
                 width = 0
             ),
             label =  df_nodes['Label'].dropna(axis=0, how='any'),
-            color = df_nodes['Color']
+            #color = df_nodes['Color']
             ),
             link = dict(
             source = df_links['Source'].dropna(axis=0, how='any'),
@@ -295,6 +295,7 @@ class nextra_postprocess():
 
         fig = dict(data=[data_trace], layout=layout)
         iplot(fig,validate=False)
+        return fig
 
 
     def drop_node_from_edge_flows(self,node_to_remove):

@@ -760,6 +760,22 @@ class nextra():
                     for i in ['gaza_natural_gas']\
                         for k in ['electricity']\
                             for t in self.timesteps),'ng_base')
+        
+
+        #---
+        # Prevent renewable deconstruction 
+        #---
+        renewable_assets = ['israel_solar','israel_wind',
+                            'west_bank_solar','west_bank_wind',
+                            'jordan_solar','jordan_wind',
+                            'gaza_solar',#'gaza_wind'
+                            ]
+        # constr
+        self.model.addConstrs(
+            (self.capacity_indices[n,k,t] >= self.nodes.loc[self.nodes.name==n,'capacity'].values[0]\
+                 for n in renewable_assets \
+                     for k in ['electricity'] \
+                         for t in self.timesteps),'res_decom')
 
             
         #----------------------------------------------------------------------
@@ -1314,7 +1330,7 @@ class nextra():
                                         for j in ['west_bank_energy_demand']
                                             for k in ['electricity']
                                                 for t in self.timesteps if t in timesteps_2030)
-                    <= \
+                    == \
                     gp.quicksum( \
                         (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
                             for k in ['electricity']
@@ -1375,7 +1391,7 @@ class nextra():
                                         for j in ['gaza_energy_demand']
                                             for k in ['electricity']
                                                 for t in self.timesteps if t in timesteps_2030) \
-                    <= \
+                    == \
                     gp.quicksum( \
                         (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
                             for k in ['electricity']
@@ -1543,7 +1559,7 @@ class nextra():
                                             for j in ['west_bank_energy_demand']
                                                 for k in ['electricity']
                                                     for t in self.timesteps if t in timesteps_2030)
-                        <= \
+                        == \
                           gp.quicksum( \
                               (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
                                     for k in ['electricity']
@@ -1569,11 +1585,11 @@ class nextra():
                                             for j in ['gaza_energy_demand']
                                                 for k in ['electricity']
                                                     for t in self.timesteps if t in timesteps_2030) \
-                            <= \
-                            gp.quicksum( \
-                                (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
-                                    for k in ['electricity']
-                                        for t in self.timesteps if t in timesteps_2030),'gaz_ss')
+                        == \
+                        gp.quicksum( \
+                            (self.arcFlows['gaza_generation','gaza_energy_demand',k,t])
+                                for k in ['electricity']
+                                    for t in self.timesteps if t in timesteps_2030),'gaz_ss')
 
         
         
