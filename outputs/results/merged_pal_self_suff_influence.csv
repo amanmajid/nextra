@@ -1,0 +1,151 @@
+technology,territory,self_sufficiency_factor,value,territory2
+Battery,Gaza,10.0,0.008111055031438366,Palestine
+Battery,Gaza,20.0,0.0194821921787449,Palestine
+Battery,Gaza,30.0,0.025197601236473695,Palestine
+Battery,Gaza,40.0,0.025259668336473695,Palestine
+Battery,Gaza,50.0,0.025275159631263165,Palestine
+Battery,Gaza,60.0,0.02525517228776806,Palestine
+Battery,Gaza,70.0,0.02495913616020218,Palestine
+Battery,Gaza,80.0,0.024647966820665158,Palestine
+Battery,Gaza,90.0,0.024511399929188615,Palestine
+Battery,Gaza,100.0,0.024407852360168476,Palestine
+Battery,Israel,10.0,0.3125,Israel
+Battery,Israel,20.0,0.3125,Israel
+Battery,Israel,30.0,0.3125,Israel
+Battery,Israel,40.0,0.3125,Israel
+Battery,Israel,50.0,0.3125,Israel
+Battery,Israel,60.0,0.3125,Israel
+Battery,Israel,70.0,0.3125,Israel
+Battery,Israel,80.0,0.3125,Israel
+Battery,Israel,90.0,0.3125,Israel
+Battery,Israel,100.0,0.3125,Israel
+Battery,Jordan,10.0,1.6421756161590213,Jordan
+Battery,Jordan,20.0,1.6290785722813266,Jordan
+Battery,Jordan,30.0,1.6229376267639604,Jordan
+Battery,Jordan,40.0,1.6232775529280838,Jordan
+Battery,Jordan,50.0,1.6236755714478572,Jordan
+Battery,Jordan,60.0,1.6241922051321869,Jordan
+Battery,Jordan,70.0,1.6251602150765876,Jordan
+Battery,Jordan,80.0,1.626358471827921,Jordan
+Battery,Jordan,90.0,1.6137282070064045,Jordan
+Battery,Jordan,100.0,1.5327697997415644,Jordan
+Battery,West Bank,10.0,0.00575,Palestine
+Battery,West Bank,20.0,0.00575,Palestine
+Battery,West Bank,30.0,0.00575,Palestine
+Battery,West Bank,40.0,0.00575,Palestine
+Battery,West Bank,50.0,0.00575,Palestine
+Battery,West Bank,60.0,0.00575,Palestine
+Battery,West Bank,70.0,0.00575,Palestine
+Battery,West Bank,80.0,0.00575,Palestine
+Battery,West Bank,90.0,0.021386317521243654,Palestine
+Battery,West Bank,100.0,0.12480698847653549,Palestine
+Gas,Gaza,10.0,0.06,Palestine
+Gas,Gaza,20.0,0.06,Palestine
+Gas,Gaza,30.0,0.06,Palestine
+Gas,Gaza,40.0,0.06,Palestine
+Gas,Gaza,50.0,0.06,Palestine
+Gas,Gaza,60.0,0.07016897398623316,Palestine
+Gas,Gaza,70.0,0.09872755811872508,Palestine
+Gas,Gaza,80.0,0.1287460421317704,Palestine
+Gas,Gaza,90.0,0.1630016303366761,Palestine
+Gas,Gaza,100.0,0.27573803014593673,Palestine
+Gas,Israel,10.0,16.616960376368684,Israel
+Gas,Israel,20.0,16.528684971941008,Israel
+Gas,Israel,30.0,16.438955059531633,Israel
+Gas,Israel,40.0,16.347909603769526,Israel
+Gas,Israel,50.0,16.256568319279452,Israel
+Gas,Israel,60.0,16.154267223040275,Israel
+Gas,Israel,70.0,16.027975180783834,Israel
+Gas,Israel,80.0,15.872959245049788,Israel
+Gas,Israel,90.0,15.5916070836802,Israel
+Gas,Israel,100.0,15.461230091631753,Israel
+Gas,Jordan,10.0,2.823,Jordan
+Gas,Jordan,20.0,2.823,Jordan
+Gas,Jordan,30.0,2.823,Jordan
+Gas,Jordan,40.0,2.823,Jordan
+Gas,Jordan,50.0,2.823,Jordan
+Gas,Jordan,60.0,2.823,Jordan
+Gas,Jordan,70.0,2.823,Jordan
+Gas,Jordan,80.0,2.823,Jordan
+Gas,Jordan,90.0,2.823,Jordan
+Gas,Jordan,100.0,2.823,Jordan
+Gas,West Bank,10.0,0.07226539055818099,Palestine
+Gas,West Bank,20.0,0.16242580161709586,Palestine
+Gas,West Bank,30.0,0.2529116540647483,Palestine
+Gas,West Bank,40.0,0.3437891194557342,Palestine
+Gas,West Bank,50.0,0.43495276578956654,Palestine
+Gas,West Bank,60.0,0.5268676768082114,Palestine
+Gas,West Bank,70.0,0.6242803414504436,Palestine
+Gas,West Bank,80.0,0.7488622716923777,Palestine
+Gas,West Bank,90.0,0.9931693488099613,Palestine
+Gas,West Bank,100.0,1.0400655626675126,Palestine
+Solar,Gaza,10.0,0.08111055031438368,Palestine
+Solar,Gaza,20.0,0.19482192178744895,Palestine
+Solar,Gaza,30.0,0.25197601236473693,Palestine
+Solar,Gaza,40.0,0.25259668336473695,Palestine
+Solar,Gaza,50.0,0.25275159631263167,Palestine
+Solar,Gaza,60.0,0.2525517228776806,Palestine
+Solar,Gaza,70.0,0.2495913616020218,Palestine
+Solar,Gaza,80.0,0.24647966820665154,Palestine
+Solar,Gaza,90.0,0.24511399929188613,Palestine
+Solar,Gaza,100.0,0.24407852095737054,Palestine
+Solar,Israel,10.0,3.0,Israel
+Solar,Israel,20.0,3.0,Israel
+Solar,Israel,30.0,3.0,Israel
+Solar,Israel,40.0,3.0,Israel
+Solar,Israel,50.0,3.0,Israel
+Solar,Israel,60.0,3.0,Israel
+Solar,Israel,70.0,3.0,Israel
+Solar,Israel,80.0,3.0,Israel
+Solar,Israel,90.0,3.0,Israel
+Solar,Israel,100.0,3.0,Israel
+Solar,Jordan,10.0,16.141756161590212,Jordan
+Solar,Jordan,20.0,16.010785722813264,Jordan
+Solar,Jordan,30.0,15.949376268863219,Jordan
+Solar,Jordan,40.0,15.952775529280839,Jordan
+Solar,Jordan,50.0,15.956755715851497,Jordan
+Solar,Jordan,60.0,15.96192202328336,Jordan
+Solar,Jordan,70.0,15.971602150765875,Jordan
+Solar,Jordan,80.0,15.98358471827921,Jordan
+Solar,Jordan,90.0,15.845374272910837,Jordan
+Solar,Jordan,100.0,15.047697997415643,Jordan
+Solar,West Bank,10.0,0.0075,Palestine
+Solar,West Bank,20.0,0.0075,Palestine
+Solar,West Bank,30.0,0.0075,Palestine
+Solar,West Bank,40.0,0.0075,Palestine
+Solar,West Bank,50.0,0.0075,Palestine
+Solar,West Bank,60.0,0.0075,Palestine
+Solar,West Bank,70.0,0.0075,Palestine
+Solar,West Bank,80.0,0.0075,Palestine
+Solar,West Bank,90.0,0.16386317521243657,Palestine
+Solar,West Bank,100.0,1.198069884765333,Palestine
+Wind,Israel,10.0,0.125,Israel
+Wind,Israel,20.0,0.125,Israel
+Wind,Israel,30.0,0.125,Israel
+Wind,Israel,40.0,0.125,Israel
+Wind,Israel,50.0,0.125,Israel
+Wind,Israel,60.0,0.125,Israel
+Wind,Israel,70.0,0.125,Israel
+Wind,Israel,80.0,0.125,Israel
+Wind,Israel,90.0,0.125,Israel
+Wind,Israel,100.0,0.125,Israel
+Wind,Jordan,10.0,0.28,Jordan
+Wind,Jordan,20.0,0.28,Jordan
+Wind,Jordan,30.0,0.28,Jordan
+Wind,Jordan,40.0,0.28,Jordan
+Wind,Jordan,50.0,0.28,Jordan
+Wind,Jordan,60.0,0.28,Jordan
+Wind,Jordan,70.0,0.28,Jordan
+Wind,Jordan,80.0,0.28,Jordan
+Wind,Jordan,90.0,0.2919078010076423,Jordan
+Wind,Jordan,100.0,0.28,Jordan
+Wind,West Bank,10.0,0.05,Palestine
+Wind,West Bank,20.0,0.05,Palestine
+Wind,West Bank,30.0,0.05,Palestine
+Wind,West Bank,40.0,0.05,Palestine
+Wind,West Bank,50.0,0.05,Palestine
+Wind,West Bank,60.0,0.05,Palestine
+Wind,West Bank,70.0,0.05,Palestine
+Wind,West Bank,80.0,0.05,Palestine
+Wind,West Bank,90.0,0.05,Palestine
+Wind,West Bank,100.0,0.05,Palestine

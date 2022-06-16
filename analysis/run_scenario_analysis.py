@@ -40,7 +40,7 @@ infrasim_init_directories()
 scenarios = {'BAS' : False,
              'BAU' : True,
              'NCO' : True,
-             'EAG' : True,
+             #'EAG' : True,
              'COO' : True,
              #'UTO' : True,
             }
