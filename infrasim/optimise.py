@@ -406,12 +406,16 @@ class nextra():
                 # index nodes by technology
                 idx_nodes = get_nodes_by_technology(self.nodes,technology=technology).name.to_list()
 
-                # constrain supply
                 self.model.addConstrs(
-                    (self.arcFlows.sum(i,'*',k,t)  <= self.capacity_indices[i,k,t] \
-                         for t in self.timesteps \
-                             for k in ['electricity'] \
-                                 for i in idx_nodes),technology+'_baseload')
+                    (self.arcFlows.sum(i,'*',k,t) 
+                        <= #global_variables['loss_factor_seasonal'] * \
+                                #global_variables['loss_factor_maintenance_thermo'] * \
+                                    #global_variables['reserve_capacity_factor'] * \
+                                        #global_variables['loss_factor_transmission'] * \
+                                            self.capacity_indices[i,k,t] \
+                                                for t in self.timesteps \
+                                                    for k in ['electricity'] \
+                                                        for i in idx_nodes),technology+'_baseload')
 
                 # constrain ramping rate
                 if 'hour' in self.flows.columns:
@@ -480,9 +484,19 @@ class nextra():
                      for k in self.commodities \
                          for t in self.timesteps if t>1 \
                              for j in storage_nodes if (j,k) in storage_caps),'storage_balance')
+
+        # #---
+        # # Battery minimum capacity level to maintain (helps increase battery life)
+        # #   ---> start at t=10 to allow time for battery to charge up
+        # self.model.addConstrs(
+        #     (self.storage_volume.sum(i,k,t) >= \
+        #          global_variables['battery_minimum_level'] * self.capacity_indices.sum(i,k,t) \
+        #              for k in self.commodities \
+        #                  for t in self.timesteps if t>10 \
+        #                      for i in storage_nodes if (i,k) in storage_caps),'bat_min_lev')
         
         
-            
+
         #----------------------------------------------------------------------
         # JUNCTIONS
         #----------------------------------------------------------------------
@@ -530,10 +544,13 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
-                         for t in self.timesteps \
-                             for k in self.commodities \
-                                 for i in solar_asset),'solar_supply')
+                     == #global_variables['loss_factor_transmission'] * \
+                            #global_variables['reserve_capacity_factor'] * \
+                                #global_variables['loss_factor_maintenance_res'] * \
+                                    self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
+                                        for t in self.timesteps \
+                                            for k in self.commodities \
+                                                for i in solar_asset),'solar_supply')
         
         
         #---
@@ -551,10 +568,13 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_wind',t] \
-                         for t in self.timesteps \
-                             for k in self.commodities \
-                                 for i in wind_asset),'wind_supply')
+                     == #global_variables['loss_factor_transmission'] * \
+                            #global_variables['reserve_capacity_factor'] * \
+                                #global_variables['loss_factor_maintenance_res'] * \
+                                    self.capacity_indices.sum(i,k,t) * supply_dict[region+'_wind',t] \
+                                        for t in self.timesteps \
+                                            for k in self.commodities \
+                                                for i in wind_asset),'wind_supply')
 
 
         #---
@@ -1604,6 +1624,7 @@ class nextra():
         else:
             self.model.setParam('OutputFlag', 1)
         # optimise
+        #self.model.setParam('Method',1) 
         self.model.optimize()
 
 

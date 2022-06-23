@@ -391,18 +391,14 @@ class nextra_postprocess():
         ax.axhline(y=s.cf.mean(), color='black', linestyle='--')
 
     
-    def plot_battery_storage_volume(self,node='all',days=1,month=6,year=2030,ax=None,color='teal'):
+    def plot_battery_storage_volume(self,node,days=1,month=6,year=2030,ax=None,color='teal'):
         '''Plot battery storage volumes as a time series
         '''
         t = self.results_storages.copy()
         c = self.results_capacities.copy()
-
-        if node == 'all':
-            t = t.loc[t.node.str.contains('battery')].reset_index(drop=True)
-            c = c[c.node.str.contains('storage')].value.sum()
-        else:
-            t = t.loc[t.node==node].reset_index(drop=True)
-            c = c[c.node==node].value.max()
+        # get node
+        t = t.loc[t.node==node].reset_index(drop=True)
+        c = c[c.node==node].value.max()
         # index by time
         t = t.loc[(t.month==month) & (t.year==year) & (t.day<=days)].reset_index(drop=True)
         # calculate SOC
