@@ -27,7 +27,8 @@ flows = '../data/nextra/nodal_flows/processed_flows_2030_low.csv'
 
 
 # Params
-timesteps=None#24*15
+timesteps=24*30
+#timesteps=None
 super_source=False
 pprint=False
 save_figures=True
@@ -71,6 +72,8 @@ for s in scenarios:
         model_results.results_edge_flows['scenario']       = s
         model_results.results_capacity_change['scenario']  = s
         model_results.results_costs['scenario']            = s
+        # save results
+        save_object(model_results, f'../outputs/results/model_run_results_{s}.pkl')
         # append results
         results[s] = model_results
         # get time
@@ -78,8 +81,9 @@ for s in scenarios:
         print('> Completed: ' + s + ' in ' + '%dh:%dm:%ds' %(hours,minutes,seconds))
     except:
         print('> FAILED! ' + s)
+        #model_run.debug()
 
 
-save_object(results, '../outputs/results/model_run_results.pkl')
+#save_object(results, '../outputs/results/model_run_results.pkl')
 
 print('> Done.')
