@@ -535,10 +535,13 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
-                         for t in self.timesteps \
-                             for k in self.commodities \
-                                 for i in solar_asset),'solar_supply')
+                     == global_variables['loss_factor_transmission'] * \
+                            global_variables['reserve_capacity_factor'] * \
+                                global_variables['loss_factor_maintenance_res'] * \
+                                    self.capacity_indices.sum(i,k,t) * supply_dict[region+'_solar',t] \
+                                        for t in self.timesteps \
+                                            for k in self.commodities \
+                                                for i in solar_asset),'solar_supply')
         
         
         #---
@@ -556,10 +559,13 @@ class nextra():
             # constrain
             self.model.addConstrs(
                 (self.arcFlows.sum(i,'*',k,t)  \
-                     == self.capacity_indices.sum(i,k,t) * supply_dict[region+'_wind',t] \
-                         for t in self.timesteps \
-                             for k in self.commodities \
-                                 for i in wind_asset),'wind_supply')
+                     == global_variables['loss_factor_transmission'] * \
+                            global_variables['reserve_capacity_factor'] * \
+                                global_variables['loss_factor_maintenance_res'] * \
+                                    self.capacity_indices.sum(i,k,t) * supply_dict[region+'_wind',t] \
+                                        for t in self.timesteps \
+                                            for k in self.commodities \
+                                                for i in wind_asset),'wind_supply')
 
 
         #---
