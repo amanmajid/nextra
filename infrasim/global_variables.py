@@ -14,6 +14,11 @@ global_variables = {
                     'baseload_coefficient'              : 0.5,
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
+                    'loss_factor_seasonal'              : 0.90,         # seasonal losses (10%) for thermoelectric plants (from Nurit)
+                    'loss_factor_maintenance_thermo'    : 0.92,         # maintenance downtime (8%) per annum in thermoelectric plants
+                    'loss_factor_maintenance_res'       : 0.92,         # maintenance downtime (8%) per annum in solar/wind plants
+                    'loss_factor_transmission'          : 0.95,         # losses (%) due to transmission
+                    'reserve_capacity_factor'           : 0.90,         # 10% reserve capacity
                     'maximum_curtailment'               : 0.15,         # Percentage of total generation (zero curtailment usually makes model infeasible)
                     'emissions_reduction_2030'          : 0.30,         # Percentage reduction in total emissions to 2030 relative to BAS scenario
                     'BAS_emissions_in_2030'             : 61343,        # Total estimated CO2 emissions (tonnes) under BAS in 2030
