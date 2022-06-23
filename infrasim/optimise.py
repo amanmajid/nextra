@@ -405,13 +405,18 @@ class nextra():
                 
                 # index nodes by technology
                 idx_nodes = get_nodes_by_technology(self.nodes,technology=technology).name.to_list()
-
+                
                 # constrain supply
                 self.model.addConstrs(
-                    (self.arcFlows.sum(i,'*',k,t)  <= self.capacity_indices[i,k,t] \
-                         for t in self.timesteps \
-                             for k in ['electricity'] \
-                                 for i in idx_nodes),technology+'_baseload')
+                    (self.arcFlows.sum(i,'*',k,t) 
+                        <= global_variables['loss_factor_seasonal'] * \
+                                global_variables['loss_factor_maintenance_thermo'] * \
+                                    global_variables['reserve_capacity_factor'] * \
+                                        global_variables['loss_factor_transmission'] * \
+                                            self.capacity_indices[i,k,t] \
+                                                for t in self.timesteps \
+                                                    for k in ['electricity'] \
+                                                        for i in idx_nodes),technology+'_baseload')
 
                 # constrain ramping rate
                 if 'hour' in self.flows.columns:

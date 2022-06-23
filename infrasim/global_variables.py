@@ -25,6 +25,7 @@ global_variables = {
                     # -BATTERY PARAMS
                     'battery_capacity_min_percentage'   : 0.10,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_capacity_max_percentage'   : 0.80,         # Percentage of total renewable capacity (solar + wind) installed
+                    'battery_minimum_level'             : 0.25,
                     'battery_charge_rate'               : 200*24,       # MW
                     'battery_discharge_rate'            : 300*24,       # MW
                     'battery_charge_hours'              : [9,10,11,12,13,14],
