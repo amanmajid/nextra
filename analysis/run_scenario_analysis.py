@@ -27,7 +27,7 @@ flows = '../data/nextra/nodal_flows/processed_flows_2030_low.csv'
 
 
 # Params
-timesteps=24*15
+timesteps=None#24*14
 super_source=False
 pprint=False
 save_figures=True
@@ -77,6 +77,7 @@ for s in scenarios:
         hours,minutes,seconds = time_elapsed(start_time)
         print('> Completed: ' + s + ' in ' + '%dh:%dm:%ds' %(hours,minutes,seconds))
     except:
+        #model_run.debug()
         print('> FAILED! ' + s)
 
 
