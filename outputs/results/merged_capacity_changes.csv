@@ -1,22 +1,22 @@
 node,territory,scenario,technology,capacity_change
 gaza_battery_storage,Gaza,BAS,Battery,0.0
-gaza_battery_storage,Gaza,BAU,Battery,1555.620374618157
+gaza_battery_storage,Gaza,BAU,Battery,70.64103386241622
 gaza_battery_storage,Gaza,COO,Battery,0.0
 gaza_battery_storage,Gaza,NCO,Battery,3120.0771727319566
 gaza_diesel,Gaza,BAS,Diesel,-60.0
 gaza_diesel,Gaza,BAU,Diesel,-60.0
 gaza_diesel,Gaza,COO,Diesel,-60.0
 gaza_diesel,Gaza,NCO,Diesel,-60.0
-gaza_natural_gas,Gaza,BAS,Gas,515.0371727732112
+gaza_natural_gas,Gaza,BAS,Gas,270.85289837294823
 gaza_natural_gas,Gaza,BAU,Gas,60.0
-gaza_natural_gas,Gaza,COO,Gas,135.11796060207942
+gaza_natural_gas,Gaza,COO,Gas,134.50126110238665
 gaza_natural_gas,Gaza,NCO,Gas,367.4134272632514
 gaza_solar,Gaza,BAS,Solar,0.0
-gaza_solar,Gaza,BAU,Solar,2223.818109057402
+gaza_solar,Gaza,BAU,Solar,353.20516931208107
 gaza_solar,Gaza,COO,Solar,0.0
 gaza_solar,Gaza,NCO,Solar,3900.0964659149454
 israel_battery_storage,Israel,BAS,Battery,625.0
-israel_battery_storage,Israel,BAU,Battery,5028.70842476607
+israel_battery_storage,Israel,BAU,Battery,6398.540746713357
 israel_battery_storage,Israel,COO,Battery,625.0
 israel_battery_storage,Israel,NCO,Battery,4613.694266950668
 israel_coal,Israel,BAS,Coal,-4800.0
@@ -27,12 +27,12 @@ israel_diesel,Israel,BAS,Diesel,-700.0
 israel_diesel,Israel,BAU,Diesel,-700.0
 israel_diesel,Israel,COO,Diesel,-700.0
 israel_diesel,Israel,NCO,Diesel,-700.0
-israel_natural_gas,Israel,BAS,Gas,14088.383047590396
-israel_natural_gas,Israel,BAU,Gas,12326.344676542987
-israel_natural_gas,Israel,COO,Gas,15518.857149836578
+israel_natural_gas,Israel,BAS,Gas,16088.509441885402
+israel_natural_gas,Israel,BAU,Gas,13813.114877192893
+israel_natural_gas,Israel,COO,Gas,16107.656296116318
 israel_natural_gas,Israel,NCO,Gas,12284.99260357468
 israel_solar,Israel,BAS,Solar,0.0
-israel_solar,Israel,BAU,Solar,21404.54212383036
+israel_solar,Israel,BAU,Solar,28253.70373356678
 israel_solar,Israel,COO,Solar,0.0
 israel_solar,Israel,NCO,Solar,19941.891934707663
 israel_wind,Israel,BAS,Wind,0.0
@@ -40,8 +40,8 @@ israel_wind,Israel,BAU,Wind,614.0
 israel_wind,Israel,COO,Wind,0.0
 israel_wind,Israel,NCO,Wind,1.5794000466703437
 jordan_battery_storage,Jordan,BAS,Battery,195.6
-jordan_battery_storage,Jordan,BAU,Battery,1150.9589461550006
-jordan_battery_storage,Jordan,COO,Battery,4833.082537628516
+jordan_battery_storage,Jordan,BAU,Battery,1223.7931355223013
+jordan_battery_storage,Jordan,COO,Battery,4464.5099903493965
 jordan_battery_storage,Jordan,NCO,Battery,1199.2929047014766
 jordan_coal,Jordan,BAS,Coal,0.0
 jordan_coal,Jordan,BAU,Coal,0.0
@@ -51,25 +51,25 @@ jordan_diesel,Jordan,BAS,Diesel,0.0
 jordan_diesel,Jordan,BAU,Diesel,0.0
 jordan_diesel,Jordan,COO,Diesel,0.0
 jordan_diesel,Jordan,NCO,Diesel,0.0
-jordan_natural_gas,Jordan,BAS,Gas,4217.617416168157
-jordan_natural_gas,Jordan,BAU,Gas,2363.67141465801
+jordan_natural_gas,Jordan,BAS,Gas,3989.532111179936
+jordan_natural_gas,Jordan,BAU,Gas,2213.247661824823
 jordan_natural_gas,Jordan,COO,Gas,0.0
 jordan_natural_gas,Jordan,NCO,Gas,2279.7019232253524
 jordan_shale,Jordan,BAS,Shale,0.0
-jordan_shale,Jordan,BAU,Shale,1148.0090899960783
+jordan_shale,Jordan,BAU,Shale,1289.6687201469313
 jordan_shale,Jordan,COO,Shale,0.0
 jordan_shale,Jordan,NCO,Shale,1249.54723220419
 jordan_solar,Jordan,BAS,Solar,0.0
-jordan_solar,Jordan,BAU,Solar,3934.605857797914
-jordan_solar,Jordan,COO,Solar,19632.32507651207
+jordan_solar,Jordan,BAU,Solar,4733.708759418799
+jordan_solar,Jordan,COO,Solar,17986.912970731722
 jordan_solar,Jordan,NCO,Solar,4683.395566294376
 jordan_wind,Jordan,BAS,Wind,0.0
-jordan_wind,Jordan,BAU,Wind,842.1888729771294
-jordan_wind,Jordan,COO,Wind,3555.0876116305103
+jordan_wind,Jordan,BAU,Wind,407.2569181927079
+jordan_wind,Jordan,COO,Wind,3357.636981015258
 jordan_wind,Jordan,NCO,Wind,335.06895723031994
 west_bank_battery_storage,West Bank,BAS,Battery,11.5
-west_bank_battery_storage,West Bank,BAU,Battery,5182.299178349245
-west_bank_battery_storage,West Bank,COO,Battery,11.5
+west_bank_battery_storage,West Bank,BAU,Battery,426.89906534423335
+west_bank_battery_storage,West Bank,COO,Battery,426.8990653442313
 west_bank_battery_storage,West Bank,NCO,Battery,11472.677655309542
 west_bank_coal,West Bank,BAS,Coal,0.0
 west_bank_coal,West Bank,BAU,Coal,0.0
@@ -79,31 +79,31 @@ west_bank_diesel,West Bank,BAS,Diesel,0.0
 west_bank_diesel,West Bank,BAU,Diesel,0.0
 west_bank_diesel,West Bank,COO,Diesel,0.0
 west_bank_diesel,West Bank,NCO,Diesel,0.0
-west_bank_natural_gas,West Bank,BAS,Gas,1173.8237276616778
+west_bank_natural_gas,West Bank,BAS,Gas,0.0
 west_bank_natural_gas,West Bank,BAU,Gas,0.0
-west_bank_natural_gas,West Bank,COO,Gas,508.31247647024884
+west_bank_natural_gas,West Bank,COO,Gas,0.0
 west_bank_natural_gas,West Bank,NCO,Gas,1382.5730105781352
 west_bank_solar,West Bank,BAS,Solar,0.0
-west_bank_solar,West Bank,BAU,Solar,8412.96229342977
-west_bank_solar,West Bank,COO,Solar,0.0
+west_bank_solar,West Bank,BAU,Solar,2076.9953267211667
+west_bank_solar,West Bank,COO,Solar,2076.9953267211567
 west_bank_solar,West Bank,NCO,Solar,14283.347069136928
 west_bank_wind,West Bank,BAS,Wind,50.0
 west_bank_wind,West Bank,BAU,Wind,50.0
 west_bank_wind,West Bank,COO,Wind,50.0
 west_bank_wind,West Bank,NCO,Wind,50.0
-,Gaza,BAS,Net change,455.0371727732112
-,Gaza,BAU,Net change,3779.438483675559
-,Gaza,COO,Net change,75.11796060207942
+,Gaza,BAS,Net change,210.85289837294823
+,Gaza,BAU,Net change,423.8462031744973
+,Gaza,COO,Net change,74.50126110238665
 ,Gaza,NCO,Net change,7327.587065910153
-,Israel,BAS,Net change,9213.383047590396
-,Israel,BAU,Net change,33873.59522513942
-,Israel,COO,Net change,10643.857149836578
+,Israel,BAS,Net change,11213.509441885402
+,Israel,BAU,Net change,43579.35935747303
+,Israel,COO,Net change,11232.656296116318
 ,Israel,NCO,Net change,31342.15820527968
-,Jordan,BAS,Net change,4413.217416168158
-,Jordan,BAU,Net change,9439.434181584133
-,Jordan,COO,Net change,28020.495225771094
+,Jordan,BAS,Net change,4185.132111179935
+,Jordan,BAU,Net change,9867.675195105563
+,Jordan,COO,Net change,25809.059942096377
 ,Jordan,NCO,Net change,9747.006583655715
-,West Bank,BAS,Net change,1235.3237276616778
-,West Bank,BAU,Net change,13645.261471779015
-,West Bank,COO,Net change,569.8124764702488
+,West Bank,BAS,Net change,61.5
+,West Bank,BAU,Net change,2553.8943920654
+,West Bank,COO,Net change,2553.8943920653883
 ,West Bank,NCO,Net change,27188.597735024603
