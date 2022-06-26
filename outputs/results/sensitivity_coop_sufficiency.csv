@@ -1,14 +1,14 @@
 territory,technology,self_sufficiency_factor,value
-Gaza,Battery,10.0,8.111055031438367
-Gaza,Battery,20.0,19.4821921787449
-Gaza,Battery,30.0,25.197601236473695
-Gaza,Battery,40.0,25.259668336473695
-Gaza,Battery,50.0,25.275159631263165
-Gaza,Battery,60.0,25.25517228776806
-Gaza,Battery,70.0,24.95913616020218
-Gaza,Battery,80.0,24.647966820665157
-Gaza,Battery,90.0,24.511399929188613
-Gaza,Battery,100.0,24.407852360168476
+Gaza,Battery,10.0,0.0
+Gaza,Battery,20.0,0.0
+Gaza,Battery,30.0,0.0
+Gaza,Battery,40.0,0.0
+Gaza,Battery,50.0,0.0
+Gaza,Battery,60.0,0.0
+Gaza,Battery,70.0,0.0
+Gaza,Battery,80.0,0.0
+Gaza,Battery,90.0,0.0
+Gaza,Battery,100.0,87.41954196148967
 Gaza,Diesel,10.0,0.0
 Gaza,Diesel,20.0,0.0
 Gaza,Diesel,30.0,0.0
@@ -20,35 +20,35 @@ Gaza,Diesel,80.0,0.0
 Gaza,Diesel,90.0,0.0
 Gaza,Diesel,100.0,0.0
 Gaza,Gas,10.0,60.0
-Gaza,Gas,20.0,60.0
-Gaza,Gas,30.0,60.0
-Gaza,Gas,40.0,60.0
-Gaza,Gas,50.0,60.0
-Gaza,Gas,60.0,70.16897398623315
-Gaza,Gas,70.0,98.72755811872509
-Gaza,Gas,80.0,128.7460421317704
-Gaza,Gas,90.0,163.0016303366761
-Gaza,Gas,100.0,275.7380301459367
-Gaza,Solar,10.0,81.11055031438367
-Gaza,Solar,20.0,194.82192178744896
-Gaza,Solar,30.0,251.97601236473693
-Gaza,Solar,40.0,252.59668336473695
-Gaza,Solar,50.0,252.75159631263165
-Gaza,Solar,60.0,252.55172287768056
-Gaza,Solar,70.0,249.5913616020218
-Gaza,Solar,80.0,246.47966820665155
-Gaza,Solar,90.0,245.11399929188613
-Gaza,Solar,100.0,244.07852095737053
-Israel,Battery,10.0,312.5
-Israel,Battery,20.0,312.5
-Israel,Battery,30.0,312.5
-Israel,Battery,40.0,312.5
-Israel,Battery,50.0,312.5
-Israel,Battery,60.0,312.5
-Israel,Battery,70.0,312.5
-Israel,Battery,80.0,312.5
-Israel,Battery,90.0,312.5
-Israel,Battery,100.0,312.5
+Gaza,Gas,20.0,90.03026423937101
+Gaza,Gas,30.0,135.11796060207942
+Gaza,Gas,40.0,180.4199215444849
+Gaza,Gas,50.0,225.82417771406662
+Gaza,Gas,60.0,271.24849204593284
+Gaza,Gas,70.0,319.6023329944088
+Gaza,Gas,80.0,374.88664420675144
+Gaza,Gas,90.0,452.87334492277427
+Gaza,Gas,100.0,543.6417718002458
+Gaza,Solar,10.0,0.0
+Gaza,Solar,20.0,0.0
+Gaza,Solar,30.0,0.0
+Gaza,Solar,40.0,0.0
+Gaza,Solar,50.0,0.0
+Gaza,Solar,60.0,0.0
+Gaza,Solar,70.0,0.0
+Gaza,Solar,80.0,0.0
+Gaza,Solar,90.0,0.0
+Gaza,Solar,100.0,437.0977098074483
+Israel,Battery,10.0,625.0
+Israel,Battery,20.0,625.0
+Israel,Battery,30.0,625.0
+Israel,Battery,40.0,625.0
+Israel,Battery,50.0,625.0
+Israel,Battery,60.0,625.0
+Israel,Battery,70.0,625.0
+Israel,Battery,80.0,625.0
+Israel,Battery,90.0,625.0
+Israel,Battery,100.0,625.0
 Israel,Coal,10.0,0.0
 Israel,Coal,20.0,0.0
 Israel,Coal,30.0,0.0
@@ -69,16 +69,16 @@ Israel,Diesel,70.0,0.0
 Israel,Diesel,80.0,0.0
 Israel,Diesel,90.0,0.0
 Israel,Diesel,100.0,0.0
-Israel,Gas,10.0,16616.960376368683
-Israel,Gas,20.0,16528.68497194101
-Israel,Gas,30.0,16438.955059531632
-Israel,Gas,40.0,16347.909603769527
-Israel,Gas,50.0,16256.568319279451
-Israel,Gas,60.0,16154.267223040277
-Israel,Gas,70.0,16027.975180783835
-Israel,Gas,80.0,15872.959245049788
-Israel,Gas,90.0,15591.607083680201
-Israel,Gas,100.0,15461.230091631753
+Israel,Gas,10.0,28002.16841990715
+Israel,Gas,20.0,27781.290998568642
+Israel,Gas,30.0,27542.85714983658
+Israel,Gas,40.0,27303.202238342772
+Israel,Gas,50.0,27062.502016661238
+Israel,Gas,60.0,26800.273866597003
+Israel,Gas,70.0,26547.202267777873
+Israel,Gas,80.0,26250.555943013445
+Israel,Gas,90.0,25828.711894163258
+Israel,Gas,100.0,25379.78118038694
 Israel,Gas Reservoir,10.0,0.0
 Israel,Gas Reservoir,20.0,0.0
 Israel,Gas Reservoir,30.0,0.0
@@ -109,16 +109,16 @@ Israel,Wind,70.0,125.0
 Israel,Wind,80.0,125.0
 Israel,Wind,90.0,125.0
 Israel,Wind,100.0,125.0
-Jordan,Battery,10.0,1642.1756161590213
-Jordan,Battery,20.0,1629.0785722813266
-Jordan,Battery,30.0,1622.9376267639605
-Jordan,Battery,40.0,1623.2775529280839
-Jordan,Battery,50.0,1623.6755714478572
-Jordan,Battery,60.0,1624.192205132187
-Jordan,Battery,70.0,1625.1602150765875
-Jordan,Battery,80.0,1626.358471827921
-Jordan,Battery,90.0,1613.7282070064045
-Jordan,Battery,100.0,1532.7697997415644
+Jordan,Battery,10.0,4837.003042272357
+Jordan,Battery,20.0,4835.114495352756
+Jordan,Battery,30.0,4833.082537628516
+Jordan,Battery,40.0,4831.045237593607
+Jordan,Battery,50.0,4828.999051404246
+Jordan,Battery,60.0,4821.8926130630425
+Jordan,Battery,70.0,4819.300498485679
+Jordan,Battery,80.0,4816.858208813693
+Jordan,Battery,90.0,4809.751836283587
+Jordan,Battery,100.0,4376.919612858865
 Jordan,Coal,10.0,0.0
 Jordan,Coal,20.0,0.0
 Jordan,Coal,30.0,0.0
@@ -159,36 +159,36 @@ Jordan,Shale,70.0,0.0
 Jordan,Shale,80.0,0.0
 Jordan,Shale,90.0,0.0
 Jordan,Shale,100.0,0.0
-Jordan,Solar,10.0,16141.756161590212
-Jordan,Solar,20.0,16010.785722813265
-Jordan,Solar,30.0,15949.37626886322
-Jordan,Solar,40.0,15952.775529280838
-Jordan,Solar,50.0,15956.755715851497
-Jordan,Solar,60.0,15961.922023283361
-Jordan,Solar,70.0,15971.602150765875
-Jordan,Solar,80.0,15983.584718279211
-Jordan,Solar,90.0,15845.374272910836
-Jordan,Solar,100.0,15047.697997415642
-Jordan,Wind,10.0,280.0
-Jordan,Wind,20.0,280.0
-Jordan,Wind,30.0,280.0
-Jordan,Wind,40.0,280.0
-Jordan,Wind,50.0,280.0
-Jordan,Wind,60.0,280.0
-Jordan,Wind,70.0,280.0
-Jordan,Wind,80.0,280.0
-Jordan,Wind,90.0,291.9078010076423
-Jordan,Wind,100.0,280.0
-West Bank,Battery,10.0,5.75
-West Bank,Battery,20.0,5.75
-West Bank,Battery,30.0,5.75
-West Bank,Battery,40.0,5.75
-West Bank,Battery,50.0,5.75
-West Bank,Battery,60.0,5.75
-West Bank,Battery,70.0,5.75
-West Bank,Battery,80.0,5.75
-West Bank,Battery,90.0,21.386317521243654
-West Bank,Battery,100.0,124.80698847653548
+Jordan,Solar,10.0,20423.626552892325
+Jordan,Solar,20.0,20378.759426717188
+Jordan,Solar,30.0,20330.32507651207
+Jordan,Solar,40.0,20281.641987148483
+Jordan,Solar,50.0,20232.74655525891
+Jordan,Solar,60.0,20113.754325108323
+Jordan,Solar,70.0,20056.396344503104
+Jordan,Solar,80.0,19997.069752969783
+Jordan,Solar,90.0,19863.398599298824
+Jordan,Solar,100.0,17628.259745651976
+Jordan,Wind,10.0,3761.3886632730396
+Jordan,Wind,20.0,3796.812594767738
+Jordan,Wind,30.0,3835.0876116305103
+Jordan,Wind,40.0,3873.584200819551
+Jordan,Wind,50.0,3912.2487017623166
+Jordan,Wind,60.0,3995.7087402068883
+Jordan,Wind,70.0,4040.1061478127226
+Jordan,Wind,80.0,4087.22129109866
+Jordan,Wind,90.0,4185.360582656667
+Jordan,Wind,100.0,4256.338319969308
+West Bank,Battery,10.0,11.5
+West Bank,Battery,20.0,11.5
+West Bank,Battery,30.0,11.5
+West Bank,Battery,40.0,11.5
+West Bank,Battery,50.0,11.5
+West Bank,Battery,60.0,11.5
+West Bank,Battery,70.0,11.5
+West Bank,Battery,80.0,11.5
+West Bank,Battery,90.0,11.5
+West Bank,Battery,100.0,395.5456258571128
 West Bank,Coal,10.0,0.0
 West Bank,Coal,20.0,0.0
 West Bank,Coal,30.0,0.0
@@ -209,16 +209,16 @@ West Bank,Diesel,70.0,0.0
 West Bank,Diesel,80.0,0.0
 West Bank,Diesel,90.0,0.0
 West Bank,Diesel,100.0,0.0
-West Bank,Gas,10.0,72.26539055818098
-West Bank,Gas,20.0,162.42580161709586
-West Bank,Gas,30.0,252.9116540647483
-West Bank,Gas,40.0,343.7891194557342
-West Bank,Gas,50.0,434.95276578956657
-West Bank,Gas,60.0,526.8676768082114
-West Bank,Gas,70.0,624.2803414504436
-West Bank,Gas,80.0,748.8622716923777
-West Bank,Gas,90.0,993.1693488099613
-West Bank,Gas,100.0,1040.0655626675125
+West Bank,Gas,10.0,160.7345354053314
+West Bank,Gas,20.0,333.9833037898995
+West Bank,Gas,30.0,508.31247647024884
+West Bank,Gas,40.0,683.5367981364166
+West Bank,Gas,50.0,859.6207011509836
+West Bank,Gas,60.0,1035.620156576798
+West Bank,Gas,70.0,1218.3372940620077
+West Bank,Gas,80.0,1436.275530928702
+West Bank,Gas,90.0,1731.8420633672933
+West Bank,Gas,100.0,2077.375950067398
 West Bank,Solar,10.0,7.5
 West Bank,Solar,20.0,7.5
 West Bank,Solar,30.0,7.5
@@ -227,8 +227,8 @@ West Bank,Solar,50.0,7.5
 West Bank,Solar,60.0,7.5
 West Bank,Solar,70.0,7.5
 West Bank,Solar,80.0,7.5
-West Bank,Solar,90.0,163.86317521243657
-West Bank,Solar,100.0,1198.069884765333
+West Bank,Solar,90.0,7.5
+West Bank,Solar,100.0,1927.7281293344624
 West Bank,Wind,10.0,50.0
 West Bank,Wind,20.0,50.0
 West Bank,Wind,30.0,50.0

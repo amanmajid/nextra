@@ -18,14 +18,14 @@ global_variables = {
                     'loss_factor_maintenance_thermo'    : 0.92,         # maintenance downtime (8%) per annum in thermoelectric plants
                     'loss_factor_maintenance_res'       : 0.92,         # maintenance downtime (8%) per annum in solar/wind plants
                     'loss_factor_transmission'          : 0.95,         # losses (%) due to transmission
-                    'reserve_capacity_factor'           : 0.90,         # 10% reserve capacity
+                    'reserve_capacity_factor'           : 0.80,         # 10% reserve capacity
                     'maximum_curtailment'               : 0.15,         # Percentage of total generation (zero curtailment usually makes model infeasible)
                     'emissions_reduction_2030'          : 0.30,         # Percentage reduction in total emissions to 2030 relative to BAS scenario
                     'BAS_emissions_in_2030'             : 61343,        # Total estimated CO2 emissions (tonnes) under BAS in 2030
                     # -BATTERY PARAMS
-                    'battery_capacity_min_percentage'   : 0.10,         # Percentage of total renewable capacity (solar + wind) installed
+                    'battery_capacity_min_percentage'   : 0.20,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_capacity_max_percentage'   : 0.80,         # Percentage of total renewable capacity (solar + wind) installed
-                    'battery_minimum_level'             : 0.25,
+                    'battery_minimum_level'             : 0.35,         # Minimum level to maintain in battery (preserves health), also incorporates losses/inefficiencies/maintanence
                     'battery_charge_rate'               : 200*24,       # MW
                     'battery_discharge_rate'            : 300*24,       # MW
                     'battery_charge_hours'              : [9,10,11,12,13,14],

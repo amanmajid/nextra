@@ -486,6 +486,15 @@ class nextra():
                          for t in self.timesteps if t>1 \
                              for j in storage_nodes if (j,k) in storage_caps),'storage_balance')
         
+        #---
+        # Battery minimum capacity level to maintain (helps increase battery life)
+        #   ---> start at t=10 to allow time for battery to charge up
+        self.model.addConstrs(
+            (self.storage_volume.sum(i,k,t) >= \
+                 global_variables['battery_minimum_level'] * self.capacity_indices.sum(i,k,t) \
+                     for k in self.commodities \
+                         for t in self.timesteps if t>10 \
+                             for i in storage_nodes if (i,k) in storage_caps),'bat_min_lev')
         
             
         #----------------------------------------------------------------------
@@ -1004,7 +1013,7 @@ class nextra():
                                 + self.arcFlows['israel_generation','gaza_energy_demand',k,t])
                                     for k in ['electricity']
                                             for t in self.timesteps if t in timesteps_2030) \
-                    == \
+                    <= \
                     gp.quicksum( \
                         (self.arcFlows['israel_solar','israel_generation',k,t] \
                             + self.arcFlows['israel_wind','israel_generation',k,t] \
@@ -1022,7 +1031,7 @@ class nextra():
                             + self.arcFlows['israel_generation','gaza_energy_demand',k,t])
                                 for k in ['electricity']
                                         for t in self.timesteps if t in timesteps_2030) \
-                    == \
+                    <= \
                     gp.quicksum( \
                         (self.arcFlows['israel_natural_gas','israel_gas_storage',k,t] \
                             + self.arcFlows['israel_ccgt','israel_generation',k,t])
@@ -1042,7 +1051,7 @@ class nextra():
                                     + self.arcFlows['jordan_generation','israel_energy_demand',k,t])
                                         for k in ['electricity']
                                             for t in self.timesteps if t in timesteps_2030) \
-                    == \
+                    <= \
                     gp.quicksum( \
                         (self.arcFlows['jordan_solar','jordan_generation',k,t] \
                             + self.arcFlows['jordan_wind','jordan_generation',k,t] \
@@ -1060,7 +1069,7 @@ class nextra():
                                 + self.arcFlows['jordan_generation','israel_energy_demand',k,t])
                                     for k in ['electricity']
                                         for t in self.timesteps if t in timesteps_2030) \
-                    == \
+                    <= \
                     gp.quicksum( \
                         (self.arcFlows['jordan_natural_gas','jordan_generation',k,t])
                             for k in ['electricity']
@@ -1075,7 +1084,7 @@ class nextra():
                                 + self.arcFlows['jordan_generation','israel_energy_demand',k,t])
                                     for k in ['electricity']
                                         for t in self.timesteps if t in timesteps_2030) \
-                    == \
+                    <= \
                     gp.quicksum( \
                         (self.arcFlows['jordan_shale','jordan_generation',k,t])
                             for k in ['electricity']
@@ -1575,7 +1584,14 @@ class nextra():
                               (self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t])
                                     for k in ['electricity']
                                         for t in self.timesteps if t in timesteps_2030),'wb_ss')
-                
+
+                # [3] NO GAS CAPACITY ALLOWED UNDER COO 
+                unexpandable = ['west_bank_natural_gas']
+                self.model.addConstrs(
+                    (self.capacity_indices[n,k,t] == 0\
+                        for n in unexpandable\
+                            for k in ['electricity']\
+                                for t in self.timesteps),'wb_gas_change')
                 
                 #-----
                 # GAZA

@@ -44,7 +44,7 @@ ss_factors = [i/100 for i in np.arange(0,101,10).tolist()]
 
 results = {}
 for s in ss_factors:
-    
+    print(f'> Running self-sufficiency factor: {s}')
     model_run = nextra(nodes,edges,flows,
                        scenario='COO',
                        energy_objective=True,
