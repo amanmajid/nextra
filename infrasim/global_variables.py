@@ -14,18 +14,18 @@ global_variables = {
                     'baseload_coefficient'              : 0.5,
                     'storage_loss_coefficient'          : 0.1,
                     'peak_demand_reserve'               : 0.2,
-                    'loss_factor_seasonal'              : 0.90,         # seasonal losses (10%) for thermoelectric plants (from Nurit)
-                    'loss_factor_maintenance_thermo'    : 0.92,         # maintenance downtime (8%) per annum in thermoelectric plants
-                    'loss_factor_maintenance_res'       : 0.92,         # maintenance downtime (8%) per annum in solar/wind plants
-                    'loss_factor_transmission'          : 0.95,         # losses (%) due to transmission
-                    'reserve_capacity_factor'           : 0.80,         # 10% reserve capacity
-                    'maximum_curtailment'               : 0.15,         # Percentage of total generation (zero curtailment usually makes model infeasible)
-                    'emissions_reduction_2030'          : 0.30,         # Percentage reduction in total emissions to 2030 relative to BAS scenario
+                    'loss_factor_seasonal'              : 1.00,         # seasonal losses (10%) for thermoelectric plants (from Nurit)
+                    'loss_factor_maintenance_thermo'    : 1.00,         # maintenance downtime (8%) per annum in thermoelectric plants
+                    'loss_factor_maintenance_res'       : 1.00,         # maintenance downtime (8%) per annum in solar/wind plants
+                    'loss_factor_transmission'          : 1.00,         # losses (%) due to transmission
+                    'reserve_capacity_factor'           : 1.00,         # 10% reserve capacity
+                    'maximum_curtailment'               : 0.05,         # Percentage of total generation (zero curtailment usually makes model infeasible)
+                    'emissions_reduction_2030'          : 0.27,         # Percentage reduction in total emissions to 2030 relative to BAS scenario
                     'BAS_emissions_in_2030'             : 61343,        # Total estimated CO2 emissions (tonnes) under BAS in 2030
                     # -BATTERY PARAMS
                     'battery_capacity_min_percentage'   : 0.20,         # Percentage of total renewable capacity (solar + wind) installed
                     'battery_capacity_max_percentage'   : 0.80,         # Percentage of total renewable capacity (solar + wind) installed
-                    'battery_minimum_level'             : 0.35,         # Minimum level to maintain in battery (preserves health), also incorporates losses/inefficiencies/maintanence
+                    'battery_minimum_level'             : 0.00,         # Minimum level to maintain in battery (preserves health), also incorporates losses/inefficiencies/maintanence
                     'battery_charge_rate'               : 200*24,       # MW
                     'battery_discharge_rate'            : 300*24,       # MW
                     'battery_charge_hours'              : [9,10,11,12,13,14],
@@ -54,9 +54,9 @@ global_variables = {
                     'isr_min_coal_output'               : 0.5,          # % of capacity [ASK GROUP]
                     'isr_min_gas_output'                : 0.5,          # % of capacity [ASK GROUP]
                     # -JORDAN
-                    'jor_res_target_2030'               : 0.3,          # %
-                    'jor_ng_target_2030'                : 0.5,          # %
-                    'jor_shale_target_2030'             : 0.2,          # %
+                    'jor_res_target_2030'               : 0.5,          # %
+                    'jor_ng_target_2030'                : 0.4,          # %
+                    'jor_shale_target_2030'             : 0.1,          # %
                     'jor_min_shale_output'              : 0.0,          # % of capacity [ASK GROUP]
                     'jor_min_gas_output'                : 0.1,          # % of capacity [ASK GROUP]
                     # -WEST BANK

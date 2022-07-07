@@ -108,7 +108,7 @@ class nextra():
         # adjust scenario
         flow_max = 10**9
         # current grid capacities (https://openknowledge.worldbank.org/handle/10986/28468)
-        egypt_to_gaza           = 27     # MW
+        egypt_to_gaza           = 0     # MW
         jordan_to_westbank      = 100    # MW
 
         if self.scenario == 'BAU' or self.scenario == 'BAS':
@@ -589,37 +589,37 @@ class nextra():
         #   Constrained as: SUM_CURTAILMENT <= x * SUM_DEMAND
         #       where, x is a fractional quantity defined in global variables
 
-        # if not self.curtailment:
-        #     pass
-        # else:
-        #     self.model.addConstr(
-        #         gp.quicksum(
-        #             # sum of curtailment
-        #             (self.arcFlows['gaza_solar','curtailment',k,t] \
-        #                 + self.arcFlows['israel_solar','curtailment',k,t] \
-        #                 + self.arcFlows['israel_wind','curtailment',k,t] \
-        #                 + self.arcFlows['jordan_solar','curtailment',k,t] \
-        #                 + self.arcFlows['jordan_wind','curtailment',k,t] \
-        #                 + self.arcFlows['west_bank_solar','curtailment',k,t] \
-        #                 + self.arcFlows['west_bank_wind','curtailment',k,t] \
-        #                     for k in self.commodities
-        #                             for t in self.timesteps))
-        #         <= \
-        #         gp.quicksum(
-        #             (global_variables['maximum_curtailment'] * \
-        #                 (self.arcFlows['gaza_generation','gaza_energy_demand',k,t] \
-        #                     + self.arcFlows['israel_generation','gaza_energy_demand',k,t]
-        #                     + self.arcFlows['israel_generation','israel_energy_demand',k,t]
-        #                     + self.arcFlows['israel_generation','jordan_energy_demand',k,t]
-        #                     + self.arcFlows['israel_generation','west_bank_energy_demand',k,t]
-        #                     + self.arcFlows['jordan_generation','israel_energy_demand',k,t]
-        #                     + self.arcFlows['jordan_generation','jordan_energy_demand',k,t]
-        #                     + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t]
-        #                     + self.arcFlows['west_bank_generation','israel_energy_demand',k,t]
-        #                     + self.arcFlows['west_bank_generation','jordan_energy_demand',k,t]
-        #                     + self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t]) \
-        #                     for k in self.commodities
-        #                         for t in self.timesteps)),'max_curtail')
+        if not self.curtailment:
+            pass
+        else:
+            self.model.addConstr(
+                gp.quicksum(
+                    # sum of curtailment
+                    (self.arcFlows['gaza_solar','curtailment',k,t] \
+                        + self.arcFlows['israel_solar','curtailment',k,t] \
+                        + self.arcFlows['israel_wind','curtailment',k,t] \
+                        + self.arcFlows['jordan_solar','curtailment',k,t] \
+                        + self.arcFlows['jordan_wind','curtailment',k,t] \
+                        + self.arcFlows['west_bank_solar','curtailment',k,t] \
+                        + self.arcFlows['west_bank_wind','curtailment',k,t] \
+                            for k in self.commodities
+                                    for t in self.timesteps))
+                <= \
+                gp.quicksum(
+                    (global_variables['maximum_curtailment'] * \
+                        (self.arcFlows['gaza_generation','gaza_energy_demand',k,t] \
+                            + self.arcFlows['israel_generation','gaza_energy_demand',k,t]
+                            + self.arcFlows['israel_generation','israel_energy_demand',k,t]
+                            + self.arcFlows['israel_generation','jordan_energy_demand',k,t]
+                            + self.arcFlows['israel_generation','west_bank_energy_demand',k,t]
+                            + self.arcFlows['jordan_generation','israel_energy_demand',k,t]
+                            + self.arcFlows['jordan_generation','jordan_energy_demand',k,t]
+                            + self.arcFlows['jordan_generation','west_bank_energy_demand',k,t]
+                            + self.arcFlows['west_bank_generation','israel_energy_demand',k,t]
+                            + self.arcFlows['west_bank_generation','jordan_energy_demand',k,t]
+                            + self.arcFlows['west_bank_generation','west_bank_energy_demand',k,t]) \
+                            for k in self.commodities
+                                for t in self.timesteps)),'max_curtail')
 
 
 
@@ -696,19 +696,19 @@ class nextra():
         #          for i,j,k,t in self.arcFlows \
         #              if 'battery' in j),'battery_discharge_rate')
 
-        # battery charging window
-        self.model.addConstrs(
-            (self.arcFlows.sum(i,'*',k,t) == 0 \
-                for i in battery_nodes \
-                    for k in ['electricity'] \
-                        for t in charging_timesteps),'bat_chg')
+        # # battery charging window
+        # coself.model.addConstrs(
+        #     (self.arcFlows.sum(i,'*',k,t) == 0 \
+        #         for i in battery_nodes \
+        #             for k in ['electricity'] \
+        #                 for t in charging_timesteps),'bat_chg')
         
-        # battery discharging window
-        self.model.addConstrs(
-            (self.arcFlows.sum('*',j,k,t) == 0 \
-                for j in battery_nodes \
-                    for k in ['electricity'] \
-                        for t in self.timesteps if t not in charging_timesteps),'bat_dischg')
+        # # battery discharging window
+        # self.model.addConstrs(
+        #     (self.arcFlows.sum('*',j,k,t) == 0 \
+        #         for j in battery_nodes \
+        #             for k in ['electricity'] \
+        #                 for t in self.timesteps if t not in charging_timesteps),'bat_dischg')
 
         
         #---
