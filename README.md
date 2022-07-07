@@ -1,4 +1,4 @@
-🚨🚧 The tool is currently under development and all code published here is part of an on-going project 🚧🚨
+🚨🚧 Currently under development and all code published here is part of an on-going project 🚧🚨
 
 ---
 
